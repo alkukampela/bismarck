@@ -2,15 +2,16 @@ import express from 'express';
 import shuffle from 'fisher-yates';
 
 import { Hand } from './models/hand';
+import { Player } from './models/player';
 
 const app = express();
 const port = 3000;
 
-const hand = new Hand(shuffledDeck(), ['a', 'b', 'c', 'd']);
+const hand = new Hand(shuffledDeck(), [new Player('a'), new Player('b'), new Player('c'), new Player('d')]);
 
 app.get('/cards', (req, res) => {
   try {
-    const player = req.query.player;
+    const player = new Player(req.query.player);
     res.send(hand.getCards(player));
   } catch (err) {
     res.send(err);
@@ -19,7 +20,7 @@ app.get('/cards', (req, res) => {
 
 app.delete('/cards', (req, res) => {
   try {
-    const player = req.query.player;
+    const player = new Player(req.query.player);
     const rank = req.query.rank;
     const suit = req.query.suit;
     hand.removeCard(player, rank, suit);
@@ -40,7 +41,7 @@ app.get('/tricks', (req, res) => {
 
 app.post('/tricks', (req, res) => {
   try {
-    const player = req.query.player;
+    const player = new Player(req.query.player);
     // TODO: use request body instead of query params
     const rank = req.query.rank;
     const suit = req.query.suit;
@@ -52,7 +53,7 @@ app.post('/tricks', (req, res) => {
 
 app.post('/tricks/cards', (req, res) => {
   try {
-    const player = req.query.player;
+    const player = new Player(req.query.player);
     // TODO: use request body instead of query params
     const rank = req.query.rank;
     const suit = req.query.suit;

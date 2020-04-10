@@ -1,8 +1,9 @@
 import { Card } from './card';
 import { Trick } from './trick';
+import { Player } from './player';
 
-const PLAYER_1 = 'ake';
-const PLAYER_2 = 'make';
+const PLAYER_1 = new Player('ake');
+const PLAYER_2 = new Player('make');
 
 const HEARTS = 2;
 
