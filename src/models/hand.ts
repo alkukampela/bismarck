@@ -5,7 +5,6 @@ const PLAYERS = 4;
 const CARDS_IN_HAND = 12;
 
 class Hand {
-
   private _cards: CardContainer[];
 
   private _playerNames: string[];
@@ -34,13 +33,7 @@ class Hand {
       throw 400;
     }
 
-    const card = this.cardsInPlayersHand(playerIndex).filter(x => x.getCard().equals(rank, suit))[0];
-
-    if (!card) {
-      throw 404;
-    }
-
-    card.setPlayed();
+    this.getCardFromHand(playerIndex, rank, suit).setPlayed();
   }
 
   public getCurrentTrick(): any {
@@ -59,18 +52,44 @@ class Hand {
     }
 
     const playerIndex = this.getPlayersIndex(playerName);
-    const card = this.cardsInPlayersHand(playerIndex).filter(x => x.getCard().equals(rank, suit))[0];
-
-    if (!card) {
-      throw 400;
-    }
-
-    card.setPlayed();
+    const card = this.getCardFromHand(playerIndex, rank, suit);
 
     // TODO: add support for trump games.
     this._currentTrick = new Trick(card.getCard(), playerName);
-
+    card.setPlayed();
     return this._currentTrick.presentation();
+  }
+
+  public addCardToTrick(playerName: string, rank: string, suit: string): any {
+    if (!this._currentTrick) {
+      throw 400;
+    }
+
+    const playerIndex = this.getPlayersIndex(playerName);
+    if (!playerIndex || !this.hasPlayerTurn(playerIndex)) {
+      throw 403;
+    }
+
+    const card = this.getCardFromHand(playerIndex, rank, suit);
+
+    // TODO: check if card has correct suit
+
+    this._currentTrick.playCard(card.getCard(), playerName);
+    card.setPlayed();
+    // TODO: if trick is ready update scores
+    return this._currentTrick.presentation();
+  }
+
+  private getPlayersIndex(player: string): number {
+    return this._playerNames.findIndex(x => x === player);
+  }
+
+  private getCardFromHand(playerIndex: number, rank: string, suit: string) {
+    const card = this.cardsInPlayersHand(playerIndex).filter(x => x.getCard().equals(rank, suit))[0];
+    if (!card) {
+      throw 404;
+    }
+    return card;
   }
 
   private cardsInPlayersHand(player: number): CardContainer[] {
@@ -79,10 +98,6 @@ class Hand {
 
   private isPlayersCard(player: number, index: number): boolean {
     return Math.trunc((index / CARDS_IN_HAND) % PLAYERS) === player;
-  }
-
-  private getPlayersIndex(player: string): number {
-    return this._playerNames.findIndex(x => x === player);
   }
 
   private isTrickOpen(): boolean {
@@ -103,6 +118,11 @@ class Hand {
     }
 
     return this.getEldestHand();
+  }
+
+  private hasPlayerTurn(index: number): boolean {
+    const previousPlayerIndex = index - 1 >= 0 ? index - 1 : PLAYERS - 1;
+    return this._playerNames[previousPlayerIndex] === this._currentTrick.getLatestPlayer();
   }
 
 }

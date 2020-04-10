@@ -50,6 +50,18 @@ app.post('/tricks', (req, res) => {
   }
 });
 
+app.post('/tricks/cards', (req, res) => {
+  try {
+    const player = req.query.player;
+    // TODO: use request body instead of query params
+    const rank = req.query.rank;
+    const suit = req.query.suit;
+    res.send(hand.addCardToTrick(player, rank, suit));
+  } catch (err) {
+    res.sendStatus(err);
+  }
+});
+
 
 app.listen(port, err => {
   if (err) {
@@ -65,6 +77,7 @@ function shuffledDeck() {
 
 function* sequenceGenerator(minVal: number, maxVal: number) {
   let currVal = minVal;
-
-  while (currVal < maxVal) yield currVal++;
+  while (currVal < maxVal) {
+    yield currVal++;
+  }
 }

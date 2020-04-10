@@ -27,6 +27,10 @@ export class Trick {
     return this._cards.length;
   }
 
+  public getLatestPlayer(): string {
+    return this._cards.slice(-1)[0][0];
+  }
+
   presentation(): any {
     return {
       cards: this._cards.map(x => {

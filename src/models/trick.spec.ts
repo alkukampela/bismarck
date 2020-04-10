@@ -60,3 +60,11 @@ test('Trick cards are counted correctly', () => {
   trick.playCard(SPADE_A, PLAYER_2);
   expect(trick.playedCards()).toBe(2);
 });
+
+test('Latest player is returned correctly', () => {
+  const trick = new Trick(SPADE_2, PLAYER_1, HEARTS);
+  expect(trick.getLatestPlayer()).toBe(PLAYER_1);
+
+  trick.playCard(SPADE_A, PLAYER_2);
+  expect(trick.getLatestPlayer()).toBe(PLAYER_2);
+});
