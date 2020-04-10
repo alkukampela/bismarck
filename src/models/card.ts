@@ -37,6 +37,14 @@ export class Card {
     };
   }
 
+  public getRank(): number {
+    return this._value % 13;
+  }
+
+  public getSuit(): number {
+    return Math.trunc(this._value / 13);
+  }
+
   public equals(rank: string, suit: string): boolean {
     return this.rankEquals(rank) && this.suitEquals(suit);
   }
@@ -47,14 +55,6 @@ export class Card {
 
   private suitEquals(suit: string): boolean {
     return this.getSuit() === Card.suits.get(suit);
-  }
-
-  private getRank(): number {
-    return this._value % 13;
-  }
-
-  private getSuit(): number {
-    return Math.trunc(this._value / 13);
   }
 
   private printRank() {

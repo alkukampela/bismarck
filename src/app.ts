@@ -1,7 +1,7 @@
 import express from 'express';
 import shuffle from 'fisher-yates';
 
-import { Hand } from './state/index';
+import { Hand } from './models/hand';
 
 const app = express();
 const port = 3000;

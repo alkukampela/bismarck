@@ -1,4 +1,4 @@
-import { CardContainer } from '../models/card-container';
+import { CardContainer } from './card-container';
 
 const PLAYERS = 4;
 const CARDS_IN_HAND = 12;
