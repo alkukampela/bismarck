@@ -1,6 +1,6 @@
 import { Card } from './card';
 
-type PlayersCard = [number, Card];
+type PlayersCard = [string, Card];
 
 export class Trick {
   private _trumpSuit: number;
@@ -8,26 +8,34 @@ export class Trick {
 
   private _cards: PlayersCard[];
 
-  constructor(card: Card, player: number, trumpSuit?: number) {
+  constructor(card: Card, player: string, trumpSuit?: number) {
     this._cards = [];
     this._cards.push([player, card]);
     this._trumpSuit = trumpSuit || card.getSuit();
     this._trickSuit = card.getSuit();
   }
 
-  public playCard(card: Card, player: number) {
+  public playCard(card: Card, player: string) {
     this._cards.push([player, card]);
   }
 
-  public getSuit(): number {
-    return this._trickSuit;
-  }
-
-  public getTaker(): number {
+  public getTaker(): string {
     return this.playerWithTopRankedCardBySuit(this._trumpSuit) || this.playerWithTopRankedCardBySuit(this._trickSuit);
   }
 
-  private playerWithTopRankedCardBySuit(suit: number): number {
+  public playedCards(): number {
+    return this._cards.length;
+  }
+
+  presentation(): any {
+    return {
+      cards: this._cards.map(x => {
+        return { player: x[0], card: x[1].presentation() };
+      }),
+    };
+  }
+
+  private playerWithTopRankedCardBySuit(suit: number): string {
     const playersCard = this._cards
       .filter(pc => pc[1].getSuit() === suit)
       .sort((a, b) => b[1].getRank() - a[1].getRank())[0];

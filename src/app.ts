@@ -6,29 +6,50 @@ import { Hand } from './models/hand';
 const app = express();
 const port = 3000;
 
-const hand = new Hand(shuffledDeck(), 0);
+const hand = new Hand(shuffledDeck(), ['a', 'b', 'c', 'd']);
 
 app.get('/cards', (req, res) => {
   try {
-    const player = Number(req.query.player);
+    const player = req.query.player;
     res.send(hand.getCards(player));
   } catch (err) {
     res.send(err);
   }
 });
 
-
 app.delete('/cards', (req, res) => {
   try {
-    const player = Number(req.query.player);
+    const player = req.query.player;
     const rank = req.query.rank;
     const suit = req.query.suit;
-    const result = hand.removeCard(player, rank, suit);
-    res.send(result);
+    hand.removeCard(player, rank, suit);
+    res.sendStatus(204);
   } catch (err) {
-    res.send(err);
+    res.sendStatus(err);
   }
 });
+
+
+app.get('/tricks', (req, res) => {
+  try {
+    res.send(hand.getCurrentTrick());
+  } catch (err) {
+    res.sendStatus(err);
+  }
+});
+
+app.post('/tricks', (req, res) => {
+  try {
+    const player = req.query.player;
+    // TODO: use request body instead of query params
+    const rank = req.query.rank;
+    const suit = req.query.suit;
+    res.send(hand.startTrick(player, rank, suit));
+  } catch (err) {
+    res.sendStatus(err);
+  }
+});
+
 
 app.listen(port, err => {
   if (err) {

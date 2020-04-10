@@ -30,7 +30,7 @@ export class Card {
     this._value = value;
   }
 
-  public printOut() {
+  public presentation() {
     return {
       rank: this.printRank(),
       suit: this.printSuit(),
@@ -57,7 +57,7 @@ export class Card {
     return this.getSuit() === Card.suits.get(suit);
   }
 
-  private printRank() {
+  private printRank(): string {
     return Card.ranks.getKey(this.getRank());
   }
 
