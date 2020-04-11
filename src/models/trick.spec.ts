@@ -6,8 +6,6 @@ import { Suit } from './suit';
 const PLAYER_1 = new Player('ake');
 const PLAYER_2 = new Player('make');
 
-//const HEARTS = 2;
-
 const SPADE_A = new Card(51);
 const SPADE_2 = new Card(39);
 const HEART_A = new Card(38);

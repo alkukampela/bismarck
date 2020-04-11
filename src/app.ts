@@ -6,7 +6,7 @@ import { Player } from './models/player';
 import { DeckGenerator } from './services/deck_generator';
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 const hand = new Hand(new DeckGenerator().shuffledDeck(), [
   new Player('a'),
