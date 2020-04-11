@@ -1,15 +1,16 @@
 import { Card } from './card';
 import { Player } from './player';
+import { Suit } from './suit';
 
 type PlayersCard = [Player, Card];
 
 export class Trick {
-  private _trumpSuit: number;
-  private _trickSuit: number;
+  private _trumpSuit: Suit;
+  private _trickSuit: Suit;
 
   private _cards: PlayersCard[];
 
-  constructor(card: Card, player: Player, trumpSuit?: number) {
+  constructor(card: Card, player: Player, trumpSuit?: Suit) {
     this._cards = [];
     this._cards.push([player, card]);
     this._trumpSuit = trumpSuit || card.getSuit();
@@ -40,7 +41,7 @@ export class Trick {
     };
   }
 
-  private playerWithTopRankedCardBySuit(suit: number): Player {
+  private playerWithTopRankedCardBySuit(suit: Suit): Player {
     const playersCard = this._cards
       .filter(pc => pc[1].getSuit() === suit)
       .sort((a, b) => b[1].getRank() - a[1].getRank())[0];

@@ -9,6 +9,15 @@ const port = 3000;
 
 const hand = new Hand(shuffledDeck(), [new Player('a'), new Player('b'), new Player('c'), new Player('d')]);
 
+app.get('/hands', (req, res) => {
+  try {
+    // TODO
+    res.sendStatus(204);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
 app.get('/cards', (req, res) => {
   try {
     const player = new Player(req.query.player);
@@ -29,7 +38,6 @@ app.delete('/cards', (req, res) => {
     res.sendStatus(err);
   }
 });
-
 
 app.get('/tricks', (req, res) => {
   try {
@@ -62,7 +70,6 @@ app.post('/tricks/cards', (req, res) => {
     res.sendStatus(err);
   }
 });
-
 
 app.listen(port, err => {
   if (err) {

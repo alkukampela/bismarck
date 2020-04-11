@@ -1,11 +1,12 @@
 import { Card } from './card';
 import { Trick } from './trick';
 import { Player } from './player';
+import { Suit } from './suit';
 
 const PLAYER_1 = new Player('ake');
 const PLAYER_2 = new Player('make');
 
-const HEARTS = 2;
+//const HEARTS = 2;
 
 const SPADE_A = new Card(51);
 const SPADE_2 = new Card(39);
@@ -34,28 +35,28 @@ test('First player wins with lower card with correct suit', () => {
 });
 
 test('First player wins with highest trump card when trump', () => {
-  const trick = new Trick(HEART_A, PLAYER_1, HEARTS);
+  const trick = new Trick(HEART_A, PLAYER_1, Suit.HEART);
   trick.playCard(HEART_K, PLAYER_2);
 
   expect(trick.getTaker()).toBe(PLAYER_1);
 });
 
 test('Second player wins with trump card when trump', () => {
-  const trick = new Trick(SPADE_A, PLAYER_1, HEARTS);
+  const trick = new Trick(SPADE_A, PLAYER_1, Suit.HEART);
   trick.playCard(HEART_K, PLAYER_2);
 
   expect(trick.getTaker()).toBe(PLAYER_2);
 });
 
 test('Highest trick suit cards when no trump cards are played', () => {
-  const trick = new Trick(SPADE_2, PLAYER_1, HEARTS);
+  const trick = new Trick(SPADE_2, PLAYER_1, Suit.HEART);
   trick.playCard(SPADE_A, PLAYER_2);
 
   expect(trick.getTaker()).toBe(PLAYER_2);
 });
 
 test('Trick cards are counted correctly', () => {
-  const trick = new Trick(SPADE_2, PLAYER_1, HEARTS);
+  const trick = new Trick(SPADE_2, PLAYER_1, Suit.HEART);
   expect(trick.playedCards()).toBe(1);
 
   trick.playCard(SPADE_A, PLAYER_2);
@@ -63,7 +64,7 @@ test('Trick cards are counted correctly', () => {
 });
 
 test('Latest player is returned correctly', () => {
-  const trick = new Trick(SPADE_2, PLAYER_1, HEARTS);
+  const trick = new Trick(SPADE_2, PLAYER_1, Suit.HEART);
   expect(trick.getLatestPlayer()).toBe(PLAYER_1);
 
   trick.playCard(SPADE_A, PLAYER_2);

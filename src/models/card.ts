@@ -1,4 +1,5 @@
 import BiMap from 'bidirectional-map';
+import { Suit } from './suit';
 
 export class Card {
   static ranks = new BiMap<number>({
@@ -11,17 +12,17 @@ export class Card {
     '8': 6,
     '9': 7,
     '10': 8,
-    J: 9,
-    Q: 10,
-    K: 11,
-    A: 12,
+    'J': 9,
+    'Q': 10,
+    'K': 11,
+    'A': 12,
   });
 
-  static suits = new BiMap<number>({
-    '♦️': 0,
-    '♣️': 1,
-    '♥️': 2,
-    '♠️': 3,
+  static suits = new BiMap<Suit>({
+    '♦️': Suit.DIAMOND,
+    '♣️': Suit.CLUB,
+    '♥️': Suit.HEART,
+    '♠️': Suit.SPADE,
   });
 
   private _value: number;
@@ -41,7 +42,7 @@ export class Card {
     return this._value % 13;
   }
 
-  public getSuit(): number {
+  public getSuit(): Suit {
     return Math.trunc(this._value / 13);
   }
 
