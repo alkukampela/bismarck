@@ -22,7 +22,10 @@ export class Trick {
   }
 
   public getTaker(): Player {
-    return this.playerWithTopRankedCardBySuit(this._trumpSuit) || this.playerWithTopRankedCardBySuit(this._trickSuit);
+    return (
+      this.playerWithTopRankedCardBySuit(this._trumpSuit) ||
+      this.playerWithTopRankedCardBySuit(this._trickSuit)
+    );
   }
 
   public playedCards(): number {
@@ -35,7 +38,7 @@ export class Trick {
 
   presentation(): any {
     return {
-      cards: this._cards.map(x => {
+      cards: this._cards.map((x) => {
         return { player: x[0], card: x[1].presentation() };
       }),
     };
@@ -43,7 +46,7 @@ export class Trick {
 
   private playerWithTopRankedCardBySuit(suit: Suit): Player {
     const playersCard = this._cards
-      .filter(pc => pc[1].getSuit() === suit)
+      .filter((pc) => pc[1].getSuit() === suit)
       .sort((a, b) => b[1].getRank() - a[1].getRank())[0];
     if (!!playersCard) {
       return playersCard[0];

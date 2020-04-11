@@ -7,7 +7,12 @@ import { Player } from './models/player';
 const app = express();
 const port = 3000;
 
-const hand = new Hand(shuffledDeck(), [new Player('a'), new Player('b'), new Player('c'), new Player('d')]);
+const hand = new Hand(shuffledDeck(), [
+  new Player('a'),
+  new Player('b'),
+  new Player('c'),
+  new Player('d'),
+]);
 
 app.get('/hands', (req, res) => {
   try {
@@ -71,7 +76,7 @@ app.post('/tricks/cards', (req, res) => {
   }
 });
 
-app.listen(port, err => {
+app.listen(port, (err) => {
   if (err) {
     return console.error(err);
   }

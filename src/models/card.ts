@@ -12,10 +12,10 @@ export class Card {
     '8': 6,
     '9': 7,
     '10': 8,
-    'J': 9,
-    'Q': 10,
-    'K': 11,
-    'A': 12,
+    J: 9,
+    Q: 10,
+    K: 11,
+    A: 12,
   });
 
   static suits = new BiMap<Suit>({

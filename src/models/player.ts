@@ -1,5 +1,4 @@
 export class Player {
-
   private _name: string;
 
   constructor(name: string) {
@@ -7,11 +6,10 @@ export class Player {
   }
 
   public getName(): string {
-    return this._name
+    return this._name;
   }
 
   public equals(other: Player): boolean {
     return this._name === other.getName();
   }
-
 }

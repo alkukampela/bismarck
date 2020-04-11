@@ -14,13 +14,17 @@ class Hand {
 
   constructor(shuffledCards: number[], playes: Player[]) {
     this._cards = [];
-    shuffledCards.map((value: number) => new CardContainer(value)).forEach(card => this._cards.push(card));
+    shuffledCards
+      .map((value: number) => new CardContainer(value))
+      .forEach((card) => this._cards.push(card));
     this._players = playes;
   }
 
   public getCards(player: Player) {
     const playerIndex = this.getPlayersIndex(player);
-    return this.cardsInPlayersHand(playerIndex).map(x => x.getCard().presentation());
+    return this.cardsInPlayersHand(playerIndex).map((x) =>
+      x.getCard().presentation()
+    );
   }
 
   public removeCard(player: Player, rank: string, suit: string) {
@@ -47,8 +51,7 @@ class Hand {
 
   public startTrick(player: Player, rank: string, suit: string): any {
     // FIXME: check that player has removed enough cards
-    if (this.isTrickOpen() ||
-        !player.equals(this.getTrickLead())) {
+    if (this.isTrickOpen() || !player.equals(this.getTrickLead())) {
       throw 400;
     }
 
@@ -82,11 +85,13 @@ class Hand {
   }
 
   private getPlayersIndex(player: Player): number {
-    return this._players.findIndex(x => player.equals(x));
+    return this._players.findIndex((x) => player.equals(x));
   }
 
   private getCardFromHand(playerIndex: number, rank: string, suit: string) {
-    const card = this.cardsInPlayersHand(playerIndex).filter(x => x.getCard().equals(rank, suit))[0];
+    const card = this.cardsInPlayersHand(playerIndex).filter((x) =>
+      x.getCard().equals(rank, suit)
+    )[0];
     if (!card) {
       throw 404;
     }
@@ -94,7 +99,9 @@ class Hand {
   }
 
   private cardsInPlayersHand(player: number): CardContainer[] {
-    return this._cards.filter((_val, index) => this.isPlayersCard(player, index)).filter(x => !x.isPlayed());
+    return this._cards
+      .filter((_val, index) => this.isPlayersCard(player, index))
+      .filter((x) => !x.isPlayed());
   }
 
   private isPlayersCard(player: number, index: number): boolean {
@@ -123,8 +130,9 @@ class Hand {
 
   private hasPlayerTurn(index: number): boolean {
     const previousPlayerIndex = index - 1 >= 0 ? index - 1 : PLAYERS - 1;
-    return this._players[previousPlayerIndex].equals(this._currentTrick.getLatestPlayer());
+    return this._players[previousPlayerIndex].equals(
+      this._currentTrick.getLatestPlayer()
+    );
   }
-
 }
 export { Hand };
