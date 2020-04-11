@@ -2,6 +2,10 @@
   "name": "bismarck",
   "version": "1.0.0",
   "description": "Bismarck game server",
+  "repository": {
+    "type": "git",
+    "url": "git+htttp://github.com/alkukampela/bismarck.git"
+  },
   "main": "dist/app.js",
   "scripts": {
     "start": "node --inspect=5858 -r ts-node/register ./src/app.ts",
@@ -49,6 +53,7 @@
   "dependencies": {
     "bidirectional-map": "^1.0.4",
     "express": "^4.17.1",
-    "fisher-yates": "^1.0.3"
+    "fisher-yates": "^1.0.3",
+    "http-status-codes": "^1.4.0"
   }
 }

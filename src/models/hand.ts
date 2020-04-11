@@ -1,3 +1,5 @@
+import * as statuses from 'http-status-codes';
+
 import { CardContainer } from './card-container';
 import { Trick } from './trick';
 import { Player } from './player';
@@ -29,7 +31,7 @@ class Hand {
 
   public removeCard(player: Player, rank: string, suit: string) {
     if (!player.equals(this.getEldestHand())) {
-      throw 403;
+      throw statuses.FORBIDDEN;
     }
 
     const playerIndex = this.getPlayersIndex(player);
@@ -43,7 +45,7 @@ class Hand {
 
   public getCurrentTrick(): any {
     if (!this._currentTrick) {
-      throw 404;
+      throw statuses.NOT_FOUND;
     }
 
     return this._currentTrick.presentation();
@@ -52,7 +54,7 @@ class Hand {
   public startTrick(player: Player, rank: string, suit: string): any {
     // FIXME: check that player has removed enough cards
     if (this.isTrickOpen() || !player.equals(this.getTrickLead())) {
-      throw 400;
+      throw statuses.BAD_REQUEST;
     }
 
     const playerIndex = this.getPlayersIndex(player);
@@ -66,12 +68,12 @@ class Hand {
 
   public addCardToTrick(player: Player, rank: string, suit: string): any {
     if (!this._currentTrick) {
-      throw 400;
+      throw statuses.BAD_REQUEST;
     }
 
     const playerIndex = this.getPlayersIndex(player);
     if (!playerIndex || !this.hasPlayerTurn(playerIndex)) {
-      throw 403;
+      throw statuses.FORBIDDEN;
     }
 
     const card = this.getCardFromHand(playerIndex, rank, suit);
@@ -93,7 +95,7 @@ class Hand {
       x.getCard().equals(rank, suit)
     )[0];
     if (!card) {
-      throw 404;
+      throw statuses.NOT_FOUND;
     }
     return card;
   }

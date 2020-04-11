@@ -1,4 +1,5 @@
 import express from 'express';
+import * as statuses from 'http-status-codes';
 
 import { Hand } from './models/hand';
 import { Player } from './models/player';
@@ -17,7 +18,7 @@ const hand = new Hand(new DeckGenerator().shuffledDeck(), [
 app.get('/hands', (_req, res) => {
   try {
     // TODO
-    res.sendStatus(204);
+    res.sendStatus(statuses.NO_CONTENT);
   } catch (err) {
     res.send(err);
   }
