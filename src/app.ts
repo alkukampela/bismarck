@@ -1,20 +1,20 @@
 import express from 'express';
-import shuffle from 'fisher-yates';
 
 import { Hand } from './models/hand';
 import { Player } from './models/player';
+import { DeckGenerator } from './services/deck_generator';
 
 const app = express();
 const port = 3000;
 
-const hand = new Hand(shuffledDeck(), [
+const hand = new Hand(new DeckGenerator().shuffledDeck(), [
   new Player('a'),
   new Player('b'),
   new Player('c'),
   new Player('d'),
 ]);
 
-app.get('/hands', (req, res) => {
+app.get('/hands', (_req, res) => {
   try {
     // TODO
     res.sendStatus(204);
@@ -82,15 +82,3 @@ app.listen(port, (err) => {
   }
   return console.log(`server is listening on ${port}`);
 });
-
-function shuffledDeck() {
-  const deck = [...sequenceGenerator(0, 52)];
-  return shuffle(deck);
-}
-
-function* sequenceGenerator(minVal: number, maxVal: number) {
-  let currVal = minVal;
-  while (currVal < maxVal) {
-    yield currVal++;
-  }
-}
