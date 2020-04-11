@@ -2,7 +2,7 @@ import BiMap from 'bidirectional-map';
 import { Suit } from './suit';
 
 export class Card {
-  static ranks = new BiMap<number>({
+  static readonly ranks = new BiMap<number>({
     '2': 0,
     '3': 1,
     '4': 2,
@@ -18,7 +18,7 @@ export class Card {
     A: 12,
   });
 
-  static suits = new BiMap<Suit>({
+  static readonly suits = new BiMap<Suit>({
     '♦️': Suit.DIAMOND,
     '♣️': Suit.CLUB,
     '♥️': Suit.HEART,

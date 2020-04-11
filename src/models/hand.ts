@@ -2,10 +2,10 @@ import { CardContainer } from './card-container';
 import { Trick } from './trick';
 import { Player } from './player';
 
-const PLAYERS = 4;
-const CARDS_IN_HAND = 12;
-
 class Hand {
+  private readonly PLAYERS = 4;
+  private readonly CARDS_IN_HAND = 12;
+
   private _cards: CardContainer[];
 
   private _players: Player[];
@@ -34,7 +34,7 @@ class Hand {
 
     const playerIndex = this.getPlayersIndex(player);
 
-    if (this.cardsInPlayersHand(playerIndex).length <= CARDS_IN_HAND) {
+    if (this.cardsInPlayersHand(playerIndex).length <= this.CARDS_IN_HAND) {
       throw 400;
     }
 
@@ -105,7 +105,7 @@ class Hand {
   }
 
   private isPlayersCard(player: number, index: number): boolean {
-    return Math.trunc((index / CARDS_IN_HAND) % PLAYERS) === player;
+    return Math.trunc((index / this.CARDS_IN_HAND) % this.PLAYERS) === player;
   }
 
   private isTrickOpen(): boolean {
@@ -113,7 +113,7 @@ class Hand {
       return false;
     }
 
-    return this._currentTrick.playedCards() < PLAYERS;
+    return this._currentTrick.playedCards() < this.PLAYERS;
   }
 
   private getEldestHand(): Player {
@@ -129,7 +129,7 @@ class Hand {
   }
 
   private hasPlayerTurn(index: number): boolean {
-    const previousPlayerIndex = index - 1 >= 0 ? index - 1 : PLAYERS - 1;
+    const previousPlayerIndex = index - 1 >= 0 ? index - 1 : this.PLAYERS - 1;
     return this._players[previousPlayerIndex].equals(
       this._currentTrick.getLatestPlayer()
     );
