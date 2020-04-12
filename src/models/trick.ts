@@ -39,7 +39,7 @@ export class Trick {
   presentation(): any {
     return {
       cards: this._cards.map((x) => {
-        return { player: x[0], card: x[1].presentation() };
+        return { [x[0].getName()]: x[1].presentation() };
       }),
     };
   }

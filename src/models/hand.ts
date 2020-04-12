@@ -1,8 +1,10 @@
 import * as statuses from 'http-status-codes';
 
 import { CardContainer } from './card-container';
+import { Card } from './card';
 import { Trick } from './trick';
 import { Player } from './player';
+import { HandScore } from './hand-score';
 
 class Hand {
   private readonly PLAYERS = 4;
@@ -14,12 +16,15 @@ class Hand {
 
   private _currentTrick: Trick;
 
-  constructor(shuffledCards: number[], playes: Player[]) {
+  private _handScore: HandScore;
+
+  constructor(shuffledCards: number[], players: Player[]) {
     this._cards = [];
     shuffledCards
       .map((value: number) => new CardContainer(value))
       .forEach((card) => this._cards.push(card));
-    this._players = playes;
+    this._players = players;
+    this._handScore = new HandScore(players);
   }
 
   public getCards(player: Player) {
@@ -82,7 +87,11 @@ class Hand {
 
     this._currentTrick.playCard(card.getCard(), player);
     card.setPlayed();
-    // TODO: if trick is ready update scores
+
+    if (this._currentTrick.playedCards() === this.PLAYERS) {
+      this._handScore.takeTrick(this._currentTrick.getTaker());
+    }
+
     return this._currentTrick.presentation();
   }
 
@@ -135,6 +144,10 @@ class Hand {
     return this._players[previousPlayerIndex].equals(
       this._currentTrick.getLatestPlayer()
     );
+  }
+
+  private getTableCards(): Card[] {
+    return this._cards.slice(48).map((container) => container.getCard());
   }
 }
 export { Hand };
