@@ -26,7 +26,7 @@ app.get('/hands', (_req, res) => {
 
 app.get('/cards', (req, res) => {
   try {
-    const player = new Player(req.query.player);
+    const player = new Player(req.query.player as string);
     res.send(hand.getCards(player));
   } catch (err) {
     res.send(err);
@@ -35,9 +35,9 @@ app.get('/cards', (req, res) => {
 
 app.delete('/cards', (req, res) => {
   try {
-    const player = new Player(req.query.player);
-    const rank = req.query.rank;
-    const suit = req.query.suit;
+    const player = new Player(req.query.player as string);
+    const rank = req.query.rank as string;
+    const suit = req.query.suit as string;
     hand.removeCard(player, rank, suit);
     res.sendStatus(204);
   } catch (err) {
@@ -55,10 +55,10 @@ app.get('/tricks', (req, res) => {
 
 app.post('/tricks', (req, res) => {
   try {
-    const player = new Player(req.query.player);
+    const player = new Player(req.query.player as string);
     // TODO: use request body instead of query params
-    const rank = req.query.rank;
-    const suit = req.query.suit;
+    const rank = req.query.rank as string;
+    const suit = req.query.suit as string;
     res.send(hand.startTrick(player, rank, suit));
   } catch (err) {
     res.sendStatus(err);
@@ -67,10 +67,10 @@ app.post('/tricks', (req, res) => {
 
 app.post('/tricks/cards', (req, res) => {
   try {
-    const player = new Player(req.query.player);
+    const player = new Player(req.query.player as string);
     // TODO: use request body instead of query params
-    const rank = req.query.rank;
-    const suit = req.query.suit;
+    const rank = req.query.rank as string;
+    const suit = req.query.suit as string;
     res.send(hand.addCardToTrick(player, rank, suit));
   } catch (err) {
     res.sendStatus(err);
