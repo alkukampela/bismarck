@@ -43,7 +43,8 @@ export class TrickEntity {
     return {
       cards: this._playersCards.map((playersCard) => {
         return {
-          [playersCard.player.getName()]: playersCard.card.presentation(),
+          player: playersCard.player.getName(),
+          card: playersCard.card.presentation(),
         };
       }),
     };
