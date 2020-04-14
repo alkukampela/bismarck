@@ -1,7 +1,7 @@
 import * as statuses from 'http-status-codes';
 
 import { CardEntity } from './card-entity';
-import { Trick } from './trick';
+import { TrickEntity } from './trick-entity';
 import { Player } from './player';
 import { HandScore } from './hand-score';
 import { Card } from '../types/card';
@@ -19,7 +19,7 @@ export class HandEntity {
 
   private _players: Player[];
 
-  private _currentTrick: Trick;
+  private _currentTrick: TrickEntity;
 
   private _handScore: HandScore;
 
@@ -76,7 +76,7 @@ export class HandEntity {
     const card = this.getCardFromHand(playerIndex, rank, suit);
 
     // TODO: add support for trump games.
-    this._currentTrick = new Trick(card.card, player);
+    this._currentTrick = new TrickEntity(card.card, player);
     card.isPlayed = true;
     return this._currentTrick.presentation();
   }
