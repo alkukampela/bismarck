@@ -1,8 +1,8 @@
 import express from 'express';
 import * as statuses from 'http-status-codes';
 
-import { Hand } from './models/hand';
-import { Player } from './models/player';
+import { Hand } from './domain/hand';
+import { Player } from './domain/player';
 import { DeckGenerator } from './services/deck_generator';
 
 const app = express();
@@ -15,7 +15,7 @@ const hand = new Hand(new DeckGenerator().shuffledDeck(), [
   new Player('d'),
 ]);
 
-app.get('/hands', (_req, res) => {
+app.get('/hands/current', (_req, res) => {
   try {
     // TODO
     res.sendStatus(statuses.NO_CONTENT);
@@ -25,12 +25,8 @@ app.get('/hands', (_req, res) => {
 });
 
 app.get('/cards', (req, res) => {
-  try {
-    const player = new Player(req.query.player as string);
-    res.send(hand.getCards(player));
-  } catch (err) {
-    res.send(err);
-  }
+  const player = new Player(req.query.player as string);
+  res.send(hand.getCards(player));
 });
 
 app.delete('/cards', (req, res) => {

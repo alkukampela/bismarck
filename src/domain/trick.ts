@@ -1,8 +1,8 @@
-import { Card } from './card';
+import { CardEntity } from './card-entity';
 import { Player } from './player';
 import { Suit } from './suit';
 
-type PlayersCard = [Player, Card];
+type PlayersCard = [Player, CardEntity];
 
 export class Trick {
   private _trumpSuit: Suit;
@@ -10,14 +10,14 @@ export class Trick {
 
   private _cards: PlayersCard[];
 
-  constructor(card: Card, player: Player, trumpSuit?: Suit) {
+  constructor(card: CardEntity, player: Player, trumpSuit?: Suit) {
     this._cards = [];
     this._cards.push([player, card]);
     this._trumpSuit = trumpSuit || card.getSuit();
     this._trickSuit = card.getSuit();
   }
 
-  public playCard(card: Card, player: Player) {
+  public playCard(card: CardEntity, player: Player) {
     this._cards.push([player, card]);
   }
 
@@ -38,8 +38,8 @@ export class Trick {
 
   presentation(): any {
     return {
-      cards: this._cards.map((x) => {
-        return { [x[0].getName()]: x[1].presentation() };
+      cards: this._cards.map((card) => {
+        return { [card[0].getName()]: card[1].presentation() };
       }),
     };
   }

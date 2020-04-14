@@ -1,7 +1,8 @@
 import BiMap from 'bidirectional-map';
 import { Suit } from './suit';
+import { Card } from '../types/card';
 
-export class Card {
+export class CardEntity {
   static readonly ranks = new BiMap<number>({
     '2': 0,
     '3': 1,
@@ -31,7 +32,7 @@ export class Card {
     this._value = value;
   }
 
-  public presentation() {
+  public presentation(): Card {
     return {
       rank: this.printRank(),
       suit: this.printSuit(),
@@ -51,18 +52,18 @@ export class Card {
   }
 
   private rankEquals(rank: string): boolean {
-    return this.getRank() === Card.ranks.get(rank);
+    return this.getRank() === CardEntity.ranks.get(rank);
   }
 
   private suitEquals(suit: string): boolean {
-    return this.getSuit() === Card.suits.get(suit);
+    return this.getSuit() === CardEntity.suits.get(suit);
   }
 
   private printRank(): string {
-    return Card.ranks.getKey(this.getRank());
+    return CardEntity.ranks.getKey(this.getRank());
   }
 
   private printSuit(): string {
-    return Card.suits.getKey(this.getSuit());
+    return CardEntity.suits.getKey(this.getSuit());
   }
 }

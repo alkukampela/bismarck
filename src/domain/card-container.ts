@@ -1,16 +1,16 @@
-import { Card } from './card';
+import { CardEntity } from './card-entity';
 
 export class CardContainer {
-  private _card: Card;
+  private _card: CardEntity;
 
   private _isPlayed: boolean;
 
   constructor(value: number) {
-    this._card = new Card(value);
+    this._card = new CardEntity(value);
     this._isPlayed = false;
   }
 
-  public getCard(): Card {
+  public getCard(): CardEntity {
     return this._card;
   }
 

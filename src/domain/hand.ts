@@ -1,10 +1,11 @@
 import * as statuses from 'http-status-codes';
 
 import { CardContainer } from './card-container';
-import { Card } from './card';
+import { CardEntity } from './card-entity';
 import { Trick } from './trick';
 import { Player } from './player';
 import { HandScore } from './hand-score';
+import { Card } from '../types/card';
 
 class Hand {
   private readonly PLAYERS = 4;
@@ -27,7 +28,7 @@ class Hand {
     this._handScore = new HandScore(players);
   }
 
-  public getCards(player: Player) {
+  public getCards(player: Player): Card[] {
     const playerIndex = this.getPlayersIndex(player);
     return this.cardsInPlayersHand(playerIndex).map((x) =>
       x.getCard().presentation()
@@ -146,7 +147,7 @@ class Hand {
     );
   }
 
-  private getTableCards(): Card[] {
+  private getTableCards(): CardEntity[] {
     return this._cards.slice(48).map((container) => container.getCard());
   }
 }

@@ -1,4 +1,4 @@
-import { Card } from './card';
+import { CardEntity } from './card-entity';
 import { Trick } from './trick';
 import { Player } from './player';
 import { Suit } from './suit';
@@ -6,10 +6,10 @@ import { Suit } from './suit';
 const PLAYER_1 = new Player('ake');
 const PLAYER_2 = new Player('make');
 
-const SPADE_A = new Card(51);
-const SPADE_2 = new Card(39);
-const HEART_A = new Card(38);
-const HEART_K = new Card(37);
+const SPADE_A = new CardEntity(51);
+const SPADE_2 = new CardEntity(39);
+const HEART_A = new CardEntity(38);
+const HEART_K = new CardEntity(37);
 
 test('First player wins with highest card when no trump', () => {
   const trick = new Trick(SPADE_A, PLAYER_1);
