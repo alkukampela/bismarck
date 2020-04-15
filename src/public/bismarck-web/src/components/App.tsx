@@ -1,22 +1,34 @@
 import * as React from 'react';
-import { Toggle } from './Toggle';
 import Trick from './Trick';
 
 const TRICK = {
-  hei: 'dee',
   cards: [
     {
-      player: 'a',
+      player: 'Pauli',
       card: {
         rank: '5',
         suit: '♣️',
       },
     },
     {
-      player: 'b',
+      player: 'Seija',
       card: {
         rank: '9',
         suit: '♥️',
+      },
+    },
+    {
+      player: 'Herkko',
+      card: {
+        rank: '10',
+        suit: '♣️',
+      },
+    },
+    {
+      player: 'Keijo',
+      card: {
+        rank: '2',
+        suit: '♣️',
       },
     },
   ],
@@ -24,10 +36,5 @@ const TRICK = {
 export const App = () => (
   <div>
     <Trick trick={TRICK} />
-    <Toggle onToggle={on => console.log('on: ', on)}>
-      <Toggle.On>The button is on</Toggle.On>
-      <Toggle.Off>The button is off</Toggle.Off>
-      <Toggle.Button />
-    </Toggle>
   </div>
 );

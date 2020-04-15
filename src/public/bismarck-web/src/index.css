@@ -4,7 +4,6 @@
   box-sizing: inherit;
 }
 body {
-  font-family: 'Helvetica', 'Arial', sans-serif;
   background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
 }
 hr {
@@ -17,4 +16,33 @@ hr {
   flex-direction: column;
   text-align: center;
   margin-top: 50px;
+}
+
+.trick {
+  column-count: 4;
+}
+
+.card {
+  display: inline-block;
+  width: 4rem;
+  height: 5.6rem;
+  background-color: #f9f9f9;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.card > .suit {
+  position: relative;
+  left: 1.25rem;
+  top: 1rem;
+  font-size: 1.5em;
+}
+
+.card > .rank {
+  position: relative;
+  top: 1rem;
+  font-size: 1.5em;
+  text-align: center;
 }
