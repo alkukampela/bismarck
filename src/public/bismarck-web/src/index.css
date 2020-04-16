@@ -4,7 +4,7 @@
   box-sizing: inherit;
 }
 body {
-  background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+  background-image: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
 }
 hr {
   width: 100%;
@@ -20,6 +20,11 @@ hr {
 
 .trick {
   column-count: 4;
+}
+
+.playersCards {
+  display: flex;
+  justify-content: space-between;
 }
 
 .card {
