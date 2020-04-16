@@ -7,6 +7,7 @@ import { DeckGenerator } from './services/deck_generator';
 
 const app = express();
 const port = 3001;
+const router = express.Router();
 
 const hand = new HandEntity(new DeckGenerator().shuffledDeck(), [
   new Player('a'),
@@ -15,7 +16,7 @@ const hand = new HandEntity(new DeckGenerator().shuffledDeck(), [
   new Player('d'),
 ]);
 
-app.get('/hands/current', (_req, res) => {
+router.get('/hands/current', (_req, res) => {
   try {
     // TODO
     res.sendStatus(statuses.NO_CONTENT);
@@ -24,12 +25,12 @@ app.get('/hands/current', (_req, res) => {
   }
 });
 
-app.get('/cards', (req, res) => {
+router.get('/cards', (req, res) => {
   const player = new Player(req.query.player as string);
   res.send(hand.getCards(player));
 });
 
-app.delete('/cards', (req, res) => {
+router.delete('/cards', (req, res) => {
   try {
     const player = new Player(req.query.player as string);
     const rank = req.query.rank as string;
@@ -41,7 +42,7 @@ app.delete('/cards', (req, res) => {
   }
 });
 
-app.get('/tricks', (req, res) => {
+router.get('/tricks', (req, res) => {
   try {
     res.send(hand.getCurrentTrick());
   } catch (err) {
@@ -49,7 +50,7 @@ app.get('/tricks', (req, res) => {
   }
 });
 
-app.post('/tricks', (req, res) => {
+router.post('/tricks', (req, res) => {
   try {
     const player = new Player(req.query.player as string);
     // TODO: use request body instead of query params
@@ -61,7 +62,7 @@ app.post('/tricks', (req, res) => {
   }
 });
 
-app.post('/tricks/cards', (req, res) => {
+router.post('/tricks/cards', (req, res) => {
   try {
     const player = new Player(req.query.player as string);
     // TODO: use request body instead of query params
@@ -73,6 +74,7 @@ app.post('/tricks/cards', (req, res) => {
   }
 });
 
+app.use('/api', router);
 app.listen(port, (err) => {
   if (err) {
     return console.error(err);
