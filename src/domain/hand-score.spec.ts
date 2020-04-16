@@ -1,5 +1,6 @@
 import { Player } from './player';
 import { HandScore } from './hand-score';
+import { PlayerScore } from '../types/player-score';
 
 const PLAYER_1 = new Player('ake');
 const PLAYER_2 = new Player('make');
@@ -26,8 +27,12 @@ test('Ensure hand scores are calculated correctly', () => {
 
   const actual = handScore.getScores();
 
-  expect(actual[PLAYER_1.getName()]).toBe(0);
-  expect(actual[PLAYER_2.getName()]).toBe(2);
-  expect(actual[PLAYER_3.getName()]).toBe(0);
-  expect(actual[PLAYER_4.getName()]).toBe(-2);
+  expect(getScoreForPlayer(actual, PLAYER_1.getName())).toBe(0);
+  expect(getScoreForPlayer(actual, PLAYER_2.getName())).toBe(2);
+  expect(getScoreForPlayer(actual, PLAYER_3.getName())).toBe(0);
+  expect(getScoreForPlayer(actual, PLAYER_4.getName())).toBe(-2);
 });
+
+const getScoreForPlayer = (scores: PlayerScore[], player: string): number => {
+  return scores.filter((x) => x.player === player)[0].score;
+};

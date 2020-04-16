@@ -1,43 +1,39 @@
 import { Player } from './player';
-
-type PlayerTricks = {
-  player: Player;
-  tricks: number;
-};
+import { PlayerScore } from '../types/player-score';
 
 export class HandScore {
-  private _players: PlayerTricks[];
+  private _players: PlayerScore[];
 
   // TODO: add support for misere
   constructor(players: Player[]) {
     this._players = players.map((player) => {
-      return { player, tricks: 0 } as PlayerTricks;
+      return { player: player.getName(), score: 0 } as PlayerScore;
     });
   }
 
   public takeTrick(player: Player): void {
     this._players
-      .filter((score) => player.equals(score.player))
-      .forEach((x) => x.tricks++);
+      .filter((score) => player.getName() === score.player)
+      .forEach((x) => x.score++);
   }
 
-  public getScores() {
-    const retVal = {};
-    this._players.forEach(
-      (trick) => (retVal[trick.player.getName()] = this.countScore(trick))
-    );
-
-    return retVal;
+  public getScores(): PlayerScore[] {
+    return this._players.map((trick) => {
+      return {
+        player: trick.player,
+        score: this.countScore(trick),
+      };
+    });
   }
 
-  private countScore(trick: PlayerTricks): number {
+  private countScore(trick: PlayerScore): number {
     return this.isEldestHand(trick.player)
-      ? this.countScoreForEldestHand(trick.tricks)
-      : this.countScoreForNonEldestHand(trick.tricks);
+      ? this.countScoreForEldestHand(trick.score)
+      : this.countScoreForNonEldestHand(trick.score);
   }
 
-  private isEldestHand(player: Player): boolean {
-    return player.equals(this._players[0].player);
+  private isEldestHand(player: string): boolean {
+    return player === this._players[0].player;
   }
 
   private countScoreForEldestHand(tricks: number): number {
