@@ -1,14 +1,16 @@
 import { Player } from './player';
 import { PlayerScore } from '../types/player-score';
+import { GameType } from '../types/game-type';
 
 export class HandScore {
   private _players: PlayerScore[];
+  private _gameType: GameType;
 
-  // TODO: add support for misere
-  constructor(players: Player[]) {
+  constructor(players: Player[], gameType: GameType) {
     this._players = players.map((player) => {
       return { player: player.getName(), score: 0 } as PlayerScore;
     });
+    this._gameType = gameType;
   }
 
   public takeTrick(player: Player): void {
@@ -37,9 +39,9 @@ export class HandScore {
   }
 
   private countScoreForEldestHand(tricks: number): number {
-    return tricks - 6;
+    return this._gameType !== GameType.MISERE ? tricks - 6 : tricks * -1;
   }
   private countScoreForNonEldestHand(tricks: number): number {
-    return tricks - 2;
+    return this._gameType !== GameType.MISERE ? tricks - 2 : 4 - tricks;
   }
 }

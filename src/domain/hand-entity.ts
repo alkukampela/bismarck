@@ -5,6 +5,7 @@ import { TrickEntity } from './trick-entity';
 import { Player } from './player';
 import { HandScore } from './hand-score';
 import { Card } from '../types/card';
+import { GameType } from '../types/game-type';
 
 type CardContainer = {
   card: CardEntity;
@@ -34,7 +35,8 @@ export class HandEntity {
       })
       .forEach((card) => this._cards.push(card));
     this._players = players;
-    this._handScore = new HandScore(players);
+    // TODO: use correct game type
+    this._handScore = new HandScore(players, GameType.TRUMP);
   }
 
   public getCards(player: Player): Card[] {

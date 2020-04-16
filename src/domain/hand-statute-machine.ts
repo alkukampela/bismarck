@@ -1,7 +1,7 @@
 import { Player } from './player';
 import { CardEntity } from './card-entity';
 import { Suit } from './suit';
-import { GameType } from './game-type';
+import { GameType } from '../types/game-type';
 import { HandStatute, HandType } from '../types/hand-statute';
 
 export class HandStatuteMachine {
