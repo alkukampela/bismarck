@@ -29,7 +29,7 @@ export class HandEntity {
 
   public getCards(player: Player): Card[] {
     return this._cardManager
-      .cardsInPlayersHand(this.getPlayersIndex(player))
+      .getPlayersCards(this.getPlayersIndex(player))
       .map((card) => card.presentation());
   }
 
@@ -41,7 +41,7 @@ export class HandEntity {
     const playerIndex = this.getPlayersIndex(player);
 
     if (
-      this._cardManager.cardsInPlayersHand(playerIndex).length <=
+      this._cardManager.getPlayersCards(playerIndex).length <=
       this.CARDS_IN_HAND
     ) {
       throw statuses.BAD_REQUEST;

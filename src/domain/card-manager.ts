@@ -29,7 +29,7 @@ export class CardManager {
     rank: string,
     suit: string
   ): CardEntity {
-    return this.cardsInPlayersHand(playerIndex)
+    return this.getPlayersCards(playerIndex)
       .filter((container) => container.equals(rank, suit))
       .map((container) => container)[0];
   }
@@ -46,7 +46,7 @@ export class CardManager {
       .map((container) => container.card);
   }
 
-  public cardsInPlayersHand(player: number): CardEntity[] {
+  public getPlayersCards(player: number): CardEntity[] {
     return this._cards
       .filter((_val, index) => this.isPlayersCard(player, index))
       .filter((container) => !container.isPlayed)
