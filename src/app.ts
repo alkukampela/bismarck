@@ -3,13 +3,12 @@ import * as statuses from 'http-status-codes';
 
 import { HandEntity } from './domain/hand-entity';
 import { Player } from './domain/player';
-import { DeckGenerator } from './services/deck_generator';
 
 const app = express();
 const port = 3001;
 const router = express.Router();
 
-const hand = new HandEntity(new DeckGenerator().shuffledDeck(), [
+const hand = new HandEntity([
   new Player('a'),
   new Player('b'),
   new Player('c'),

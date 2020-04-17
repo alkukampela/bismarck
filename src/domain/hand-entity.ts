@@ -1,22 +1,17 @@
 import * as statuses from 'http-status-codes';
 
-import { CardEntity } from './card-entity';
 import { TrickEntity } from './trick-entity';
 import { Player } from './player';
 import { HandScore } from './hand-score';
 import { Card } from '../types/card';
 import { GameType } from '../types/game-type';
-
-type CardContainer = {
-  card: CardEntity;
-  isPlayed: boolean;
-};
+import { CardManager } from './card-manager';
 
 export class HandEntity {
   private readonly PLAYERS = 4;
   private readonly CARDS_IN_HAND = 12;
 
-  private _cards: CardContainer[];
+  private _cardManager: CardManager;
 
   private _players: Player[];
 
@@ -24,26 +19,18 @@ export class HandEntity {
 
   private _handScore: HandScore;
 
-  constructor(shuffledCards: number[], players: Player[]) {
-    this._cards = [];
-    shuffledCards
-      .map((value: number) => {
-        return {
-          card: new CardEntity(value),
-          isPlayed: false,
-        } as CardContainer;
-      })
-      .forEach((card) => this._cards.push(card));
+  constructor(players: Player[]) {
+    // TODO: maybe not init from param but use service
+    this._cardManager = new CardManager();
     this._players = players;
     // TODO: use correct game type
     this._handScore = new HandScore(players, GameType.TRUMP);
   }
 
   public getCards(player: Player): Card[] {
-    const playerIndex = this.getPlayersIndex(player);
-    return this.cardsInPlayersHand(playerIndex).map((x) =>
-      x.card.presentation()
-    );
+    return this._cardManager
+      .cardsInPlayersHand(this.getPlayersIndex(player))
+      .map((card) => card.presentation());
   }
 
   public removeCard(player: Player, rank: string, suit: string) {
@@ -53,11 +40,14 @@ export class HandEntity {
 
     const playerIndex = this.getPlayersIndex(player);
 
-    if (this.cardsInPlayersHand(playerIndex).length <= this.CARDS_IN_HAND) {
-      throw 400;
+    if (
+      this._cardManager.cardsInPlayersHand(playerIndex).length <=
+      this.CARDS_IN_HAND
+    ) {
+      throw statuses.BAD_REQUEST;
     }
 
-    this.getCardFromHand(playerIndex, rank, suit).isPlayed = true;
+    this._cardManager.removeCard(rank, suit);
   }
 
   public getCurrentTrick(): any {
@@ -75,11 +65,19 @@ export class HandEntity {
     }
 
     const playerIndex = this.getPlayersIndex(player);
-    const card = this.getCardFromHand(playerIndex, rank, suit);
+    const card = this._cardManager.getCardFromPlayersHand(
+      playerIndex,
+      rank,
+      suit
+    );
+
+    if (!card) {
+      throw statuses.BAD_REQUEST;
+    }
 
     // TODO: add support for trump games.
-    this._currentTrick = new TrickEntity(card.card, player);
-    card.isPlayed = true;
+    this._currentTrick = new TrickEntity(card, player);
+    this._cardManager.removeCard(rank, suit);
     return this._currentTrick.presentation();
   }
 
@@ -93,12 +91,16 @@ export class HandEntity {
       throw statuses.FORBIDDEN;
     }
 
-    const card = this.getCardFromHand(playerIndex, rank, suit);
-
     // TODO: check if card has correct suit
 
-    this._currentTrick.playCard(card.card, player);
-    card.isPlayed = true;
+    const card = this._cardManager.getCardFromPlayersHand(
+      playerIndex,
+      rank,
+      suit
+    );
+
+    this._currentTrick.playCard(card, player);
+    this._cardManager.removeCard(rank, suit);
 
     if (this._currentTrick.playedCards() === this.PLAYERS) {
       this._handScore.takeTrick(this._currentTrick.getTaker());
@@ -109,26 +111,6 @@ export class HandEntity {
 
   private getPlayersIndex(player: Player): number {
     return this._players.findIndex((x) => player.equals(x));
-  }
-
-  private getCardFromHand(playerIndex: number, rank: string, suit: string) {
-    const card = this.cardsInPlayersHand(playerIndex).filter((x) =>
-      x.card.equals(rank, suit)
-    )[0];
-    if (!card) {
-      throw statuses.NOT_FOUND;
-    }
-    return card;
-  }
-
-  private cardsInPlayersHand(player: number): CardContainer[] {
-    return this._cards
-      .filter((_val, index) => this.isPlayersCard(player, index))
-      .filter((x) => !x.isPlayed);
-  }
-
-  private isPlayersCard(player: number, index: number): boolean {
-    return Math.trunc((index / this.CARDS_IN_HAND) % this.PLAYERS) === player;
   }
 
   private isTrickOpen(): boolean {
@@ -156,9 +138,5 @@ export class HandEntity {
     return this._players[previousPlayerIndex].equals(
       this._currentTrick.getLatestPlayer()
     );
-  }
-
-  private getTableCards(): CardEntity[] {
-    return this._cards.slice(48).map((container) => container.card);
   }
 }
