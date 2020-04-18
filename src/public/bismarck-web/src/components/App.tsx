@@ -1,11 +1,13 @@
 import * as React from 'react';
 import Trick from './Trick';
 import PlayersHand from './PlayersHand';
+import { PlayerScore } from '../../../../types/player-score';
+import ScoreBoard from './ScoreBoard';
 
 const TRICK = {
   cards: [
     {
-      player: 'Pauli',
+      player: 'Vilho',
       card: {
         rank: '5',
         suit: '♣️',
@@ -26,7 +28,7 @@ const TRICK = {
       },
     },
     {
-      player: 'Keijo',
+      player: 'Raili',
       card: {
         rank: '2',
         suit: '♣️',
@@ -98,9 +100,17 @@ const CARDS = [
   },
 ];
 
+const TOTAL_SCORE: PlayerScore[] = [
+  { player: 'Vilho', score: 3 },
+  { player: 'Seija', score: 2 },
+  { player: 'Herkko', score: -2 },
+  { player: 'Raili', score: -3 },
+];
+
 export const App = () => (
   <div>
     <Trick trick={TRICK} />
     <PlayersHand cards={CARDS} />
+    <ScoreBoard totalScore={TOTAL_SCORE} />
   </div>
 );
