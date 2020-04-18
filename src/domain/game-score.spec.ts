@@ -1,45 +1,14 @@
 import { Player } from './player';
-import { GameScore } from './game-score';
-import { GameStatus } from '../types/game-status';
+import { GameScoreManager } from './game-score-manager';
+import { GameScoreBoard } from '../types/game-score-board';
 
 const PLAYER_1 = new Player('ake');
 const PLAYER_2 = new Player('make');
 const PLAYER_3 = new Player('pera');
 const PLAYER_4 = new Player('mä');
 
-test('Ensure hand scores are calculated correctly', () => {
-  const gameScore = new GameScore([PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4]);
-
-  const actual = gameScore.getStatus();
-
-  expect(actual.tricks).toBe(0);
-  expect(getPlayersScore(PLAYER_1, actual)).toBe(0);
-  expect(getPlayersScore(PLAYER_2, actual)).toBe(0);
-  expect(getPlayersScore(PLAYER_3, actual)).toBe(0);
-  expect(getPlayersScore(PLAYER_4, actual)).toBe(0);
-});
-
-test('Ensure hand scores are calculated correctly', () => {
-  const gameScore = new GameScore([PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4]);
-
-  gameScore.saveTrick([
-    { player: PLAYER_1.getName(), score: 2 },
-    { player: PLAYER_2.getName(), score: 3 },
-    { player: PLAYER_3.getName(), score: -1 },
-    { player: PLAYER_4.getName(), score: -4 },
-  ]);
-
-  const actual = gameScore.getStatus();
-
-  expect(actual.tricks).toBe(1);
-  expect(getPlayersScore(PLAYER_1, actual)).toBe(2);
-  expect(getPlayersScore(PLAYER_2, actual)).toBe(3);
-  expect(getPlayersScore(PLAYER_3, actual)).toBe(-1);
-  expect(getPlayersScore(PLAYER_4, actual)).toBe(-4);
-});
-
-test('Ensure hand scores are calculated correctly', () => {
-  const gameScore = new GameScore([PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4]);
+test('Ensure trick scores are stored correctly', () => {
+  const gameScore = new GameScoreManager();
 
   gameScore.saveTrick([
     { player: PLAYER_1.getName(), score: 2 },
@@ -55,16 +24,61 @@ test('Ensure hand scores are calculated correctly', () => {
     { player: PLAYER_4.getName(), score: 1 },
   ]);
 
-  const actual = gameScore.getStatus();
+  const actual = gameScore.getScoreBoard();
 
-  expect(actual.tricks).toBe(2);
-  expect(getPlayersScore(PLAYER_1, actual)).toBe(3);
-  expect(getPlayersScore(PLAYER_2, actual)).toBe(2);
-  expect(getPlayersScore(PLAYER_3, actual)).toBe(-2);
-  expect(getPlayersScore(PLAYER_4, actual)).toBe(-3);
+  expect(actual.trickScores.length).toBe(2);
+
+  expect(getPlayersTrickScore(PLAYER_1, 0, actual)).toBe(2);
+  expect(getPlayersTrickScore(PLAYER_2, 0, actual)).toBe(3);
+  expect(getPlayersTrickScore(PLAYER_3, 0, actual)).toBe(-1);
+  expect(getPlayersTrickScore(PLAYER_4, 0, actual)).toBe(-4);
+
+  expect(getPlayersTrickScore(PLAYER_1, 1, actual)).toBe(1);
+  expect(getPlayersTrickScore(PLAYER_2, 1, actual)).toBe(-1);
+  expect(getPlayersTrickScore(PLAYER_3, 1, actual)).toBe(-1);
+  expect(getPlayersTrickScore(PLAYER_4, 1, actual)).toBe(1);
 });
 
-const getPlayersScore = (player: Player, gameStatus: GameStatus): number => {
-  return gameStatus.scores.filter((x) => x.player === player.getName())[0]
-    .score;
+test('Ensure total scores are calculated correctly', () => {
+  const gameScore = new GameScoreManager();
+
+  gameScore.saveTrick([
+    { player: PLAYER_1.getName(), score: 2 },
+    { player: PLAYER_2.getName(), score: 3 },
+    { player: PLAYER_3.getName(), score: -1 },
+    { player: PLAYER_4.getName(), score: -4 },
+  ]);
+
+  gameScore.saveTrick([
+    { player: PLAYER_1.getName(), score: 1 },
+    { player: PLAYER_2.getName(), score: -1 },
+    { player: PLAYER_3.getName(), score: -1 },
+    { player: PLAYER_4.getName(), score: 1 },
+  ]);
+
+  const actual = gameScore.getScoreBoard();
+
+  expect(getPlayersTotalScore(PLAYER_1, actual)).toBe(3);
+  expect(getPlayersTotalScore(PLAYER_2, actual)).toBe(2);
+  expect(getPlayersTotalScore(PLAYER_3, actual)).toBe(-2);
+  expect(getPlayersTotalScore(PLAYER_4, actual)).toBe(-3);
+});
+
+const getPlayersTrickScore = (
+  player: Player,
+  trick: number,
+  scoreBoard: GameScoreBoard
+): number => {
+  return scoreBoard.trickScores[trick].filter(
+    (playerScore) => playerScore.player === player.getName()
+  )[0].score;
+};
+
+const getPlayersTotalScore = (
+  player: Player,
+  scoreBoard: GameScoreBoard
+): number => {
+  return scoreBoard.totalScore.filter(
+    (playerScore) => playerScore.player === player.getName()
+  )[0].score;
 };
