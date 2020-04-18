@@ -2,7 +2,7 @@ import * as React from 'react';
 import Trick from './Trick';
 import PlayersHand from './PlayersHand';
 import { PlayerScore } from '../../../../types/player-score';
-import ScoreBoard from './ScoreBoard';
+import { ScoreBoard } from './ScoreBoard';
 
 const TRICK = {
   cards: [
@@ -111,6 +111,6 @@ export const App = () => (
   <div>
     <Trick trick={TRICK} />
     <PlayersHand cards={CARDS} />
-    <ScoreBoard totalScore={TOTAL_SCORE} />
+    <ScoreBoard Scores={TOTAL_SCORE} />
   </div>
 );
