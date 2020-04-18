@@ -1,5 +1,6 @@
 import { CardEntity } from './card-entity';
 import shuffle from 'fisher-yates';
+import { Suit } from '../types/suit';
 
 type CardContainer = {
   card: CardEntity;
@@ -51,6 +52,11 @@ export class CardManager {
       .filter((_val, index) => this.isPlayersCard(player, index))
       .filter((container) => !container.isPlayed)
       .map((container) => container.card);
+    // TODO: sort by suit & rank
+  }
+
+  public getTrumpSuit(): Suit {
+    return this.getTableCards()[0].getSuit();
   }
 
   private isPlayersCard(player: number, index: number): boolean {

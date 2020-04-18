@@ -1,20 +1,46 @@
 import { Player } from './player';
-import { CardEntity } from './card-entity';
-import { Suit } from './suit';
 import { GameType } from '../types/game-type';
 import { HandStatute, HandType } from '../types/hand-statute';
+import { Suit } from '../types/suit';
 
 export class HandStatuteMachine {
   public getHandStatute(
     defaultPlayerOrder: Player[],
     handNumber: number,
-    openCard: CardEntity
+    trumpSuit: Suit
   ): HandStatute {
-    const handType = this.getHandType(
+    return this.calculateStatute(handNumber, defaultPlayerOrder, trumpSuit);
+  }
+
+  public getChoiceHandStatute(
+    defaultPlayerOrder: Player[],
+    handNumber: number,
+    chosenGameType: GameType,
+    trumpSuit?: Suit
+  ): HandStatute {
+    return this.calculateStatute(
       handNumber,
-      defaultPlayerOrder.length,
-      openCard
+      defaultPlayerOrder,
+      trumpSuit,
+      chosenGameType
     );
+  }
+
+  private calculateStatute(
+    handNumber: number,
+    defaultPlayerOrder: Player[],
+    trumpSuit: Suit,
+    chosenGameType?: GameType
+  ): HandStatute {
+    const handType = {
+      isChoice: this.isChoiceTurn(handNumber, defaultPlayerOrder.length),
+      gameType: this.determineGameType(
+        handNumber,
+        defaultPlayerOrder.length,
+        trumpSuit,
+        chosenGameType
+      ),
+    };
 
     const playerOrder = this.switchTurns(
       defaultPlayerOrder,
@@ -27,43 +53,41 @@ export class HandStatuteMachine {
     };
   }
 
-  private getHandType(
+  private determineGameType(
     handNumber: number,
     playerCount: number,
-    openCard: CardEntity
-  ): HandType {
-    if (handNumber >= playerCount * 3) {
-      return {
-        isChoice: true,
-      };
+    trumpSuit: Suit,
+    chosenGameType?: GameType
+  ): {
+    value: GameType;
+    trumpSuit?: Suit;
+  } {
+    if (this.isChoiceTurn(handNumber, playerCount) && !chosenGameType) {
+      return;
     }
 
+    const gameType =
+      chosenGameType || this.predefinedGameType(handNumber, playerCount);
+
     return {
-      isChoice: false,
-      gameType: this.getGameType(handNumber, playerCount, openCard.getSuit()),
+      value: gameType,
+      ...(gameType === GameType.TRUMP && { trumpSuit }),
     };
   }
 
-  private getGameType(
-    handNumber: number,
-    playerCount: number,
-    suit: Suit
-  ): {
-    value: string;
-    trumpSuit?: string;
-  } {
-    const gameType = GameType[GameType[Math.trunc(handNumber / playerCount)]];
+  private isChoiceTurn(handNumber: number, playerCount: number): boolean {
+    return handNumber >= playerCount * 3;
+  }
 
-    if (gameType === GameType.TRUMP) {
-      return {
-        value: GameType[gameType],
-        trumpSuit: Suit[suit],
-      };
+  private predefinedGameType(handNumber: number, playerCount: number) {
+    switch (Math.trunc(handNumber / playerCount)) {
+      case 0:
+        return GameType.TRUMP;
+      case 1:
+        return GameType.NO_TRUMP;
+      case 2:
+        return GameType.MISERE;
     }
-
-    return {
-      value: GameType[gameType],
-    };
   }
 
   private switchTurns(playerOrder: Player[], times: number): Player[] {

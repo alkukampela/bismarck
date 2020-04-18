@@ -1,5 +1,5 @@
 import BiMap from 'bidirectional-map';
-import { Suit } from './suit';
+import { Suit } from '../types/suit';
 import { Card } from '../types/card';
 
 export class CardEntity {

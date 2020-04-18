@@ -1,6 +1,6 @@
 import { CardEntity } from './card-entity';
 import { Player } from './player';
-import { Suit } from './suit';
+import { Suit } from '../types/suit';
 
 type PlayersCard = {
   player: Player;

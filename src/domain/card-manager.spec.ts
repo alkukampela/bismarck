@@ -50,3 +50,10 @@ test('Ensure getting players card', () => {
     )
   ).toBe(expected);
 });
+
+test('Ensure returns correct trump suit', () => {
+  const cardManager = new CardManager();
+  const openCards = cardManager.getTableCards();
+
+  expect(cardManager.getTrumpSuit()).toBe(openCards[0].getSuit());
+});

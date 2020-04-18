@@ -1,5 +1,5 @@
 export enum GameType {
-  TRUMP = 0,
-  NO_TRUMP = 1,
-  MISERE = 2,
+  TRUMP = 'Trump',
+  NO_TRUMP = 'No trump',
+  MISERE = 'Misere',
 }

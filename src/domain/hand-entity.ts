@@ -1,11 +1,13 @@
-import * as statuses from 'http-status-codes';
-
-import { TrickEntity } from './trick-entity';
-import { Player } from './player';
-import { HandScore } from './hand-score';
-import { Card } from '../types/card';
-import { GameType } from '../types/game-type';
 import { CardManager } from './card-manager';
+import { HandScore } from './hand-score';
+import { HandStatuteMachine } from './hand-statute-machine';
+import { Player } from './player';
+import { TrickEntity } from './trick-entity';
+import { Card } from '../types/card';
+import { HandStatute } from '../types/hand-statute';
+import * as statuses from 'http-status-codes';
+import { GameType } from '../types/game-type';
+import { Suit } from '../types/suit';
 
 export class HandEntity {
   private readonly PLAYERS = 4;
@@ -13,18 +15,27 @@ export class HandEntity {
 
   private _cardManager: CardManager;
 
-  private _players: Player[];
-
   private _currentTrick: TrickEntity;
 
   private _handScore: HandScore;
 
-  constructor(players: Player[]) {
-    // TODO: maybe not init from param but use service
+  private _players: Player[];
+
+  private _handStatute: HandStatute;
+
+  constructor(defaulPlayerOrder: Player[], handNumber: number) {
     this._cardManager = new CardManager();
-    this._players = players;
-    // TODO: use correct game type
-    this._handScore = new HandScore(players, GameType.TRUMP);
+
+    this._handStatute = new HandStatuteMachine().getHandStatute(
+      defaulPlayerOrder,
+      handNumber,
+      this._cardManager.getTrumpSuit()
+    );
+
+    this._players = this._handStatute.playerOrder.map(
+      (name) => new Player(name)
+    );
+    this._handScore = new HandScore(this._players);
   }
 
   public getCards(player: Player): Card[] {
@@ -50,6 +61,28 @@ export class HandEntity {
     this._cardManager.removeCard(rank, suit);
   }
 
+  public chooseGameType(
+    defaultPlayerOrder: Player[],
+    handNumber: number,
+    player: Player,
+    chosenGameType: GameType,
+    suit?: Suit
+  ): HandStatute {
+    if (
+      !player.equals(this.getEldestHand()) ||
+      !this._handStatute.handType.gameType.value
+    ) {
+      throw statuses.BAD_REQUEST;
+    }
+    this._handStatute = new HandStatuteMachine().getChoiceHandStatute(
+      defaultPlayerOrder,
+      handNumber,
+      chosenGameType,
+      suit
+    );
+    return this._handStatute;
+  }
+
   public getCurrentTrick(): any {
     if (!this._currentTrick) {
       throw statuses.NOT_FOUND;
@@ -60,7 +93,11 @@ export class HandEntity {
 
   public startTrick(player: Player, rank: string, suit: string): any {
     // FIXME: check that player has removed enough cards
-    if (this.isTrickOpen() || !player.equals(this.getTrickLead())) {
+    if (
+      this.isTrickOpen() ||
+      !player.equals(this.getTrickLead()) ||
+      !this._handStatute.handType.gameType.value
+    ) {
       throw statuses.BAD_REQUEST;
     }
 

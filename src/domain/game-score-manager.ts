@@ -1,4 +1,3 @@
-import { Player } from './player';
 import { GameScoreBoard } from '../types/game-score-board';
 import { PlayerScore } from '../types/player-score';
 

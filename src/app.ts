@@ -8,12 +8,10 @@ const app = express();
 const port = 3001;
 const router = express.Router();
 
-const hand = new HandEntity([
-  new Player('a'),
-  new Player('b'),
-  new Player('c'),
-  new Player('d'),
-]);
+const hand = new HandEntity(
+  [new Player('a'), new Player('b'), new Player('c'), new Player('d')],
+  3
+);
 
 router.get('/hands/current', (_req, res) => {
   try {
@@ -70,6 +68,15 @@ router.post('/tricks/cards', (req, res) => {
     res.send(hand.addCardToTrick(player, rank, suit));
   } catch (err) {
     res.sendStatus(err);
+  }
+});
+
+router.get('/game/score', (req, res) => {
+  try {
+    // TODO
+    res.sendStatus(statuses.NO_CONTENT);
+  } catch (err) {
+    res.send(err);
   }
 });
 

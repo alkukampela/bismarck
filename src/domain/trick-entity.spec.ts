@@ -1,7 +1,7 @@
 import { CardEntity } from './card-entity';
 import { TrickEntity } from './trick-entity';
 import { Player } from './player';
-import { Suit } from './suit';
+import { Suit } from '../types/suit';
 
 const PLAYER_1 = new Player('ake');
 const PLAYER_2 = new Player('make');
