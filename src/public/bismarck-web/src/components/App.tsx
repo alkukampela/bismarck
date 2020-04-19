@@ -1,8 +1,11 @@
-import * as React from 'react';
-import Trick from './Trick';
 import { PlayersHand } from './PlayersHand';
-import { PlayerScore } from '../../../../types/player-score';
 import { ScoreBoard } from './ScoreBoard';
+import { StatuteSummary } from './Statute';
+import Trick from './Trick';
+import { GameType } from '../../../../types/game-type';
+import { HandStatute } from '../../../../types/hand-statute';
+import { PlayerScore } from '../../../../types/player-score';
+import * as React from 'react';
 
 const TRICK = {
   cards: [
@@ -44,10 +47,21 @@ const TOTAL_SCORE: PlayerScore[] = [
   { player: 'Raili', score: -3 },
 ];
 
+const STATUTE: HandStatute = {
+  handType: {
+    isChoice: false,
+    gameType: {
+      value: GameType.NO_TRUMP,
+    },
+  },
+  playerOrder: ['Vilho', 'Seija', 'Herkko', 'Raili'],
+};
+
 export const App = () => (
   <div>
     <Trick trick={TRICK} />
     <PlayersHand />
-    <ScoreBoard Scores={TOTAL_SCORE} />
+    <ScoreBoard scores={TOTAL_SCORE} />
+    <StatuteSummary statute={STATUTE} />
   </div>
 );
