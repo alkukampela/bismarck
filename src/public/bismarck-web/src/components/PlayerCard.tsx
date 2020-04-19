@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Card from './Card';
+import { Card } from './Card';
 
 export default class PlayerCard extends React.Component<any, {}> {
   constructor(props: any) {

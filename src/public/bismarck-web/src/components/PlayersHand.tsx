@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Card from './Card';
+import { Card } from './Card';
 
 export const PlayersHand = _props => {
   const [state, setState] = React.useState({ cards: [] });
