@@ -61,6 +61,10 @@ export class HandEntity {
     this._cardManager.removeCard(rank, suit);
   }
 
+  public getStatute(): HandStatute {
+    return this._handStatute;
+  }
+
   public chooseGameType(
     player: Player,
     chosenGameType: GameType,

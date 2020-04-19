@@ -14,13 +14,8 @@ const hand = new HandEntity(
   4
 );
 
-router.get('/hands/current', (_req, res) => {
-  try {
-    // TODO
-    res.sendStatus(statuses.NO_CONTENT);
-  } catch (err) {
-    res.send(err);
-  }
+router.get('/hands/current/statute', (_req, res) => {
+  res.send(hand.getStatute());
 });
 
 router.get('/cards', (req, res) => {
