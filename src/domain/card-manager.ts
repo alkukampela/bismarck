@@ -51,8 +51,9 @@ export class CardManager {
     return this._cards
       .filter((_val, index) => this.isPlayersCard(player, index))
       .filter((container) => !container.isPlayed)
+      .sort((a, b) => a.card.getRank() - b.card.getRank())
+      .sort((a, b) => a.card.getSuit() - b.card.getSuit())
       .map((container) => container.card);
-    // TODO: sort by suit & rank
   }
 
   public getTrumpSuit(): Suit {

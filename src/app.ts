@@ -11,7 +11,7 @@ const router = express.Router();
 
 const hand = new HandEntity(
   [new Player('a'), new Player('b'), new Player('c'), new Player('d')],
-  3
+  4
 );
 
 router.get('/hands/current', (_req, res) => {
