@@ -1,18 +1,28 @@
 import * as React from 'react';
 import Card from './Card';
 
-export default class PlayersHand extends React.Component<any, {}> {
-  constructor(props: any) {
-    super(props);
-  }
+export const PlayersHand = _props => {
+  const [state, setState] = React.useState({ cards: [] });
 
-  render() {
-    return (
-      <div className="playersCards">
-        {this.props.cards.map((card: any, index: number) => (
-          <Card card={card} key={index} />
-        ))}
-      </div>
-    );
-  }
-}
+  React.useEffect(() => {
+    fetch(`http://localhost:3001/api/cards?player=a`, {
+      mode: 'cors',
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(cards => {
+        setState(state => ({ ...state, cards }));
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+  return (
+    <div className="playersCards">
+      {state.cards.map((card: any, index: number) => (
+        <Card card={card} key={index} />
+      ))}
+    </div>
+  );
+};

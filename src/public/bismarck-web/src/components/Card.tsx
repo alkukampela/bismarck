@@ -6,12 +6,7 @@ export default class Card extends React.Component<any, {}> {
   }
 
   private getCardClass = (suit: string) => {
-    switch (suit) {
-      case '♦️':
-      case '♥️':
-        return 'card red-card';
-    }
-    return 'card black-card';
+    return `card ${['♦️', '♥️'].includes(suit) ? 'red-card' : 'black-card'}`;
   };
 
   render() {

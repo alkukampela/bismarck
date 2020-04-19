@@ -11,7 +11,7 @@
     "type-check:watch": "tsc --noEmit --watch"
   },
   "engines": {
-    "node": ">= 8.11.0",
+    "node": ">= 12.16.0",
     "npm": ">= 6.0.0"
   },
   "jest": {
@@ -37,7 +37,6 @@
     "Parcel"
   ],
   "dependencies": {
-    "@types/md5": "^2.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },
