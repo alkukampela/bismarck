@@ -1,6 +1,7 @@
 import express from 'express';
 import * as statuses from 'http-status-codes';
 
+import cors from 'cors';
 import { HandEntity } from './domain/hand-entity';
 import { Player } from './domain/player';
 
@@ -80,6 +81,7 @@ router.get('/game/score', (req, res) => {
   }
 });
 
+app.use(cors());
 app.use('/api', router);
 app.listen(port, (err) => {
   if (err) {
