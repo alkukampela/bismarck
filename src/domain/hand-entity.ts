@@ -62,8 +62,6 @@ export class HandEntity {
   }
 
   public chooseGameType(
-    defaultPlayerOrder: Player[],
-    handNumber: number,
     player: Player,
     chosenGameType: GameType,
     suit?: Suit
@@ -74,9 +72,11 @@ export class HandEntity {
     ) {
       throw statuses.BAD_REQUEST;
     }
-    this._handStatute = new HandStatuteMachine().getChoiceHandStatute(
-      defaultPlayerOrder,
-      handNumber,
+
+    // TODO check that suit is passed if game type is trump and not passed in other game types
+
+    this._handStatute = new HandStatuteMachine().chooseGameType(
+      this._handStatute,
       chosenGameType,
       suit
     );
@@ -112,8 +112,11 @@ export class HandEntity {
       throw statuses.BAD_REQUEST;
     }
 
-    // TODO: add support for trump games.
-    this._currentTrick = new TrickEntity(card, player);
+    this._currentTrick = new TrickEntity(
+      card,
+      player,
+      this._handStatute.handType.gameType.trumpSuit
+    );
     this._cardManager.removeCard(rank, suit);
     return this._currentTrick.presentation();
   }
