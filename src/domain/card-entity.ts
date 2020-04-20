@@ -32,6 +32,12 @@ export class CardEntity {
     this._value = value;
   }
 
+  public static fromCard(card: Card): CardEntity {
+    const suit = CardEntity.suits.get(card.suit);
+    const rank = CardEntity.ranks.get(card.rank);
+    return new CardEntity(suit.valueOf() * 13 + rank.valueOf());
+  }
+
   public presentation(): Card {
     return {
       rank: this.printRank(),

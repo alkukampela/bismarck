@@ -8,6 +8,7 @@ import { HandStatute } from '../types/hand-statute';
 import * as statuses from 'http-status-codes';
 import { GameType } from '../types/game-type';
 import { Suit } from '../types/suit';
+import { CardEntity } from './card-entity';
 
 export class HandEntity {
   private readonly PLAYERS = 4;
@@ -95,7 +96,7 @@ export class HandEntity {
     return this._currentTrick.presentation();
   }
 
-  public startTrick(player: Player, rank: string, suit: string): any {
+  public startTrick(player: Player, card: Card): any {
     // FIXME: check that player has removed enough cards
     if (
       this.isTrickOpen() ||
@@ -106,22 +107,22 @@ export class HandEntity {
     }
 
     const playerIndex = this.getPlayersIndex(player);
-    const card = this._cardManager.getCardFromPlayersHand(
-      playerIndex,
-      rank,
-      suit
-    );
-
-    if (!card) {
+    if (
+      !this._cardManager.getCardFromPlayersHand(
+        playerIndex,
+        card.rank,
+        card.suit
+      )
+    ) {
       throw statuses.BAD_REQUEST;
     }
 
     this._currentTrick = new TrickEntity(
-      card,
+      CardEntity.fromCard(card),
       player,
       this._handStatute.handType.gameType.trumpSuit
     );
-    this._cardManager.removeCard(rank, suit);
+    this._cardManager.removeCard(card.rank, card.suit);
     return this._currentTrick.presentation();
   }
 
