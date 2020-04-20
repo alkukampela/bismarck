@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Card } from './Card';
 
-export const PlayersHand = _props => {
+export const PlayersHand = ({ player }: { player: String }) => {
   const [state, setState] = React.useState({ cards: [] });
 
   React.useEffect(() => {
-    fetch(`http://localhost:3001/api/cards?player=a`, {
+    fetch(`http://localhost:3001/api/cards?player=${player}`, {
       mode: 'cors',
     })
       .then(response => {

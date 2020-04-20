@@ -6,6 +6,7 @@ import { GameType } from '../../../../types/game-type';
 import { HandStatute } from '../../../../types/hand-statute';
 import { PlayerScore } from '../../../../types/player-score';
 import * as React from 'react';
+import * as QueryString from 'query-string';
 
 const TRICK = {
   cards: [
@@ -57,11 +58,14 @@ const STATUTE: HandStatute = {
   playerOrder: ['Vilho', 'Seija', 'Herkko', 'Raili'],
 };
 
-export const App = () => (
-  <div>
-    <Trick trick={TRICK} />
-    <PlayersHand />
-    <ScoreBoard scores={TOTAL_SCORE} />
-    <StatuteSummary statute={STATUTE} />
-  </div>
-);
+export const App = () => {
+  const player = (QueryString.parse(location.search).player as String) || 'a';
+  return (
+    <div>
+      <Trick trick={TRICK} />
+      <PlayersHand player={player} />
+      <ScoreBoard scores={TOTAL_SCORE} />
+      <StatuteSummary statute={STATUTE} />
+    </div>
+  );
+};
