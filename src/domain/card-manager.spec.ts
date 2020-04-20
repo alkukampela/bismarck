@@ -22,9 +22,9 @@ test('Ensure removed card is not in players hand after removal', () => {
   const cardManager = new CardManager();
   const cards = cardManager.getPlayersCards(player);
 
-  const cardToBeRemoved = cards[0].presentation();
+  const cardToBeRemoved = cards[0].toCard();
 
-  cardManager.removeCard(cardToBeRemoved.rank, cardToBeRemoved.suit);
+  cardManager.removeCard(cardToBeRemoved);
 
   expect(cardManager.getPlayersCards(player).length).toBe(cards.length - 1);
   expect(
@@ -35,20 +35,14 @@ test('Ensure removed card is not in players hand after removal', () => {
   ).toBe(0);
 });
 
-test('Ensure getting players card', () => {
+test('Ensure card returned as players card is actually players card', () => {
   const player = 2;
   const cardManager = new CardManager();
   const cards = cardManager.getPlayersCards(player);
 
-  const expected = cards[3];
-
-  expect(
-    cardManager.getCardFromPlayersHand(
-      player,
-      expected.presentation().rank,
-      expected.presentation().suit
-    )
-  ).toBe(expected);
+  cards.forEach((card) =>
+    expect(cardManager.hasPlayerCard(player, card.toCard())).toBe(true)
+  );
 });
 
 test('Ensure returns correct trump suit', () => {

@@ -28,9 +28,12 @@ router.delete('/cards', (req, res) => {
   try {
     const player = new Player(req.query.player as string);
 
-    const rank = req.query.rank as string;
-    const suit = req.query.suit as string;
-    hand.removeCard(player, rank, suit);
+    const card: Card = {
+      rank: req.query.rank as string,
+      suit: req.query.suit as string,
+    };
+
+    hand.removeCard(player, card);
     res.sendStatus(204);
   } catch (err) {
     res.sendStatus(err);
@@ -49,7 +52,6 @@ router.post('/tricks', (req, res) => {
   try {
     const player = new Player(req.query.player as string);
     const card = req.body as Card;
-
     res.send(hand.startTrick(player, card));
   } catch (err) {
     res.sendStatus(err);
@@ -59,10 +61,8 @@ router.post('/tricks', (req, res) => {
 router.post('/tricks/cards', (req, res) => {
   try {
     const player = new Player(req.query.player as string);
-    // TODO: use request body instead of query params
-    const rank = req.query.rank as string;
-    const suit = req.query.suit as string;
-    res.send(hand.addCardToTrick(player, rank, suit));
+    const card = req.body as Card;
+    res.send(hand.addCardToTrick(player, card));
   } catch (err) {
     res.sendStatus(err);
   }

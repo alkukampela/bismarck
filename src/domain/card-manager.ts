@@ -1,6 +1,7 @@
 import { CardEntity } from './card-entity';
-import shuffle from 'fisher-yates';
+import { Card } from '../types/card';
 import { Suit } from '../types/suit';
+import shuffle from 'fisher-yates';
 
 type CardContainer = {
   card: CardEntity;
@@ -25,19 +26,17 @@ export class CardManager {
       .forEach((card: CardContainer) => this._cards.push(card));
   }
 
-  public getCardFromPlayersHand(
-    playerIndex: number,
-    rank: string,
-    suit: string
-  ): CardEntity {
-    return this.getPlayersCards(playerIndex)
-      .filter((container) => container.equals(rank, suit))
-      .map((container) => container)[0];
+  public hasPlayerCard(playerIndex: number, card: Card): boolean {
+    return (
+      this.getPlayersCards(playerIndex).filter((c) =>
+        c.equals(card.rank, card.suit)
+      ).length > 0
+    );
   }
 
-  public removeCard(rank: string, suit: string): void {
+  public removeCard(card: Card): void {
     this._cards.filter((container) =>
-      container.card.equals(rank, suit)
+      container.card.equals(card.rank, card.suit)
     )[0].isPlayed = true;
   }
 

@@ -42,10 +42,10 @@ export class HandEntity {
   public getCards(player: Player): Card[] {
     return this._cardManager
       .getPlayersCards(this.getPlayersIndex(player))
-      .map((card) => card.presentation());
+      .map((card) => card.toCard());
   }
 
-  public removeCard(player: Player, rank: string, suit: string) {
+  public removeCard(player: Player, card: Card) {
     if (!player.equals(this.getEldestHand())) {
       throw statuses.FORBIDDEN;
     }
@@ -53,13 +53,14 @@ export class HandEntity {
     const playerIndex = this.getPlayersIndex(player);
 
     if (
+      !this._cardManager.hasPlayerCard(playerIndex, card) ||
       this._cardManager.getPlayersCards(playerIndex).length <=
-      this.CARDS_IN_HAND
+        this.CARDS_IN_HAND
     ) {
       throw statuses.BAD_REQUEST;
     }
 
-    this._cardManager.removeCard(rank, suit);
+    this._cardManager.removeCard(card);
   }
 
   public getStatute(): HandStatute {
@@ -107,13 +108,7 @@ export class HandEntity {
     }
 
     const playerIndex = this.getPlayersIndex(player);
-    if (
-      !this._cardManager.getCardFromPlayersHand(
-        playerIndex,
-        card.rank,
-        card.suit
-      )
-    ) {
+    if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
       throw statuses.BAD_REQUEST;
     }
 
@@ -122,11 +117,11 @@ export class HandEntity {
       player,
       this._handStatute.handType.gameType.trumpSuit
     );
-    this._cardManager.removeCard(card.rank, card.suit);
+    this._cardManager.removeCard(card);
     return this._currentTrick.presentation();
   }
 
-  public addCardToTrick(player: Player, rank: string, suit: string): any {
+  public addCardToTrick(player: Player, card: Card): any {
     if (!this._currentTrick) {
       throw statuses.BAD_REQUEST;
     }
@@ -135,17 +130,14 @@ export class HandEntity {
     if (!playerIndex || !this.hasPlayerTurn(playerIndex)) {
       throw statuses.FORBIDDEN;
     }
-
     // TODO: check if card has correct suit
 
-    const card = this._cardManager.getCardFromPlayersHand(
-      playerIndex,
-      rank,
-      suit
-    );
+    if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
+      throw statuses.BAD_REQUEST;
+    }
 
-    this._currentTrick.playCard(card, player);
-    this._cardManager.removeCard(rank, suit);
+    this._currentTrick.playCard(CardEntity.fromCard(card), player);
+    this._cardManager.removeCard(card);
 
     if (this._currentTrick.playedCards() === this.PLAYERS) {
       this._handScore.takeTrick(this._currentTrick.getTaker());

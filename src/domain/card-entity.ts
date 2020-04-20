@@ -38,7 +38,7 @@ export class CardEntity {
     return new CardEntity(suit.valueOf() * 13 + rank.valueOf());
   }
 
-  public presentation(): Card {
+  public toCard(): Card {
     return {
       rank: this.printRank(),
       suit: this.printSuit(),
