@@ -33,10 +33,6 @@ const TRICK = {
     },
     {
       player: 'Raili',
-      card: {
-        rank: '2',
-        suit: '♣️',
-      },
     },
   ],
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PlayerCard from './PlayerCard';
+import { TrickCard } from './TrickCard';
 
 export default class Trick extends React.Component<any, {}> {
   constructor(props: any) {
@@ -10,7 +10,7 @@ export default class Trick extends React.Component<any, {}> {
     return (
       <div className="trick">
         {this.props.trick.cards.map((playerCard: any, index: number) => (
-          <PlayerCard playerCard={playerCard} key={index} />
+          <TrickCard trickCard={playerCard} key={index} />
         ))}
       </div>
     );
