@@ -6,29 +6,28 @@ interface Cards {
   cards: CardType[];
 }
 
-export const PlayersHand = ({ player }: { player: String }) => {
+export const PlayersHand = ({ player }: { player: string }) => {
   const [state, setState] = React.useState<Cards>({ cards: [] });
 
   React.useEffect(() => {
-    const fetchCards = async function(): Promise<CardType[]> {
+    const fetchCards = async function (): Promise<CardType[]> {
       const resp = await fetch(
         `http://localhost:3001/api/cards?player=${player}`,
         {
           mode: 'cors',
         }
       );
-      const result = await resp.json();
-      return result as CardType[];
+      return (await resp.json()) as CardType[];
     };
 
-    fetchCards().then(cards => {
-      setState(state => ({ ...state, cards }));
+    fetchCards().then((cards) => {
+      setState((state) => ({ ...state, cards }));
     });
   }, []);
   return (
     <div className="playersCards">
       {state.cards.map((card: any, index: number) => (
-        <Card card={card} key={index} />
+        <Card card={card} key={index} player={player} />
       ))}
     </div>
   );

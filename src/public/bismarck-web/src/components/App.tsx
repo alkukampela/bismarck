@@ -8,35 +8,6 @@ import { PlayerScore } from '../../../../types/player-score';
 import * as React from 'react';
 import * as QueryString from 'query-string';
 
-const TRICK = {
-  cards: [
-    {
-      player: 'Vilho',
-      card: {
-        rank: '5',
-        suit: '♣️',
-      },
-    },
-    {
-      player: 'Seija',
-      card: {
-        rank: '9',
-        suit: '♥️',
-      },
-    },
-    {
-      player: 'Herkko',
-      card: {
-        rank: '10',
-        suit: '♣️',
-      },
-    },
-    {
-      player: 'Raili',
-    },
-  ],
-};
-
 const TOTAL_SCORE: PlayerScore[] = [
   { player: 'Vilho', score: 3 },
   { player: 'Seija', score: 2 },
@@ -58,7 +29,7 @@ export const App = () => {
   const player = (QueryString.parse(location.search).player as String) || 'a';
   return (
     <div>
-      <Trick trickCards={TRICK} />
+      <Trick />
       <PlayersHand player={player} />
       <ScoreBoard scores={TOTAL_SCORE} />
       <StatuteSummary statute={STATUTE} />
