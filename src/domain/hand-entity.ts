@@ -9,6 +9,7 @@ import * as statuses from 'http-status-codes';
 import { GameType } from '../types/game-type';
 import { Suit } from '../types/suit';
 import { CardEntity } from './card-entity';
+import { TrickCards } from '../types/trick-cards';
 
 export class HandEntity {
   private readonly PLAYERS = 4;
@@ -89,7 +90,7 @@ export class HandEntity {
     return this._handStatute;
   }
 
-  public getCurrentTrick(): any {
+  public getCurrentTrick(): TrickCards {
     if (!this._currentTrick) {
       throw statuses.NOT_FOUND;
     }
@@ -97,7 +98,7 @@ export class HandEntity {
     return this._currentTrick.presentation();
   }
 
-  public startTrick(player: Player, card: Card): any {
+  public startTrick(player: Player, card: Card): TrickCards {
     // FIXME: check that player has removed enough cards
     if (
       this.isTrickOpen() ||
@@ -114,14 +115,14 @@ export class HandEntity {
 
     this._currentTrick = new TrickEntity(
       CardEntity.fromCard(card),
-      player,
+      this.getTricksPlayerOrder(playerIndex),
       this._handStatute.handType.gameType.trumpSuit
     );
     this._cardManager.removeCard(card);
     return this._currentTrick.presentation();
   }
 
-  public addCardToTrick(player: Player, card: Card): any {
+  public addCardToTrick(player: Player, card: Card): TrickCards {
     if (!this._currentTrick) {
       throw statuses.BAD_REQUEST;
     }
@@ -175,5 +176,12 @@ export class HandEntity {
     return this._players[previousPlayerIndex].equals(
       this._currentTrick.getLatestPlayer()
     );
+  }
+
+  getTricksPlayerOrder(startingIndex: number): Player[] {
+    return [
+      ...this._players.slice(startingIndex),
+      ...this._players.slice(0, startingIndex),
+    ];
   }
 }

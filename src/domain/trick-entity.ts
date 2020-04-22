@@ -1,10 +1,11 @@
 import { CardEntity } from './card-entity';
 import { Player } from './player';
 import { Suit } from '../types/suit';
+import { TrickCards } from '../types/trick-cards';
 
 type PlayersCard = {
   player: Player;
-  card: CardEntity;
+  card?: CardEntity;
 };
 
 export class TrickEntity {
@@ -13,15 +14,17 @@ export class TrickEntity {
 
   private _playersCards: PlayersCard[];
 
-  constructor(card: CardEntity, player: Player, trumpSuit?: Suit) {
-    this._playersCards = [];
-    this._playersCards.push({ player, card });
+  constructor(card: CardEntity, players: Player[], trumpSuit?: Suit) {
+    this._playersCards = players.map((player, index) => {
+      return index === 0 ? { player, card } : { player };
+    });
+
     this._trumpSuit = trumpSuit || card.getSuit();
     this._trickSuit = card.getSuit();
   }
 
   public playCard(card: CardEntity, player: Player) {
-    this._playersCards.push({ player, card });
+    this._playersCards.filter((pc) => pc.player.equals(player))[0].card = card;
   }
 
   public getTaker(): Player {
@@ -32,20 +35,24 @@ export class TrickEntity {
   }
 
   public playedCards(): number {
-    return this._playersCards.length;
+    return this._playersCards.filter((pc) => !!pc.card).length;
   }
 
   public getLatestPlayer(): Player {
-    return this._playersCards.slice(-1)[0].player;
+    return this._playersCards.filter((pc) => !!pc.card).slice(-1)[0].player;
   }
 
-  presentation(): any {
+  presentation(): TrickCards {
     return {
       cards: this._playersCards.map((playersCard) => {
-        return {
-          player: playersCard.player.getName(),
-          card: playersCard.card.toCard(),
-        };
+        return !!playersCard.card
+          ? {
+              player: playersCard.player.getName(),
+              card: playersCard.card.toCard(),
+            }
+          : {
+              player: playersCard.player.getName(),
+            };
       }),
     };
   }

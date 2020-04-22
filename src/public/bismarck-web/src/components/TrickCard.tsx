@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Card } from './Card';
 
-import { Card as CardType } from '../../../../types/card';
-
-interface TrickCardType {
-  player: String;
-  card: CardType;
-}
+import { TrickCard as TrickCardType } from '../../../../types/trick-cards';
 
 export const TrickCard = ({
   trickCard: trickCard,
@@ -20,7 +15,7 @@ export const TrickCard = ({
       ) : (
         <div className="card empty-card" />
       )}
-      <h1>{trickCard.player}</h1>
+      <h2>{trickCard.player}</h2>
     </div>
   );
 };

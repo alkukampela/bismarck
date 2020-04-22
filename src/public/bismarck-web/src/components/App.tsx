@@ -1,7 +1,7 @@
 import { PlayersHand } from './PlayersHand';
 import { ScoreBoard } from './ScoreBoard';
 import { StatuteSummary } from './Statute';
-import Trick from './Trick';
+import { Trick } from './Trick';
 import { GameType } from '../../../../types/game-type';
 import { HandStatute } from '../../../../types/hand-statute';
 import { PlayerScore } from '../../../../types/player-score';
@@ -58,7 +58,7 @@ export const App = () => {
   const player = (QueryString.parse(location.search).player as String) || 'a';
   return (
     <div>
-      <Trick trick={TRICK} />
+      <Trick trickCards={TRICK} />
       <PlayersHand player={player} />
       <ScoreBoard scores={TOTAL_SCORE} />
       <StatuteSummary statute={STATUTE} />
