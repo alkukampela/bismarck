@@ -99,16 +99,17 @@ export class HandEntity {
   }
 
   public startTrick(player: Player, card: Card): TrickCards {
-    // FIXME: check that player has removed enough cards
+    const playerIndex = this.getPlayersIndex(player);
+
     if (
       this.isTrickOpen() ||
       !player.equals(this.getTrickLead()) ||
-      !this._handStatute.handType.gameType.value
+      !this._handStatute.handType.gameType.value ||
+      this._cardManager.getPlayersCards(playerIndex).length > this.CARDS_IN_HAND
     ) {
       throw statuses.BAD_REQUEST;
     }
 
-    const playerIndex = this.getPlayersIndex(player);
     if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
       throw statuses.BAD_REQUEST;
     }
