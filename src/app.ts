@@ -10,10 +10,7 @@ const app = express();
 const port = 3001;
 const router = express.Router();
 
-const hand = new HandEntity(
-  [new Player('a'), new Player('b'), new Player('c'), new Player('d')],
-  4
-);
+let hand = newHand();
 
 router.get('/hands/current/statute', (_req, res) => {
   res.send(hand.getStatute());
@@ -68,13 +65,19 @@ router.post('/tricks/cards', (req, res) => {
   }
 });
 
-router.get('/game/score', (req, res) => {
+router.get('/game/score', (_req, res) => {
   try {
     // TODO
     res.sendStatus(statuses.NO_CONTENT);
   } catch (err) {
     res.send(err);
   }
+});
+
+// TODO remove when no longer needed
+router.get('/hand/reset', (_req, res) => {
+  hand = newHand();
+  res.sendStatus(statuses.NO_CONTENT);
 });
 
 app.use(cors());
@@ -86,3 +89,10 @@ app.listen(port, (err) => {
   }
   return console.log(`server is listening on ${port}`);
 });
+
+function newHand() {
+  return new HandEntity(
+    [new Player('a'), new Player('b'), new Player('c'), new Player('d')],
+    4
+  );
+}
