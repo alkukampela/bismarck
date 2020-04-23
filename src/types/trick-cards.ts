@@ -1,7 +1,8 @@
 import { Card } from './card';
+import { Player } from './player';
 
 export interface TrickCard {
-  player: string;
+  player: Player;
   card?: Card;
 }
 

@@ -14,7 +14,7 @@ export const ScoreBoard: React.FunctionComponent<TotalScores> = ({
       <h1>Tilanne</h1>
       {scores.map((value: PlayerScore, index: number) => (
         <div key={index}>
-          {value.player}: {value.score}
+          {value.player.name}: {value.score}
         </div>
       ))}
     </div>

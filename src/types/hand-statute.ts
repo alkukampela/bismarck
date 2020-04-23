@@ -1,9 +1,10 @@
 import { GameType } from './game-type';
 import { Suit } from './suit';
+import { Player } from './player';
 
 export interface HandStatute {
   handType: HandType;
-  playerOrder: string[];
+  playerOrder: Player[];
 }
 
 export interface HandType {

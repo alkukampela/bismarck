@@ -1,12 +1,12 @@
-import { Player } from './player';
 import { HandScore } from './hand-score';
-import { PlayerScore } from '../types/player-score';
 import { GameType } from '../types/game-type';
+import { Player } from '../types/player';
+import { PlayerScore } from '../types/player-score';
 
-const PLAYER_1 = new Player('ake');
-const PLAYER_2 = new Player('make');
-const PLAYER_3 = new Player('pera');
-const PLAYER_4 = new Player('mä');
+const PLAYER_1 = { name: 'ake' };
+const PLAYER_2 = { name: 'make' };
+const PLAYER_3 = { name: 'pera' };
+const PLAYER_4 = { name: 'mä' };
 
 test('Ensure hand scores are calculated correctly in trump game', () => {
   const handScore = new HandScore([PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4]);
@@ -28,10 +28,10 @@ test('Ensure hand scores are calculated correctly in trump game', () => {
 
   const actual = handScore.getScores(GameType.TRUMP);
 
-  expect(getScoreForPlayer(actual, PLAYER_1.getName())).toBe(0);
-  expect(getScoreForPlayer(actual, PLAYER_2.getName())).toBe(2);
-  expect(getScoreForPlayer(actual, PLAYER_3.getName())).toBe(0);
-  expect(getScoreForPlayer(actual, PLAYER_4.getName())).toBe(-2);
+  expect(getScoreForPlayer(actual, PLAYER_1)).toBe(0);
+  expect(getScoreForPlayer(actual, PLAYER_2)).toBe(2);
+  expect(getScoreForPlayer(actual, PLAYER_3)).toBe(0);
+  expect(getScoreForPlayer(actual, PLAYER_4)).toBe(-2);
 });
 
 test('Ensure hand scores are calculated correctly in no-trump game', () => {
@@ -54,10 +54,10 @@ test('Ensure hand scores are calculated correctly in no-trump game', () => {
 
   const actual = handScore.getScores(GameType.NO_TRUMP);
 
-  expect(getScoreForPlayer(actual, PLAYER_1.getName())).toBe(-1);
-  expect(getScoreForPlayer(actual, PLAYER_2.getName())).toBe(2);
-  expect(getScoreForPlayer(actual, PLAYER_3.getName())).toBe(1);
-  expect(getScoreForPlayer(actual, PLAYER_4.getName())).toBe(-2);
+  expect(getScoreForPlayer(actual, PLAYER_1)).toBe(-1);
+  expect(getScoreForPlayer(actual, PLAYER_2)).toBe(2);
+  expect(getScoreForPlayer(actual, PLAYER_3)).toBe(1);
+  expect(getScoreForPlayer(actual, PLAYER_4)).toBe(-2);
 });
 
 test('Ensure hand scores are calculated correctly in misere game', () => {
@@ -81,12 +81,12 @@ test('Ensure hand scores are calculated correctly in misere game', () => {
 
   const actual = handScore.getScores(GameType.MISERE);
 
-  expect(getScoreForPlayer(actual, PLAYER_1.getName())).toBe(-1);
-  expect(getScoreForPlayer(actual, PLAYER_2.getName())).toBe(0);
-  expect(getScoreForPlayer(actual, PLAYER_3.getName())).toBe(2);
-  expect(getScoreForPlayer(actual, PLAYER_4.getName())).toBe(-1);
+  expect(getScoreForPlayer(actual, PLAYER_1)).toBe(-1);
+  expect(getScoreForPlayer(actual, PLAYER_2)).toBe(0);
+  expect(getScoreForPlayer(actual, PLAYER_3)).toBe(2);
+  expect(getScoreForPlayer(actual, PLAYER_4)).toBe(-1);
 });
 
-const getScoreForPlayer = (scores: PlayerScore[], player: string): number => {
-  return scores.filter((x) => x.player === player)[0].score;
+const getScoreForPlayer = (scores: PlayerScore[], player: Player): number => {
+  return scores.filter((x) => x.player.name === player.name)[0].score;
 };

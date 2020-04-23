@@ -1,6 +1,6 @@
-import { Player } from './player';
 import { GameType } from '../types/game-type';
 import { HandStatute, HandType } from '../types/hand-statute';
+import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 
 export class HandStatuteMachine {
@@ -18,10 +18,7 @@ export class HandStatuteMachine {
       ),
     };
 
-    const playerOrder = this.switchTurns(
-      defaultPlayerOrder,
-      handNumber
-    ).map((player) => player.getName());
+    const playerOrder = this.switchTurns(defaultPlayerOrder, handNumber);
 
     return {
       handType,

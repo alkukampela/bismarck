@@ -3,7 +3,6 @@ import * as statuses from 'http-status-codes';
 
 import cors from 'cors';
 import { HandEntity } from './domain/hand-entity';
-import { Player } from './domain/player';
 import { Card } from './types/card';
 
 const app = express();
@@ -17,13 +16,13 @@ router.get('/hands/current/statute', (_req, res) => {
 });
 
 router.get('/cards', (req, res) => {
-  const player = new Player(req.query.player as string);
+  const player = { name: req.query.player as string };
   res.send(hand.getCards(player));
 });
 
 router.delete('/cards', (req, res) => {
   try {
-    const player = new Player(req.query.player as string);
+    const player = { name: req.query.player as string };
 
     const card: Card = {
       rank: req.query.rank as string,
@@ -47,7 +46,7 @@ router.get('/tricks', (req, res) => {
 
 router.post('/tricks', (req, res) => {
   try {
-    const player = new Player(req.query.player as string);
+    const player = { name: req.query.player as string };
     const card = req.body as Card;
     res.send(hand.startTrick(player, card));
   } catch (err) {
@@ -57,7 +56,7 @@ router.post('/tricks', (req, res) => {
 
 router.post('/tricks/cards', (req, res) => {
   try {
-    const player = new Player(req.query.player as string);
+    const player = { name: req.query.player as string };
     const card = req.body as Card;
     res.send(hand.addCardToTrick(player, card));
   } catch (err) {
@@ -92,7 +91,7 @@ app.listen(port, (err) => {
 
 function newHand() {
   return new HandEntity(
-    [new Player('a'), new Player('b'), new Player('c'), new Player('d')],
+    [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }],
     4
   );
 }

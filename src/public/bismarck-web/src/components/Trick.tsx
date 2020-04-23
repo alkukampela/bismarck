@@ -16,7 +16,7 @@ export const Trick = () => {
       fetchTrick()
         .then((trick) => setState(trick))
         .catch();
-    }, 3000);
+    }, 1000);
   });
 
   return (

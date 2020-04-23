@@ -15,7 +15,7 @@ export const TrickCard = ({
       ) : (
         <div className="card empty-card" />
       )}
-      <h2>{trickCard.player}</h2>
+      <h2>{trickCard.player.name}</h2>
     </div>
   );
 };

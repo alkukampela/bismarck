@@ -1,5 +1,5 @@
 import { CardEntity } from './card-entity';
-import { Player } from './player';
+import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
 
@@ -24,7 +24,9 @@ export class TrickEntity {
   }
 
   public playCard(card: CardEntity, player: Player) {
-    this._playersCards.filter((pc) => pc.player.equals(player))[0].card = card;
+    this._playersCards.filter(
+      (pc) => pc.player.name === player.name
+    )[0].card = card;
   }
 
   public getTaker(): Player {
@@ -47,11 +49,11 @@ export class TrickEntity {
       cards: this._playersCards.map((playersCard) => {
         return !!playersCard.card
           ? {
-              player: playersCard.player.getName(),
+              player: playersCard.player,
               card: playersCard.card.toCard(),
             }
           : {
-              player: playersCard.player.getName(),
+              player: playersCard.player,
             };
       }),
     };

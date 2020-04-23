@@ -1,15 +1,15 @@
+import { CardEntity } from './card-entity';
 import { CardManager } from './card-manager';
 import { HandScore } from './hand-score';
 import { HandStatuteMachine } from './hand-statute-machine';
-import { Player } from './player';
 import { TrickEntity } from './trick-entity';
 import { Card } from '../types/card';
-import { HandStatute } from '../types/hand-statute';
-import * as statuses from 'http-status-codes';
 import { GameType } from '../types/game-type';
+import { HandStatute } from '../types/hand-statute';
+import { Player } from '../types/player';
 import { Suit } from '../types/suit';
-import { CardEntity } from './card-entity';
 import { TrickCards } from '../types/trick-cards';
+import * as statuses from 'http-status-codes';
 
 export class HandEntity {
   private readonly PLAYERS = 4;
@@ -34,9 +34,7 @@ export class HandEntity {
       this._cardManager.getTrumpSuit()
     );
 
-    this._players = this._handStatute.playerOrder.map(
-      (name) => new Player(name)
-    );
+    this._players = this._handStatute.playerOrder;
     this._handScore = new HandScore(this._players);
   }
 
@@ -47,7 +45,7 @@ export class HandEntity {
   }
 
   public removeCard(player: Player, card: Card) {
-    if (!player.equals(this.getEldestHand())) {
+    if (player.name !== this.getEldestHand().name) {
       throw statuses.FORBIDDEN;
     }
 
@@ -74,8 +72,8 @@ export class HandEntity {
     suit?: Suit
   ): HandStatute {
     if (
-      !player.equals(this.getEldestHand()) ||
-      !this._handStatute.handType.gameType.value
+      player.name !== this.getEldestHand().name ||
+      this._handStatute.handType.gameType.value
     ) {
       throw statuses.BAD_REQUEST;
     }
@@ -103,14 +101,12 @@ export class HandEntity {
 
     if (
       this.isTrickOpen() ||
-      !player.equals(this.getTrickLead()) ||
+      player.name !== this.getTrickLead().name ||
       !this._handStatute.handType.gameType.value ||
-      this._cardManager.getPlayersCards(playerIndex).length > this.CARDS_IN_HAND
+      this._cardManager.getPlayersCards(playerIndex).length >
+        this.CARDS_IN_HAND ||
+      !this._cardManager.hasPlayerCard(playerIndex, card)
     ) {
-      throw statuses.BAD_REQUEST;
-    }
-
-    if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
       throw statuses.BAD_REQUEST;
     }
 
@@ -149,7 +145,7 @@ export class HandEntity {
   }
 
   private getPlayersIndex(player: Player): number {
-    return this._players.findIndex((x) => player.equals(x));
+    return this._players.findIndex((x) => player.name === x.name);
   }
 
   private isTrickOpen(): boolean {
@@ -174,12 +170,13 @@ export class HandEntity {
 
   private hasPlayerTurn(index: number): boolean {
     const previousPlayerIndex = index - 1 >= 0 ? index - 1 : this.PLAYERS - 1;
-    return this._players[previousPlayerIndex].equals(
-      this._currentTrick.getLatestPlayer()
+    return (
+      this._players[previousPlayerIndex].name ===
+      this._currentTrick.getLatestPlayer().name
     );
   }
 
-  getTricksPlayerOrder(startingIndex: number): Player[] {
+  private getTricksPlayerOrder(startingIndex: number): Player[] {
     return [
       ...this._players.slice(startingIndex),
       ...this._players.slice(0, startingIndex),

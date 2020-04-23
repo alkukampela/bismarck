@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { Card as CardType } from '../../../../types/card';
-import { json } from 'express';
 
 export const Card = ({ card, player }: { card: CardType; player?: string }) => {
   const [showCard, setState] = React.useState<boolean>(true);
@@ -55,7 +54,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
     if (!player) {
       return;
     }
-    // TODO: call all possible api endpoints
+
     removeCard(card, player).then((success) => success && setState(false));
     startTrick(card, player).then((success) => success && setState(false));
     addToTrick(card, player).then((success) => success && setState(false));

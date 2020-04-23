@@ -1,12 +1,9 @@
 import { CardEntity } from './card-entity';
 import { TrickEntity } from './trick-entity';
-import { Player } from './player';
 import { Suit } from '../types/suit';
 
-const PLAYER_1 = new Player('ake');
-const PLAYER_2 = new Player('make');
-const PLAYER_3 = new Player('pera');
-const PLAYER_4 = new Player('mä');
+const PLAYER_1 = { name: 'ake' };
+const PLAYER_2 = { name: 'make' };
 
 const PLAYERS = [PLAYER_1, PLAYER_2];
 

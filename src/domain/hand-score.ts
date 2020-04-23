@@ -1,19 +1,19 @@
-import { Player } from './player';
-import { PlayerScore } from '../types/player-score';
 import { GameType } from '../types/game-type';
+import { Player } from '../types/player';
+import { PlayerScore } from '../types/player-score';
 
 export class HandScore {
   private _players: PlayerScore[];
 
   constructor(players: Player[]) {
     this._players = players.map((player) => {
-      return { player: player.getName(), score: 0 } as PlayerScore;
+      return { player, score: 0 } as PlayerScore;
     });
   }
 
   public takeTrick(player: Player): void {
     this._players
-      .filter((score) => player.getName() === score.player)
+      .filter((score) => player.name === score.player.name)
       .forEach((x) => x.score++);
   }
 
@@ -32,7 +32,7 @@ export class HandScore {
       : this.countScoreForNonEldestHand(trick.score, gameType);
   }
 
-  private isEldestHand(player: string): boolean {
+  private isEldestHand(player: Player): boolean {
     return player === this._players[0].player;
   }
 

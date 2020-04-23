@@ -1,13 +1,12 @@
-import { Player } from './player';
 import { HandStatuteMachine } from './hand-statute-machine';
-import { Suit } from '../types/suit';
 import { GameType } from '../types/game-type';
 import { HandStatute } from '../types/hand-statute';
+import { Suit } from '../types/suit';
 
-const PLAYER_1 = new Player('ake');
-const PLAYER_2 = new Player('make');
-const PLAYER_3 = new Player('pera');
-const PLAYER_4 = new Player('mä');
+const PLAYER_1 = { name: 'ake' };
+const PLAYER_2 = { name: 'make' };
+const PLAYER_3 = { name: 'pera' };
+const PLAYER_4 = { name: 'mä' };
 
 const PLAYERS = [PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4];
 
@@ -19,7 +18,7 @@ test('Ensure hand rules are correct for last trump hand', () => {
   expect(actual.handType.isChoice).toBe(false);
   expect(actual.handType.gameType.value).toBe(GameType.TRUMP);
   expect(actual.handType.gameType.trumpSuit).toBe(Suit.SPADE);
-  expect(actual.playerOrder[0]).toBe(PLAYER_4.getName());
+  expect(actual.playerOrder[0]).toBe(PLAYER_4);
 });
 
 test('Ensure hand rules are correct for first no-trump hand', () => {
@@ -28,7 +27,7 @@ test('Ensure hand rules are correct for first no-trump hand', () => {
   expect(actual.handType.isChoice).toBe(false);
   expect(actual.handType.gameType.value).toBe(GameType.NO_TRUMP);
   expect(actual.handType.gameType.trumpSuit).toBeUndefined();
-  expect(actual.playerOrder[0]).toBe(PLAYER_1.getName());
+  expect(actual.playerOrder[0]).toBe(PLAYER_1);
 });
 
 test('Ensure hand rules are correct for second misere hand', () => {
@@ -37,7 +36,7 @@ test('Ensure hand rules are correct for second misere hand', () => {
   expect(actual.handType.isChoice).toBe(false);
   expect(actual.handType.gameType.value).toBe(GameType.MISERE);
   expect(actual.handType.gameType.trumpSuit).toBeUndefined();
-  expect(actual.playerOrder[0]).toBe(PLAYER_1.getName());
+  expect(actual.playerOrder[0]).toBe(PLAYER_1);
 });
 
 test('Ensure hand rules are correct for third choice', () => {
@@ -45,7 +44,7 @@ test('Ensure hand rules are correct for third choice', () => {
 
   expect(actual.handType.isChoice).toBe(true);
   expect(actual.handType.gameType).toBeUndefined();
-  expect(actual.playerOrder[0]).toBe(PLAYER_3.getName());
+  expect(actual.playerOrder[0]).toBe(PLAYER_3);
 });
 
 test('Ensure returns correct statute after choosing trump', () => {
@@ -87,7 +86,7 @@ test('Ensure returns correct statute after choosing misere', () => {
 
 function getEmptyChoiceStatute(): HandStatute {
   return {
-    playerOrder: PLAYERS.map((player) => player.getName()),
+    playerOrder: PLAYERS,
     handType: {
       isChoice: true,
     },

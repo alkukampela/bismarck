@@ -9,10 +9,10 @@ import * as React from 'react';
 import * as QueryString from 'query-string';
 
 const TOTAL_SCORE: PlayerScore[] = [
-  { player: 'Vilho', score: 3 },
-  { player: 'Seija', score: 2 },
-  { player: 'Herkko', score: -2 },
-  { player: 'Raili', score: -3 },
+  { player: { name: 'Vilho' }, score: 3 },
+  { player: { name: 'Seija' }, score: 2 },
+  { player: { name: 'Herkko' }, score: -2 },
+  { player: { name: 'Raili' }, score: -3 },
 ];
 
 const STATUTE: HandStatute = {
@@ -22,7 +22,12 @@ const STATUTE: HandStatute = {
       value: GameType.NO_TRUMP,
     },
   },
-  playerOrder: ['Vilho', 'Seija', 'Herkko', 'Raili'],
+  playerOrder: [
+    { name: 'Vilho' },
+    { name: 'Seija' },
+    { name: 'Herkko' },
+    { name: 'Raili' },
+  ],
 };
 
 export const App = () => {
