@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Card as CardType } from '../../../../types/card';
+import { json } from 'express';
 
 export const Card = ({ card, player }: { card: CardType; player?: string }) => {
   const [showCard, setState] = React.useState<boolean>(true);
@@ -20,12 +21,44 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
     return resp.ok;
   }
 
+  async function startTrick(card: CardType, player: string): Promise<boolean> {
+    const resp = await fetch(
+      `http://localhost:3001/api/tricks?player=${player}`,
+      {
+        method: 'POST',
+        mode: 'cors',
+        body: JSON.stringify(card),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return resp.ok;
+  }
+
+  async function addToTrick(card: CardType, player: string): Promise<boolean> {
+    const resp = await fetch(
+      `http://localhost:3001/api/tricks/cards?player=${player}`,
+      {
+        method: 'POST',
+        mode: 'cors',
+        body: JSON.stringify(card),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return resp.ok;
+  }
+
   const tryEverything = () => {
     if (!player) {
       return;
     }
     // TODO: call all possible api endpoints
     removeCard(card, player).then((success) => success && setState(false));
+    startTrick(card, player).then((success) => success && setState(false));
+    addToTrick(card, player).then((success) => success && setState(false));
   };
 
   return (
