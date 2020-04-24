@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card } from './Card';
 
-import { TrickCard as TrickCardType } from '../../../../types/trick-cards';
+import { TrickCard as TrickCardType } from '../../../types/trick-cards';
 
 export const TrickCard = ({
   trickCard: trickCard,

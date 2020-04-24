@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Card as CardType } from '../../../../types/card';
+import { Card as CardType } from '../../../types/card';
 
 export const Card = ({ card, player }: { card: CardType; player?: string }) => {
   const [showCard, setState] = React.useState<boolean>(true);

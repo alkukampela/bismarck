@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { HandStatute } from '../../../../types/hand-statute';
+import { HandStatute } from '../../../types/hand-statute';
 
 interface Statute {
   statute: HandStatute;

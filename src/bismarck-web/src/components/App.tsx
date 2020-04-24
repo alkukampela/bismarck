@@ -2,9 +2,9 @@ import { PlayersHand } from './PlayersHand';
 import { ScoreBoard } from './ScoreBoard';
 import { StatuteSummary } from './Statute';
 import { Trick } from './Trick';
-import { GameType } from '../../../../types/game-type';
-import { HandStatute } from '../../../../types/hand-statute';
-import { PlayerScore } from '../../../../types/player-score';
+import { GameType } from '../../../types/game-type';
+import { HandStatute } from '../../../types/hand-statute';
+import { PlayerScore } from '../../../types/player-score';
 import * as React from 'react';
 import * as QueryString from 'query-string';
 
@@ -28,6 +28,7 @@ const STATUTE: HandStatute = {
     { name: 'Herkko' },
     { name: 'Raili' },
   ],
+  eldestHand: { name: 'Vilho' },
 };
 
 export const App = () => {

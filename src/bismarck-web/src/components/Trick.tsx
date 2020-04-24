@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TrickCard } from './TrickCard';
-import { TrickCards as TrickCardsType } from '../../../../types/trick-cards';
+import { TrickCards as TrickCardsType } from '../../../types/trick-cards';
 
 export const Trick = () => {
   const fetchTrick = async function (): Promise<TrickCardsType> {
