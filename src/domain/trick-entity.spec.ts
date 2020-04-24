@@ -78,6 +78,7 @@ test('Ensure allCardsArePlayed is true when trick is finished', () => {
 
 const statute = (numberOfPlayers: number, suit?: Suit): HandStatute => {
   return {
+    eldestHand: PLAYER_1,
     playerOrder:
       numberOfPlayers === 2
         ? [PLAYER_1, PLAYER_2]

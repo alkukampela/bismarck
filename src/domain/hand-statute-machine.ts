@@ -21,6 +21,7 @@ export class HandStatuteMachine {
     const playerOrder = this.switchTurns(defaultPlayerOrder, handNumber);
 
     return {
+      eldestHand: playerOrder[0],
       handType,
       playerOrder,
     };

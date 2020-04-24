@@ -84,8 +84,18 @@ test('Ensure returns correct statute after choosing misere', () => {
   expect(actual.handType.gameType.trumpSuit).toBeUndefined();
 });
 
+test('Ensure returns eldest Hand', () => {
+  const actual = handStatuteMachine.chooseGameType(
+    getEmptyChoiceStatute(),
+    GameType.MISERE
+  );
+
+  expect(actual.eldestHand).toBe(PLAYER_1);
+});
+
 function getEmptyChoiceStatute(): HandStatute {
   return {
+    eldestHand: PLAYERS[0],
     playerOrder: PLAYERS,
     handType: {
       isChoice: true,

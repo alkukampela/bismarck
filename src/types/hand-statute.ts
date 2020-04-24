@@ -5,6 +5,7 @@ import { Player } from './player';
 export interface HandStatute {
   handType: HandType;
   playerOrder: Player[];
+  eldestHand: Player;
 }
 
 export interface HandType {

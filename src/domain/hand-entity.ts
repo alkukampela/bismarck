@@ -20,8 +20,6 @@ export class HandEntity {
 
   private _handScore: HandScore;
 
-  private _players: Player[];
-
   private _handStatute: HandStatute;
 
   constructor(defaulPlayerOrder: Player[], handNumber: number) {
@@ -33,8 +31,7 @@ export class HandEntity {
       this._cardManager.getTrumpSuit()
     );
 
-    this._players = this._handStatute.playerOrder;
-    this._handScore = new HandScore(this._players);
+    this._handScore = new HandScore(this._handStatute.playerOrder);
   }
 
   public getCards(player: Player): Card[] {
@@ -44,7 +41,7 @@ export class HandEntity {
   }
 
   public removeCard(player: Player, card: Card) {
-    if (player.name !== this.getEldestHand().name) {
+    if (!this.isEldestHand(player)) {
       throw statuses.FORBIDDEN;
     }
 
@@ -71,7 +68,7 @@ export class HandEntity {
     suit?: Suit
   ): HandStatute {
     if (
-      player.name !== this.getEldestHand().name ||
+      !this.isEldestHand(player) ||
       this._handStatute.handType.gameType.value
     ) {
       throw statuses.BAD_REQUEST;
@@ -144,7 +141,9 @@ export class HandEntity {
   }
 
   private getPlayersIndex(player: Player): number {
-    return this._players.findIndex((x) => player.name === x.name);
+    return this._handStatute.playerOrder.findIndex(
+      (x) => player.name === x.name
+    );
   }
 
   private isTrickOpen(): boolean {
@@ -155,15 +154,15 @@ export class HandEntity {
     return !this._currentTrick.allCardsArePlayed();
   }
 
-  private getEldestHand(): Player {
-    return this._players[0];
-  }
-
   private getTrickLead(): Player {
     if (this._currentTrick) {
       return this._currentTrick.getTaker();
     }
 
-    return this.getEldestHand();
+    return this._handStatute.eldestHand;
+  }
+
+  private isEldestHand(player: Player) {
+    return player.name === this._handStatute.eldestHand.name;
   }
 }
