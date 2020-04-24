@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { PlayerScore } from '../../../../types/player-score';
+import { PlayerScore } from '../../../types/player-score';
 
 interface TotalScores {
   scores: PlayerScore[];
