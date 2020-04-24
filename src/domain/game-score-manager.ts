@@ -23,11 +23,17 @@ export class GameScoreManager {
     const totals: PlayerScore[] = [];
 
     // TODO refactor this horrornous mess
-    this._scores.forEach((x) =>
-      x.forEach((y) => {
-        totals.filter((z) => z.player === y.player).length === 0
-          ? totals.push({ player: y.player, score: y.score })
-          : (totals.filter((z) => z.player === y.player)[0].score += y.score);
+    this._scores.forEach((trickScore) =>
+      trickScore.forEach((playerTrick) => {
+        totals.filter(
+          (playerTotal) => playerTotal.player === playerTrick.player
+        ).length === 0
+          ? totals.push({
+              player: playerTrick.player,
+              score: playerTrick.score,
+            })
+          : (totals.filter((z) => z.player === playerTrick.player)[0].score +=
+              playerTrick.score);
       })
     );
 

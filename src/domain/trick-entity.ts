@@ -2,6 +2,7 @@ import { CardEntity } from './card-entity';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
+import { HandStatute } from '../types/hand-statute';
 
 type PlayersCard = {
   player: Player;
@@ -14,13 +15,21 @@ export class TrickEntity {
 
   private _playersCards: PlayersCard[];
 
-  constructor(card: CardEntity, players: Player[], trumpSuit?: Suit) {
-    this._playersCards = players.map((player, index) => {
-      return index === 0 ? { player, card } : { player };
-    });
+  constructor(
+    firstCard: CardEntity,
+    trickLead: Player,
+    handStatute: HandStatute
+  ) {
+    this._playersCards = this.tricksPlayerOrder(
+      trickLead,
+      handStatute.playerOrder
+    );
 
-    this._trumpSuit = trumpSuit || card.getSuit();
-    this._trickSuit = card.getSuit();
+    this.playCard(firstCard, trickLead);
+
+    this._trumpSuit =
+      handStatute.handType.gameType.trumpSuit || firstCard.getSuit();
+    this._trickSuit = firstCard.getSuit();
   }
 
   public playCard(card: CardEntity, player: Player) {
@@ -36,15 +45,16 @@ export class TrickEntity {
     );
   }
 
-  public playedCards(): number {
-    return this._playersCards.filter((pc) => !!pc.card).length;
+  public allCardsArePlayed(): boolean {
+    return !this._playersCards.filter((pc) => !pc.card).length;
   }
 
-  public getLatestPlayer(): Player {
-    return this._playersCards.filter((pc) => !!pc.card).slice(-1)[0].player;
+  public hasPlayerTurn(player: Player): boolean {
+    const nextPlayer = this.nextPlayerInTurn();
+    return !!nextPlayer && player.name === nextPlayer.name;
   }
 
-  presentation(): TrickCards {
+  public presentation(): TrickCards {
     return {
       cards: this._playersCards.map((playersCard) => {
         return !!playersCard.card
@@ -66,5 +76,25 @@ export class TrickEntity {
     if (!!playersCard) {
       return playersCard.player;
     }
+  }
+
+  private tricksPlayerOrder(
+    trickLead: Player,
+    defaultOrder: Player[]
+  ): PlayersCard[] {
+    const startingIndex = defaultOrder.findIndex(
+      (player) => player.name === trickLead.name
+    );
+    return [
+      ...defaultOrder.slice(startingIndex),
+      ...defaultOrder.slice(0, startingIndex),
+    ].map((player) => {
+      return { player };
+    });
+  }
+
+  private nextPlayerInTurn(): Player {
+    const nextPlayer = this._playersCards.find((pc) => !pc.card);
+    return nextPlayer && nextPlayer.player;
   }
 }

@@ -12,7 +12,6 @@ import { TrickCards } from '../types/trick-cards';
 import * as statuses from 'http-status-codes';
 
 export class HandEntity {
-  private readonly PLAYERS = 4;
   private readonly CARDS_IN_HAND = 12;
 
   private _cardManager: CardManager;
@@ -112,8 +111,8 @@ export class HandEntity {
 
     this._currentTrick = new TrickEntity(
       CardEntity.fromCard(card),
-      this.getTricksPlayerOrder(playerIndex),
-      this._handStatute.handType.gameType.trumpSuit
+      player,
+      this._handStatute
     );
     this._cardManager.removeCard(card);
     return this._currentTrick.presentation();
@@ -124,12 +123,12 @@ export class HandEntity {
       throw statuses.BAD_REQUEST;
     }
 
-    const playerIndex = this.getPlayersIndex(player);
-    if (!playerIndex || !this.hasPlayerTurn(playerIndex)) {
+    if (!this._currentTrick.hasPlayerTurn(player)) {
       throw statuses.FORBIDDEN;
     }
     // TODO: check if card has correct suit
 
+    const playerIndex = this.getPlayersIndex(player);
     if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
       throw statuses.BAD_REQUEST;
     }
@@ -137,7 +136,7 @@ export class HandEntity {
     this._currentTrick.playCard(CardEntity.fromCard(card), player);
     this._cardManager.removeCard(card);
 
-    if (this._currentTrick.playedCards() === this.PLAYERS) {
+    if (this._currentTrick.allCardsArePlayed()) {
       this._handScore.takeTrick(this._currentTrick.getTaker());
     }
 
@@ -153,7 +152,7 @@ export class HandEntity {
       return false;
     }
 
-    return this._currentTrick.playedCards() < this.PLAYERS;
+    return !this._currentTrick.allCardsArePlayed();
   }
 
   private getEldestHand(): Player {
@@ -166,20 +165,5 @@ export class HandEntity {
     }
 
     return this.getEldestHand();
-  }
-
-  private hasPlayerTurn(index: number): boolean {
-    const previousPlayerIndex = index - 1 >= 0 ? index - 1 : this.PLAYERS - 1;
-    return (
-      this._players[previousPlayerIndex].name ===
-      this._currentTrick.getLatestPlayer().name
-    );
-  }
-
-  private getTricksPlayerOrder(startingIndex: number): Player[] {
-    return [
-      ...this._players.slice(startingIndex),
-      ...this._players.slice(0, startingIndex),
-    ];
   }
 }
