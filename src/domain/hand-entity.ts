@@ -10,6 +10,7 @@ import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
 import * as statuses from 'http-status-codes';
+import { PlayerScore } from '../types/player-score';
 
 export class HandEntity {
   private readonly CARDS_IN_HAND = 12;
@@ -138,6 +139,10 @@ export class HandEntity {
     }
 
     return this._currentTrick.presentation();
+  }
+
+  public getPlayersTrickCount(): PlayerScore[] {
+    return this._handScore.getTricks();
   }
 
   private getPlayersIndex(player: Player): number {

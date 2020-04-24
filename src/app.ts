@@ -64,6 +64,10 @@ router.post('/tricks/cards', (req, res) => {
   }
 });
 
+router.get('/hands/current/trick-count', (_req, res) => {
+  res.send(hand.getPlayersTrickCount());
+});
+
 router.get('/game/score', (_req, res) => {
   try {
     // TODO

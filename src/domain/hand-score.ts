@@ -17,6 +17,10 @@ export class HandScore {
       .forEach((x) => x.score++);
   }
 
+  public getTricks(): PlayerScore[] {
+    return this._players;
+  }
+
   public getScores(gameType: GameType): PlayerScore[] {
     return this._players.map((trick) => {
       return {
