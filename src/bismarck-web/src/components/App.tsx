@@ -32,7 +32,8 @@ const STATUTE: HandStatute = {
 };
 
 export const App = () => {
-  const player = (QueryString.parse(location.search).player as string) || 'a';
+  const player =
+    (QueryString.parse(location.search).player as string) || 'siika';
   return (
     <div>
       <Trick />

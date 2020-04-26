@@ -8,5 +8,10 @@
     "incremental": false,
     "experimentalDecorators": true,
     "lib": ["dom", "es2015"]
-  }
+  },
+  "references": [
+    {
+      "path": "../../tsconfig.json"
+    }
+  ]
 }
