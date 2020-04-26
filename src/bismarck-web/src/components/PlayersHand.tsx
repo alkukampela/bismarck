@@ -7,7 +7,7 @@ interface Cards {
 }
 
 export const PlayersHand = ({ player }: { player: string }) => {
-  const [state, setState] = React.useState<Cards>({ cards: [] });
+  const [handCards, setHandCards] = React.useState<Cards>({ cards: [] });
 
   React.useEffect(() => {
     const fetchCards = async function (): Promise<CardType[]> {
@@ -21,12 +21,13 @@ export const PlayersHand = ({ player }: { player: string }) => {
     };
 
     fetchCards().then((cards) => {
-      setState((state) => ({ ...state, cards }));
+      setHandCards((state) => ({ ...state, cards }));
     });
   }, []);
+
   return (
     <div className="playersCards">
-      {state.cards.map((card: CardType, index: number) => (
+      {handCards.cards.map((card: CardType, index: number) => (
         <Card card={card} key={index} player={player} />
       ))}
     </div>

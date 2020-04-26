@@ -24,6 +24,7 @@ export const TrickTakers = () => {
 
   return (
     <div>
+      <h2>Tikit</h2>
       {trickTakers.map((playerScore: PlayerScore, index: number) => (
         <div key={index}>
           <span>{playerScore.player.name}: </span>

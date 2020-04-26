@@ -3,8 +3,6 @@ import { ScoreBoard } from './ScoreBoard';
 import { StatuteSummary } from './Statute';
 import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
-import { GameType } from '../../../types/game-type';
-import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import * as QueryString from 'query-string';
 import * as React from 'react';
@@ -16,32 +14,15 @@ const TOTAL_SCORE: PlayerScore[] = [
   { player: { name: 'Raili' }, score: -3 },
 ];
 
-const STATUTE: HandStatute = {
-  handType: {
-    isChoice: false,
-    gameType: {
-      value: GameType.NO_TRUMP,
-    },
-  },
-  playerOrder: [
-    { name: 'Vilho' },
-    { name: 'Seija' },
-    { name: 'Herkko' },
-    { name: 'Raili' },
-  ],
-  eldestHand: { name: 'Vilho' },
-};
-
 export const App = () => {
-  const player =
-    (QueryString.parse(location.search).player as string) || 'siika';
+  const player = (QueryString.parse(location.search).player as string) || '';
   return (
     <div>
       <Trick />
       <PlayersHand player={player} />
-      <ScoreBoard scores={TOTAL_SCORE} />
-      <StatuteSummary statute={STATUTE} />
+      <StatuteSummary />
       <TrickTakers />
+      <ScoreBoard scores={TOTAL_SCORE} />
     </div>
   );
 };
