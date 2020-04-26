@@ -9,6 +9,18 @@ const app = express();
 const port = 3001;
 const router = express.Router();
 
+function newHand() {
+  return new HandEntity(
+    [
+      { name: 'siika' },
+      { name: 'toutain' },
+      { name: 'kuha' },
+      { name: 'rautu' },
+    ],
+    4
+  );
+}
+
 let hand = newHand();
 
 router.get('/hands/current/statute', (_req, res) => {
@@ -92,10 +104,3 @@ app.listen(port, (err) => {
   }
   return console.log(`server is listening on ${port}`);
 });
-
-function newHand() {
-  return new HandEntity(
-    [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }],
-    4
-  );
-}
