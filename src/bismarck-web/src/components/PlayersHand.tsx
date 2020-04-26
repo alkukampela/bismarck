@@ -26,7 +26,7 @@ export const PlayersHand = ({ player }: { player: string }) => {
   }, []);
   return (
     <div className="playersCards">
-      {state.cards.map((card: any, index: number) => (
+      {state.cards.map((card: CardType, index: number) => (
         <Card card={card} key={index} player={player} />
       ))}
     </div>

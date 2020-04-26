@@ -2,11 +2,12 @@ import { PlayersHand } from './PlayersHand';
 import { ScoreBoard } from './ScoreBoard';
 import { StatuteSummary } from './Statute';
 import { Trick } from './Trick';
+import { TrickTakers } from './TrickTakers';
 import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
-import * as React from 'react';
 import * as QueryString from 'query-string';
+import * as React from 'react';
 
 const TOTAL_SCORE: PlayerScore[] = [
   { player: { name: 'Vilho' }, score: 3 },
@@ -40,6 +41,7 @@ export const App = () => {
       <PlayersHand player={player} />
       <ScoreBoard scores={TOTAL_SCORE} />
       <StatuteSummary statute={STATUTE} />
+      <TrickTakers />
     </div>
   );
 };
