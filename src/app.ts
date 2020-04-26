@@ -2,6 +2,8 @@ import express from 'express';
 import * as statuses from 'http-status-codes';
 
 import cors from 'cors';
+
+import morgan from 'morgan';
 import { HandEntity } from './domain/hand-entity';
 import { Card } from './types/card';
 
@@ -96,6 +98,7 @@ router.get('/hand/reset', (_req, res) => {
 });
 
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api', router);
 app.listen(port, (err) => {
