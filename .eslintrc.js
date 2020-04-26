@@ -15,6 +15,6 @@ module.exports = {
     '@typescript-eslint/no-parameter-properties': 0,
     '@typescript-eslint/interface-name-prefix': 0,
     'max-len': ['error', { code: 80 }],
-    indent: ['error', 2],
+    indent: ['error', 2, { SwitchCase: 1 }],
   },
 };
