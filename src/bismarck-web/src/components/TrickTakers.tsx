@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { PlayerScore } from '../../../types/player-score';
+import * as React from 'react';
 
 export const TrickTakers = () => {
   const fetchScores = async function (): Promise<PlayerScore[]> {

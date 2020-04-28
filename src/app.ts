@@ -14,12 +14,12 @@ const router = express.Router();
 function newHand() {
   return new HandEntity(
     [
-      { name: 'siika' },
-      { name: 'toutain' },
-      { name: 'kuha' },
-      { name: 'rautu' },
+      { name: 'Reijo' },
+      { name: 'Kaija' },
+      { name: 'Tuulikki' },
+      { name: 'Yrjö' },
     ],
-    4
+    0
   );
 }
 
@@ -80,6 +80,10 @@ router.post('/tricks/cards', (req, res) => {
 
 router.get('/hands/current/trick-count', (_req, res) => {
   res.send(hand.getPlayersTrickCount());
+});
+
+router.get('/hands/current/tablecards', (_req, res) => {
+  res.send(hand.getTableCards());
 });
 
 router.get('/game/score', (_req, res) => {

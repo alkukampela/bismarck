@@ -1,14 +1,9 @@
+import { GameType } from '../../../types/game-type';
+import { HandStatute } from '../../../types/hand-statute';
+import { Suit } from '../../../types/suit';
 import * as React from 'react';
 
-import { HandStatute } from '../../../types/hand-statute';
-import { GameType } from '../../../types/game-type';
-import { Suit } from '../../../types/suit';
-
-interface Statute {
-  statute?: HandStatute;
-}
-
-export const StatuteSummary: React.FunctionComponent<HandStatute> = () => {
+export const StatuteSummary = () => {
   const [statute, setStatute] = React.useState<HandStatute>({
     eldestHand: { name: '' },
     handType: {
@@ -29,7 +24,6 @@ export const StatuteSummary: React.FunctionComponent<HandStatute> = () => {
     };
 
     fetchStatute().then((fetchedStatute) => {
-      console.log(fetchedStatute);
       setStatute(fetchedStatute);
     });
   }, []);

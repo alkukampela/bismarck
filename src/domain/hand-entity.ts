@@ -63,6 +63,10 @@ export class HandEntity {
     return this._handStatute;
   }
 
+  public getTableCards(): Card[] {
+    return this._cardManager.getTableCards().map((card) => card.toCard());
+  }
+
   public chooseGameType(
     player: Player,
     chosenGameType: GameType,

@@ -1,0 +1,34 @@
+import { Card } from './Card';
+import { Card as CardType } from '../../../types/card';
+import * as React from 'react';
+
+export const TableCards = () => {
+  const [cards, setCards] = React.useState<CardType[]>([]);
+
+  React.useEffect(() => {
+    const fetchCards = async function (): Promise<CardType[]> {
+      const resp = await fetch(
+        `http://localhost:3001/api/hands/current/tablecards`,
+        {
+          mode: 'cors',
+        }
+      );
+      return (await resp.json()) as CardType[];
+    };
+
+    fetchCards().then((fetchedCards) => {
+      setCards(fetchedCards);
+    });
+  }, []);
+
+  return (
+    <div>
+      <h2>Pöytäkortit</h2>
+      <div className="table-cards">
+        {cards.map((card: CardType, index: number) => (
+          <Card card={card} key={index} />
+        ))}
+      </div>
+    </div>
+  );
+};

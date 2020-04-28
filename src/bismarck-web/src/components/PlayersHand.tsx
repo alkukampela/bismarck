@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
+import * as React from 'react';
 
 interface Cards {
   cards: CardType[];
@@ -26,7 +26,7 @@ export const PlayersHand = ({ player }: { player: string }) => {
   }, []);
 
   return (
-    <div className="playersCards">
+    <div className="players-cards">
       {handCards.cards.map((card: CardType, index: number) => (
         <Card card={card} key={index} player={player} />
       ))}
