@@ -7,6 +7,25 @@ const PLAYER_2 = { name: 'make' };
 const PLAYER_3 = { name: 'pera' };
 const PLAYER_4 = { name: 'mä' };
 
+const getPlayersTotalScore = (
+  player: Player,
+  scoreBoard: GameScoreBoard
+): number => {
+  return scoreBoard.totalScore.filter(
+    (playerScore) => playerScore.player.name === player.name
+  )[0].score;
+};
+
+const getPlayersTrickScore = (
+  player: Player,
+  trick: number,
+  scoreBoard: GameScoreBoard
+): number => {
+  return scoreBoard.trickScores[trick].filter(
+    (playerScore) => playerScore.player.name === player.name
+  )[0].score;
+};
+
 test('Ensure trick scores are stored correctly', () => {
   const gameScore = new GameScoreManager();
 
@@ -63,22 +82,3 @@ test('Ensure total scores are calculated correctly', () => {
   expect(getPlayersTotalScore(PLAYER_3, actual)).toBe(-2);
   expect(getPlayersTotalScore(PLAYER_4, actual)).toBe(-3);
 });
-
-const getPlayersTrickScore = (
-  player: Player,
-  trick: number,
-  scoreBoard: GameScoreBoard
-): number => {
-  return scoreBoard.trickScores[trick].filter(
-    (playerScore) => playerScore.player.name === player.name
-  )[0].score;
-};
-
-const getPlayersTotalScore = (
-  player: Player,
-  scoreBoard: GameScoreBoard
-): number => {
-  return scoreBoard.totalScore.filter(
-    (playerScore) => playerScore.player.name === player.name
-  )[0].score;
-};

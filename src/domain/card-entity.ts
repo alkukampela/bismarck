@@ -38,6 +38,10 @@ export class CardEntity {
     return new CardEntity(suit.valueOf() * 13 + rank.valueOf());
   }
 
+  public static getSuit(firstCard: Card): Suit {
+    return CardEntity.suits.get(firstCard.suit);
+  }
+
   public toCard(): Card {
     return {
       rank: this.printRank(),

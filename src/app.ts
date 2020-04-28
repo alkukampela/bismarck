@@ -1,11 +1,9 @@
-import express from 'express';
-import * as statuses from 'http-status-codes';
-
-import cors from 'cors';
-
-import morgan from 'morgan';
 import { HandEntity } from './domain/hand-entity';
 import { Card } from './types/card';
+import cors from 'cors';
+import express from 'express';
+import * as statuses from 'http-status-codes';
+import morgan from 'morgan';
 
 const app = express();
 const port = 3001;
@@ -46,7 +44,7 @@ router.delete('/cards', (req, res) => {
     hand.removeCard(player, card);
     res.sendStatus(204);
   } catch (err) {
-    res.sendStatus(err);
+    res.status(statuses.BAD_REQUEST).send({ error: err.message });
   }
 });
 

@@ -8,6 +8,10 @@ const PLAYER_2 = { name: 'make' };
 const PLAYER_3 = { name: 'pera' };
 const PLAYER_4 = { name: 'mä' };
 
+const getScoreForPlayer = (scores: PlayerScore[], player: Player): number => {
+  return scores.filter((x) => x.player.name === player.name)[0].score;
+};
+
 test('Ensure hand scores are calculated correctly in trump game', () => {
   const handScore = new HandScore([PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4]);
 
@@ -86,7 +90,3 @@ test('Ensure hand scores are calculated correctly in misere game', () => {
   expect(getScoreForPlayer(actual, PLAYER_3)).toBe(2);
   expect(getScoreForPlayer(actual, PLAYER_4)).toBe(-1);
 });
-
-const getScoreForPlayer = (scores: PlayerScore[], player: Player): number => {
-  return scores.filter((x) => x.player.name === player.name)[0].score;
-};

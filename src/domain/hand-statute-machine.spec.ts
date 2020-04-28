@@ -12,6 +12,16 @@ const PLAYERS = [PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4];
 
 const handStatuteMachine = new HandStatuteMachine();
 
+function getEmptyChoiceStatute(): HandStatute {
+  return {
+    eldestHand: PLAYERS[0],
+    playerOrder: PLAYERS,
+    handType: {
+      isChoice: true,
+    },
+  };
+}
+
 test('Ensure hand rules are correct for last trump hand', () => {
   const actual = handStatuteMachine.getHandStatute(PLAYERS, 3, Suit.SPADE);
 
@@ -92,13 +102,3 @@ test('Ensure returns eldest Hand', () => {
 
   expect(actual.eldestHand).toBe(PLAYER_1);
 });
-
-function getEmptyChoiceStatute(): HandStatute {
-  return {
-    eldestHand: PLAYERS[0],
-    playerOrder: PLAYERS,
-    handType: {
-      isChoice: true,
-    },
-  };
-}

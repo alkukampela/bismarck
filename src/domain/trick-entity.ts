@@ -1,8 +1,9 @@
 import { CardEntity } from './card-entity';
+import { Card } from '../types/card';
+import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
-import { HandStatute } from '../types/hand-statute';
 
 type PlayersCard = {
   player: Player;
@@ -15,11 +16,7 @@ export class TrickEntity {
 
   private _playersCards: PlayersCard[];
 
-  constructor(
-    firstCard: CardEntity,
-    trickLead: Player,
-    handStatute: HandStatute
-  ) {
+  constructor(firstCard: Card, trickLead: Player, handStatute: HandStatute) {
     this._playersCards = this.tricksPlayerOrder(
       trickLead,
       handStatute.playerOrder
@@ -28,14 +25,14 @@ export class TrickEntity {
     this.playCard(firstCard, trickLead);
 
     this._trumpSuit =
-      handStatute.handType.gameType.trumpSuit || firstCard.getSuit();
-    this._trickSuit = firstCard.getSuit();
+      handStatute.handType.gameType.trumpSuit || CardEntity.getSuit(firstCard);
+    this._trickSuit = CardEntity.getSuit(firstCard);
   }
 
-  public playCard(card: CardEntity, player: Player) {
+  public playCard(card: Card, player: Player) {
     this._playersCards.filter(
       (pc) => pc.player.name === player.name
-    )[0].card = card;
+    )[0].card = CardEntity.fromCard(card);
   }
 
   public getTaker(): Player {

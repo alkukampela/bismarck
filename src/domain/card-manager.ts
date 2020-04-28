@@ -28,8 +28,8 @@ export class CardManager {
 
   public hasPlayerCard(playerIndex: number, card: Card): boolean {
     return (
-      this.getPlayersCards(playerIndex).filter((c) =>
-        c.equals(card.rank, card.suit)
+      this.getPlayersCards(playerIndex).filter(
+        (pc) => pc.rank === card.rank && pc.suit === card.suit
       ).length > 0
     );
   }
@@ -40,23 +40,31 @@ export class CardManager {
     )[0].isPlayed = true;
   }
 
-  public getTableCards(): CardEntity[] {
+  public getTableCards(): Card[] {
     return this._cards
       .slice(this.PLAYERS * this.CARDS_IN_HAND)
-      .map((container) => container.card);
+      .map((container) => container.card)
+      .map((cardEntity) => cardEntity.toCard());
   }
 
-  public getPlayersCards(player: number): CardEntity[] {
+  public getPlayersCards(player: number): Card[] {
     return this._cards
       .filter((_val, index) => this.isPlayersCard(player, index))
       .filter((container) => !container.isPlayed)
       .sort((a, b) => a.card.getRank() - b.card.getRank())
       .sort((a, b) => a.card.getSuit() - b.card.getSuit())
-      .map((container) => container.card);
+      .map((container) => container.card.toCard());
   }
 
   public getTrumpSuit(): Suit {
-    return this.getTableCards()[0].getSuit();
+    return this._cards
+      .slice(this.PLAYERS * this.CARDS_IN_HAND)
+      .map((container) => container.card)[0]
+      .getSuit();
+  }
+
+  public hasTooManyCards(player: number): boolean {
+    return this.getPlayersCards(player).length > this.CARDS_IN_HAND;
   }
 
   private isPlayersCard(player: number, index: number): boolean {

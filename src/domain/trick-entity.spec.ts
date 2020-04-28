@@ -1,4 +1,3 @@
-import { CardEntity } from './card-entity';
 import { TrickEntity } from './trick-entity';
 import { Suit } from '../types/suit';
 import { HandStatute } from '../types/hand-statute';
@@ -8,11 +7,28 @@ const PLAYER_1 = { name: 'ake' };
 const PLAYER_2 = { name: 'make' };
 const PLAYER_3 = { name: 'pera' };
 
-const SPADE_A = new CardEntity(51);
-const SPADE_K = new CardEntity(50);
-const SPADE_2 = new CardEntity(39);
-const HEART_A = new CardEntity(38);
-const HEART_K = new CardEntity(37);
+const SPADE_A = { suit: '♠️', rank: 'A' };
+const SPADE_K = { suit: '♠️', rank: 'K' };
+const SPADE_2 = { suit: '♠️', rank: '2' };
+const HEART_A = { suit: '♥️', rank: 'A' };
+const HEART_K = { suit: '♥️', rank: 'K' };
+
+const statute = (numberOfPlayers: number, suit?: Suit): HandStatute => {
+  return {
+    eldestHand: PLAYER_1,
+    playerOrder:
+      numberOfPlayers === 2
+        ? [PLAYER_1, PLAYER_2]
+        : [PLAYER_1, PLAYER_2, PLAYER_3],
+    handType: {
+      isChoice: false,
+      gameType: {
+        trumpSuit: suit,
+        value: !!suit ? GameType.TRUMP : GameType.NO_TRUMP,
+      },
+    },
+  };
+};
 
 test('First player wins with highest card when no trump', () => {
   const trick = new TrickEntity(SPADE_A, PLAYER_1, statute(2));
@@ -75,20 +91,3 @@ test('Ensure allCardsArePlayed is true when trick is finished', () => {
 
   expect(trick.allCardsArePlayed()).toBe(true);
 });
-
-const statute = (numberOfPlayers: number, suit?: Suit): HandStatute => {
-  return {
-    eldestHand: PLAYER_1,
-    playerOrder:
-      numberOfPlayers === 2
-        ? [PLAYER_1, PLAYER_2]
-        : [PLAYER_1, PLAYER_2, PLAYER_3],
-    handType: {
-      isChoice: false,
-      gameType: {
-        trumpSuit: suit,
-        value: !!suit ? GameType.TRUMP : GameType.NO_TRUMP,
-      },
-    },
-  };
-};

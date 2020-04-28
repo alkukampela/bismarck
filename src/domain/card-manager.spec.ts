@@ -1,4 +1,5 @@
 import { CardManager } from './card-manager';
+import { CardEntity } from './card-entity';
 
 test('Ensure deals correct amount of cards', () => {
   const cardManager = new CardManager();
@@ -22,7 +23,7 @@ test('Ensure removed card is not in players hand after removal', () => {
   const cardManager = new CardManager();
   const cards = cardManager.getPlayersCards(player);
 
-  const cardToBeRemoved = cards[0].toCard();
+  const cardToBeRemoved = cards[0];
 
   cardManager.removeCard(cardToBeRemoved);
 
@@ -30,8 +31,10 @@ test('Ensure removed card is not in players hand after removal', () => {
   expect(
     cardManager
       .getPlayersCards(player)
-      .filter((x) => x.equals(cardToBeRemoved.rank, cardToBeRemoved.suit))
-      .length
+      .filter(
+        (x) =>
+          x.rank === cardToBeRemoved.rank && x.suit === cardToBeRemoved.suit
+      ).length
   ).toBe(0);
 });
 
@@ -41,13 +44,33 @@ test('Ensure card returned as players card is actually players card', () => {
   const cards = cardManager.getPlayersCards(player);
 
   cards.forEach((card) =>
-    expect(cardManager.hasPlayerCard(player, card.toCard())).toBe(true)
+    expect(cardManager.hasPlayerCard(player, card)).toBe(true)
   );
 });
 
 test('Ensure returns correct trump suit', () => {
   const cardManager = new CardManager();
   const openCards = cardManager.getTableCards();
+  const expectedTrumpSuit = CardEntity.getSuit(openCards[0]);
 
-  expect(cardManager.getTrumpSuit()).toBe(openCards[0].getSuit());
+  expect(cardManager.getTrumpSuit()).toBe(expectedTrumpSuit);
+});
+
+test('Ensure eldest hand has too many cards until removed 4', () => {
+  const player = 0;
+  const cardManager = new CardManager();
+
+  expect(cardManager.hasTooManyCards(player)).toBe(true);
+
+  cardManager.removeCard(cardManager.getPlayersCards(0)[0]);
+  expect(cardManager.hasTooManyCards(player)).toBe(true);
+
+  cardManager.removeCard(cardManager.getPlayersCards(0)[0]);
+  expect(cardManager.hasTooManyCards(player)).toBe(true);
+
+  cardManager.removeCard(cardManager.getPlayersCards(0)[0]);
+  expect(cardManager.hasTooManyCards(player)).toBe(true);
+
+  cardManager.removeCard(cardManager.getPlayersCards(0)[0]);
+  expect(cardManager.hasTooManyCards(player)).toBe(false);
 });

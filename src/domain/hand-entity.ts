@@ -1,5 +1,5 @@
-import { CardEntity } from './card-entity';
 import { CardManager } from './card-manager';
+import { ErrorTypes } from './error-types';
 import { HandScore } from './hand-score';
 import { HandStatuteMachine } from './hand-statute-machine';
 import { TrickEntity } from './trick-entity';
@@ -7,14 +7,12 @@ import { Card } from '../types/card';
 import { GameType } from '../types/game-type';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
+import { PlayerScore } from '../types/player-score';
 import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
 import * as statuses from 'http-status-codes';
-import { PlayerScore } from '../types/player-score';
 
 export class HandEntity {
-  private readonly CARDS_IN_HAND = 12;
-
   private _cardManager: CardManager;
 
   private _currentTrick: TrickEntity;
@@ -36,24 +34,22 @@ export class HandEntity {
   }
 
   public getCards(player: Player): Card[] {
-    return this._cardManager
-      .getPlayersCards(this.getPlayersIndex(player))
-      .map((card) => card.toCard());
+    return this._cardManager.getPlayersCards(this.getPlayersIndex(player));
   }
 
   public removeCard(player: Player, card: Card) {
     if (!this.isEldestHand(player)) {
-      throw statuses.FORBIDDEN;
+      throw Error(ErrorTypes.MUST_BE_ELDEST_HAND);
     }
 
     const playerIndex = this.getPlayersIndex(player);
 
-    if (
-      !this._cardManager.hasPlayerCard(playerIndex, card) ||
-      this._cardManager.getPlayersCards(playerIndex).length <=
-        this.CARDS_IN_HAND
-    ) {
-      throw statuses.BAD_REQUEST;
+    if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
+      throw Error(ErrorTypes.CARD_NOT_FOUND);
+    }
+
+    if (!this._cardManager.hasTooManyCards(playerIndex)) {
+      throw Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE);
     }
 
     this._cardManager.removeCard(card);
@@ -64,7 +60,7 @@ export class HandEntity {
   }
 
   public getTableCards(): Card[] {
-    return this._cardManager.getTableCards().map((card) => card.toCard());
+    return this._cardManager.getTableCards();
   }
 
   public chooseGameType(
@@ -72,14 +68,16 @@ export class HandEntity {
     chosenGameType: GameType,
     suit?: Suit
   ): HandStatute {
-    if (
-      !this.isEldestHand(player) ||
-      this._handStatute.handType.gameType.value
-    ) {
-      throw statuses.BAD_REQUEST;
+    if (!this.isEldestHand(player)) {
+      throw Error(ErrorTypes.MUST_BE_ELDEST_HAND);
     }
 
-    // TODO check that suit is passed if game type is trump and not passed in other game types
+    if (this._handStatute.handType.gameType.value) {
+      throw Error(ErrorTypes.GAME_TYPE_CHOSEN);
+    }
+
+    // TODO check that suit is passed if game type is trump and
+    // not passed in other game types
 
     this._handStatute = new HandStatuteMachine().chooseGameType(
       this._handStatute,
@@ -102,20 +100,15 @@ export class HandEntity {
 
     if (
       this.isTrickOpen() ||
-      player.name !== this.getTrickLead().name ||
       !this._handStatute.handType.gameType.value ||
-      this._cardManager.getPlayersCards(playerIndex).length >
-        this.CARDS_IN_HAND ||
+      player.name !== this.getTrickLead().name ||
+      this._cardManager.hasTooManyCards(playerIndex) ||
       !this._cardManager.hasPlayerCard(playerIndex, card)
     ) {
       throw statuses.BAD_REQUEST;
     }
 
-    this._currentTrick = new TrickEntity(
-      CardEntity.fromCard(card),
-      player,
-      this._handStatute
-    );
+    this._currentTrick = new TrickEntity(card, player, this._handStatute);
     this._cardManager.removeCard(card);
     return this._currentTrick.presentation();
   }
@@ -135,7 +128,7 @@ export class HandEntity {
       throw statuses.BAD_REQUEST;
     }
 
-    this._currentTrick.playCard(CardEntity.fromCard(card), player);
+    this._currentTrick.playCard(card, player);
     this._cardManager.removeCard(card);
 
     if (this._currentTrick.allCardsArePlayed()) {
