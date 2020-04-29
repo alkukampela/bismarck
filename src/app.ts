@@ -4,9 +4,16 @@ import cors from 'cors';
 import express from 'express';
 import * as statuses from 'http-status-codes';
 import morgan from 'morgan';
+import * as WebSocket from 'ws';
+import * as http from 'http';
+import { TrickCards } from './types/trick-cards';
 
 const app = express();
-const port = 3001;
+
+const server = http.createServer(app);
+
+const wss = new WebSocket.Server({ server });
+const port = process.env.PORT || 3001;
 const router = express.Router();
 
 function newHand() {
@@ -22,6 +29,12 @@ function newHand() {
 }
 
 let hand = newHand();
+
+const publishTrick = (trick: TrickCards) => {
+  wss.clients.forEach((client) => {
+    client.send(JSON.stringify(trick));
+  });
+};
 
 router.get('/hands/current/statute', (_req, res) => {
   res.send(hand.getStatute());
@@ -60,9 +73,12 @@ router.post('/tricks', (req, res) => {
   try {
     const player = { name: req.query.player as string };
     const card = req.body as Card;
-    res.send(hand.startTrick(player, card));
+
+    const trick = hand.startTrick(player, card);
+    publishTrick(trick);
+    res.send(trick);
   } catch (err) {
-    res.sendStatus(err);
+    res.status(statuses.BAD_REQUEST).send({ error: err.message });
   }
 });
 
@@ -70,9 +86,11 @@ router.post('/tricks/cards', (req, res) => {
   try {
     const player = { name: req.query.player as string };
     const card = req.body as Card;
-    res.send(hand.addCardToTrick(player, card));
+    const trick = hand.addCardToTrick(player, card);
+    publishTrick(trick);
+    res.send(trick);
   } catch (err) {
-    res.sendStatus(err);
+    res.status(statuses.BAD_REQUEST).send({ error: err.message });
   }
 });
 
@@ -99,13 +117,23 @@ router.get('/hand/reset', (_req, res) => {
   res.sendStatus(statuses.NO_CONTENT);
 });
 
+wss.on('connection', (ws: WebSocket) => {
+  console.log('Client connected');
+  ws.on('close', () => console.log('Client disconnected'));
+});
+
+/*
+setInterval(() => {
+  wss.clients.forEach((client) => {
+    client.send(new Date().toTimeString());
+  });
+}, 1000);*/
+
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api', router);
-app.listen(port, (err) => {
-  if (err) {
-    return console.error(err);
-  }
-  return console.log(`server is listening on ${port}`);
+
+server.listen(port, () => {
+  console.log(`Server is listening on ${port}`);
 });
