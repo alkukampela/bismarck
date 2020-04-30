@@ -3,7 +3,7 @@ import { StatuteSummary } from './Statute';
 import { TableCards } from './TableCards';
 import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
-import { GameProvider } from '../GameContext';
+import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
 import * as React from 'react';
 
@@ -12,7 +12,7 @@ export const App = () => {
   const game = { player, gameId: '451' };
 
   return (
-    <GameProvider value={game}>
+    <Provider value={game}>
       <div>
         <Trick />
         <PlayersHand player={player} />
@@ -20,6 +20,6 @@ export const App = () => {
         <TrickTakers />
         <TableCards />
       </div>
-    </GameProvider>
+    </Provider>
   );
 };

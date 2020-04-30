@@ -1,6 +1,6 @@
 import { TrickCard } from './TrickCard';
 import * as TC from '../../../types/trick-cards';
-import GameContext from '../GameContext';
+import { GameContext } from '../GameContext';
 import * as React from 'react';
 
 export const Trick = () => {

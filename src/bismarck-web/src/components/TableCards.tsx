@@ -1,6 +1,6 @@
 import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
-import GameContext from '../GameContext';
+import { GameContext } from '../GameContext';
 import * as React from 'react';
 
 export const TableCards = () => {

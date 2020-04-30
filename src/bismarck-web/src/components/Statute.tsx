@@ -2,7 +2,7 @@ import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
 import { Suit } from '../../../types/suit';
 import * as React from 'react';
-import GameContext from '../GameContext';
+import { GameContext } from '../GameContext';
 
 export const StatuteSummary = () => {
   const game = React.useContext(GameContext);

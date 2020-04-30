@@ -1,8 +1,15 @@
-import React from 'react';
+import * as React from 'react';
 
-const GameContext = React.createContext();
+interface GameContextInterface {
+  gameId: string;
+  player: string;
+}
 
-export const GameProvider = GameContext.Provider;
-export const GameConsumer = GameContext.Consumer;
+const context = React.createContext<GameContextInterface>({
+  gameId: '',
+  player: '',
+});
 
-export default GameContext;
+export const GameContext = context;
+
+export const GameContextProvider = context.Provider;

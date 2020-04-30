@@ -1,5 +1,5 @@
 import { PlayerScore } from '../../../types/player-score';
-import GameContext from '../GameContext';
+import { GameContext } from '../GameContext';
 import * as React from 'react';
 
 export const TrickTakers = () => {
