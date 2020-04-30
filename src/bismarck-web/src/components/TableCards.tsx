@@ -1,14 +1,17 @@
 import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
+import GameContext from '../GameContext';
 import * as React from 'react';
 
 export const TableCards = () => {
+  const game = React.useContext(GameContext);
+
   const [cards, setCards] = React.useState<CardType[]>([]);
 
   React.useEffect(() => {
-    const fetchCards = async function (): Promise<CardType[]> {
+    const fetchCards = async (): Promise<CardType[]> => {
       const resp = await fetch(
-        `http://localhost:3001/api/hands/current/tablecards`,
+        `http://localhost:3001/api/games/${game.gameId}/hand/tablecards`,
         {
           mode: 'cors',
         }

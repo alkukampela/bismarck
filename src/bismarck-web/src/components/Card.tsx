@@ -1,7 +1,10 @@
 import { Card as CardType } from '../../../types/card';
+import GameContext from '../GameContext';
 import * as React from 'react';
 
 export const Card = ({ card, player }: { card: CardType; player?: string }) => {
+  const game = React.useContext(GameContext);
+
   const [showCard, setState] = React.useState<boolean>(true);
 
   const getCardClass = (suit: string) => {
@@ -10,7 +13,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
 
   async function removeCard(card: CardType, player: string): Promise<boolean> {
     const resp = await fetch(
-      `http://localhost:3001/api/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
+      `http://localhost:3001/api/games/${game.gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
       {
         method: 'DELETE',
         mode: 'cors',
@@ -21,7 +24,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
 
   async function startTrick(card: CardType, player: string): Promise<boolean> {
     const resp = await fetch(
-      `http://localhost:3001/api/tricks?player=${player}`,
+      `http://localhost:3001/api/games/${game.gameId}/hand/trick?player=${player}`,
       {
         method: 'POST',
         mode: 'cors',
@@ -36,7 +39,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
 
   async function addToTrick(card: CardType, player: string): Promise<boolean> {
     const resp = await fetch(
-      `http://localhost:3001/api/tricks/cards?player=${player}`,
+      `http://localhost:3001/api/games/${game.gameId}/hand/trick/cards?player=${player}`,
       {
         method: 'POST',
         mode: 'cors',

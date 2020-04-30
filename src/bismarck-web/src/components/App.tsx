@@ -3,18 +3,23 @@ import { StatuteSummary } from './Statute';
 import { TableCards } from './TableCards';
 import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
+import { GameProvider } from '../GameContext';
 import * as QueryString from 'query-string';
 import * as React from 'react';
 
 export const App = () => {
   const player = (QueryString.parse(location.search).player as string) || '';
+  const game = { player, gameId: '451' };
+
   return (
-    <div>
-      <Trick />
-      <PlayersHand player={player} />
-      <StatuteSummary />
-      <TrickTakers />
-      <TableCards />
-    </div>
+    <GameProvider value={game}>
+      <div>
+        <Trick />
+        <PlayersHand player={player} />
+        <StatuteSummary />
+        <TrickTakers />
+        <TableCards />
+      </div>
+    </GameProvider>
   );
 };

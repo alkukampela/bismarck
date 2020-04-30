@@ -2,8 +2,11 @@ import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
 import { Suit } from '../../../types/suit';
 import * as React from 'react';
+import GameContext from '../GameContext';
 
 export const StatuteSummary = () => {
+  const game = React.useContext(GameContext);
+
   const [statute, setStatute] = React.useState<HandStatute>({
     eldestHand: { name: '' },
     handType: {
@@ -13,9 +16,9 @@ export const StatuteSummary = () => {
   });
 
   React.useEffect(() => {
-    const fetchStatute = async function (): Promise<HandStatute> {
+    const fetchStatute = async (): Promise<HandStatute> => {
       const resp = await fetch(
-        `http://localhost:3001/api/hands/current/statute`,
+        `http://localhost:3001/api/games/${game.gameId}/hand/statute`,
         {
           mode: 'cors',
         }

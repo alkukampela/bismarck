@@ -1,10 +1,13 @@
 import { PlayerScore } from '../../../types/player-score';
+import GameContext from '../GameContext';
 import * as React from 'react';
 
 export const TrickTakers = () => {
-  const fetchScores = async function (): Promise<PlayerScore[]> {
+  const game = React.useContext(GameContext);
+
+  const fetchScores = async (): Promise<PlayerScore[]> => {
     const resp = await fetch(
-      `http://localhost:3001/api/hands/current/trick-count`,
+      `http://localhost:3001/api/games/${game.gameId}/hand/trick-count`,
       {
         mode: 'cors',
       }
