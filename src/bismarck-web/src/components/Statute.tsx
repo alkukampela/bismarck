@@ -66,7 +66,7 @@ export const StatuteSummary = () => {
       {statute.handType.gameType && (
         <div>Pelityyppi: {gameTypeName(statute.handType.gameType.value)}</div>
       )}
-      {statute.handType.gameType?.trumpSuit && (
+      {typeof statute.handType.gameType?.trumpSuit !== 'undefined' && (
         <div>Valtti: {trumpSuitName(statute.handType.gameType.trumpSuit)}</div>
       )}
       <hr />
