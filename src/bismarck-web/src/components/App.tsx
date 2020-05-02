@@ -11,9 +11,6 @@ export const App = () => {
   const player = (QueryString.parse(location.search).player as string) || '';
   const game = { player, gameId: '451' };
 
-  const uri = process.env.REACT_APP_API_URL;
-  console.log(uri);
-
   return (
     <Provider value={game}>
       <div>
