@@ -31,10 +31,16 @@ function newHand() {
 
 let hand = newHand();
 
-const publishTrick = (trick: TrickCards) => {
+type WebSocketWithGameId = WebSocket & {
+  gameId: string;
+};
+
+const publishTrick = (trick: TrickCards, gameId: string) => {
   let cc = 0;
-  wss.clients.forEach((client) => {
-    client.send(JSON.stringify(trick));
+  wss.clients.forEach((client: WebSocketWithGameId) => {
+    if (client.gameId === gameId) {
+      client.send(JSON.stringify(trick));
+    }
     ++cc;
   });
   console.log(`clients: ${cc}`);
@@ -79,7 +85,7 @@ router.post('/games/:id/hand/trick', (req, res) => {
     const card = req.body as Card;
 
     const trick = hand.startTrick(player, card);
-    publishTrick(trick);
+    publishTrick(trick, req.params.id);
     res.send(trick);
   } catch (err) {
     res.status(statuses.BAD_REQUEST).send({ error: err.message });
@@ -91,7 +97,7 @@ router.post('/games/:id/hand/trick/cards', (req, res) => {
     const player = { name: req.query.player as string };
     const card = req.body as Card;
     const trick = hand.addCardToTrick(player, card);
-    publishTrick(trick);
+    publishTrick(trick, req.params.id);
     res.send(trick);
   } catch (err) {
     res.status(statuses.BAD_REQUEST).send({ error: err.message });
@@ -121,13 +127,14 @@ router.get('/games/{:id}/reset', (_req, res) => {
   res.sendStatus(statuses.NO_CONTENT);
 });
 
-wss.on('connection', (ws: any, req: Request) => {
+wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');
 
   const parameters = url.parse(req.url, true);
 
-  ws.hereMyCustomParameter = parameters.query.myCustomParam;
+  ws.gameId = parameters.query.gameId as string;
 
+  // TODO: send trick from correct game
   ws.send(JSON.stringify(hand.getCurrentTrick()));
 
   ws.on('close', () => console.log('Client disconnected'));
