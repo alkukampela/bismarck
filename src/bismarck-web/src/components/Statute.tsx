@@ -18,7 +18,7 @@ export const StatuteSummary = () => {
   React.useEffect(() => {
     const fetchStatute = async (): Promise<HandStatute> => {
       const resp = await fetch(
-        `http://localhost:3001/api/games/${game.gameId}/hand/statute`,
+        `${process.env.REACT_APP_API_URL}/games/${game.gameId}/hand/statute`,
         {
           mode: 'cors',
         }
