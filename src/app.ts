@@ -6,12 +6,15 @@ import express from 'express';
 import * as http from 'http';
 import * as statuses from 'http-status-codes';
 import morgan from 'morgan';
+import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
 
 const app = express();
 
 const server = http.createServer(app);
+
+app.use(express.static(path.join(__dirname, 'bismarck-web/dist')));
 
 const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
