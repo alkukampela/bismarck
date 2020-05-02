@@ -88,11 +88,9 @@ export class HandEntity {
   }
 
   public getCurrentTrick(): TrickCards {
-    if (!this._currentTrick) {
-      throw statuses.NOT_FOUND;
-    }
-
-    return this._currentTrick.presentation();
+    return !!this._currentTrick
+      ? this._currentTrick.presentation()
+      : this.defaultTrick();
   }
 
   public startTrick(player: Player, card: Card): TrickCards {
@@ -154,6 +152,14 @@ export class HandEntity {
     }
 
     return !this._currentTrick.allCardsArePlayed();
+  }
+
+  private defaultTrick(): TrickCards {
+    return {
+      cards: this._handStatute.playerOrder.map((player) => {
+        return { player };
+      }),
+    };
   }
 
   private getTrickLead(): Player {

@@ -1,40 +1,23 @@
-import { TrickCard } from './TrickCard';
-import * as TC from '../../../types/trick-cards';
-import { GameContext } from '../GameContext';
 import * as React from 'react';
+import * as TC from '../../../types/trick-cards';
+import { TrickDisplay } from './TrickDisplay';
+import { socket } from '../services/socket';
 
 export const Trick = () => {
-  const game = React.useContext(GameContext);
-
-  const fetchTrick = async (): Promise<TC.TrickCards> => {
-    const resp = await fetch(
-      `http://localhost:3001/api/games/${game.gameId}/hand/trick`,
-      {
-        mode: 'cors',
-      }
-    );
-    return resp.ok ? ((await resp.json()) as TC.TrickCards) : { cards: [] };
-  };
-
-  const [cards, setCards] = React.useState<TC.TrickCards>({
-    cards: [],
-  });
+  const [cards, setCards] = React.useState<TC.TrickCards>({ cards: [] });
 
   React.useEffect(() => {
-    setTimeout(() => {
-      fetchTrick()
-        .then((trick) => setCards(trick))
-        .catch();
-    }, 1000);
+    socket.onmessage = (msg) => {
+      const trick = JSON.parse(msg.data);
+      setCards(trick);
+    };
   });
+
+  React.useEffect(() => () => socket.close(), [socket]);
 
   return (
     <div>
-      <div className="trick">
-        {cards.cards.map((playerCard: TC.TrickCard, index: number) => (
-          <TrickCard trickCard={playerCard} key={index} />
-        ))}
-      </div>
+      <TrickDisplay trickCards={cards} />
     </div>
   );
 };

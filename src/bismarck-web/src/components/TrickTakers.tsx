@@ -22,7 +22,7 @@ export const TrickTakers = () => {
       fetchScores()
         .then((takers) => setTrickTakers(takers))
         .catch();
-    }, 1000);
+    }, 3000);
   });
 
   return (

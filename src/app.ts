@@ -7,7 +7,6 @@ import * as http from 'http';
 import * as statuses from 'http-status-codes';
 import morgan from 'morgan';
 import url from 'url';
-import { v4 as uuid } from 'uuid';
 import * as WebSocket from 'ws';
 
 const app = express();
@@ -33,10 +32,12 @@ function newHand() {
 let hand = newHand();
 
 const publishTrick = (trick: TrickCards) => {
+  let cc = 0;
   wss.clients.forEach((client) => {
-    console.log(client);
     client.send(JSON.stringify(trick));
+    ++cc;
   });
+  console.log(`clients: ${cc}`);
 };
 
 router.get('/games/:id/hand/statute', (_req, res) => {
@@ -125,13 +126,9 @@ wss.on('connection', (ws: any, req: Request) => {
 
   const parameters = url.parse(req.url, true);
 
-  const uid = uuid();
-  ws.uid = uid;
-
-  ws.chatRoom = { uid: parameters.query.myCustomID };
   ws.hereMyCustomParameter = parameters.query.myCustomParam;
 
-  console.log(ws);
+  ws.send(JSON.stringify(hand.getCurrentTrick()));
 
   ws.on('close', () => console.log('Client disconnected'));
 });
