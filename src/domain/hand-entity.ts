@@ -113,17 +113,21 @@ export class HandEntity {
 
   public addCardToTrick(player: Player, card: Card): TrickCards {
     if (!this._currentTrick) {
-      throw statuses.BAD_REQUEST;
+      throw Error(ErrorTypes.TRICK_NOT_STARTED);
     }
 
     if (!this._currentTrick.hasPlayerTurn(player)) {
-      throw statuses.FORBIDDEN;
+      throw Error(ErrorTypes.OTHER_PLAYER_HAS_TURN);
     }
-    // TODO: check if card has correct suit
 
     const playerIndex = this.getPlayersIndex(player);
+
     if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
-      throw statuses.BAD_REQUEST;
+      throw Error(ErrorTypes.CARD_NOT_FOUND);
+    }
+
+    if (!this.checkCardsLegality(playerIndex, card)) {
+      throw Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
     }
 
     this._currentTrick.playCard(card, player);
@@ -172,5 +176,37 @@ export class HandEntity {
 
   private isEldestHand(player: Player) {
     return player.name === this._handStatute.eldestHand.name;
+  }
+
+  private checkCardsLegality(playerIndex: number, card: Card) {
+    if (this._currentTrick.isTrickSuit(card)) {
+      return true;
+    }
+
+    if (
+      !this._currentTrick.isTrickSuit(card) &&
+      this._cardManager.hasPlayerCardsOfSuit(
+        playerIndex,
+        this._currentTrick.getTrickSuit()
+      )
+    ) {
+      return false;
+    }
+
+    if (this._currentTrick.isTrumpSuit(card)) {
+      return true;
+    }
+
+    if (
+      !this._currentTrick.isTrumpSuit(card) &&
+      this._cardManager.hasPlayerCardsOfSuit(
+        playerIndex,
+        this._currentTrick.getTrumpSuit()
+      )
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }

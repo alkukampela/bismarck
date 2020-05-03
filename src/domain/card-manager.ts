@@ -26,9 +26,9 @@ export class CardManager {
       .forEach((card: CardContainer) => this._cards.push(card));
   }
 
-  public hasPlayerCard(playerIndex: number, card: Card): boolean {
+  public hasPlayerCard(player: number, card: Card): boolean {
     return (
-      this.getPlayersCards(playerIndex).filter(
+      this.getPlayersCards(player).filter(
         (pc) => pc.rank === card.rank && pc.suit === card.suit
       ).length > 0
     );
@@ -65,6 +65,15 @@ export class CardManager {
 
   public hasTooManyCards(player: number): boolean {
     return this.getPlayersCards(player).length > this.CARDS_IN_HAND;
+  }
+
+  public hasPlayerCardsOfSuit(player: number, suit: Suit): boolean {
+    return (
+      this._cards
+        .filter((_val, index) => this.isPlayersCard(player, index))
+        .filter((container) => !container.isPlayed)
+        .filter((container) => container.card.getSuit() === suit).length > 0
+    );
   }
 
   private isPlayersCard(player: number, index: number): boolean {

@@ -66,6 +66,22 @@ export class TrickEntity {
     };
   }
 
+  public isTrickSuit(card: Card): boolean {
+    return this._trickSuit === CardEntity.suits.get(card.suit);
+  }
+
+  public isTrumpSuit(card: Card): boolean {
+    return this._trumpSuit === CardEntity.suits.get(card.suit);
+  }
+
+  public getTrickSuit(): Suit {
+    return this._trickSuit;
+  }
+
+  public getTrumpSuit(): Suit {
+    return this._trumpSuit;
+  }
+
   private playerWithTopRankedCardBySuit(suit: Suit): Player {
     const playersCard = this._playersCards
       .filter((pc) => pc.card.getSuit() === suit)
