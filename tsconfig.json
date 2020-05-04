@@ -8,7 +8,8 @@
     "pretty": true,
     "outDir": "dist",
     "composite": true,
-    "declaration": true
+    "declaration": true,
+    "rootDir": "src"
   },
   "lib": ["es2015"],
   "include": ["src/**/*.ts"],
