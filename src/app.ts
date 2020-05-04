@@ -14,7 +14,11 @@ const app = express();
 
 const server = http.createServer(app);
 
-app.use(express.static(path.join(__dirname, 'bismarck-web/dist')));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'public')));
+} else {
+  app.use(express.static(path.join(__dirname, 'bismarck-web/dist')));
+}
 
 const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
