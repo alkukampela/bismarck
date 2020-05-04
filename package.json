@@ -15,6 +15,7 @@
     "start": "node --inspect=5858 -r ts-node/register ./src/app.ts",
     "start:watch": "nodemon",
     "build": "tsc",
+    "build:ui": "rm -rf dist/public && cd src/bismarck-web && rm -rf dist && npm run build --prod && cp -r dist ../../dist/public",
     "test": "jest",
     "lint": "npm run lint:js ",
     "lint:eslint": "eslint --ignore-path .gitignore --ext .ts",
@@ -27,7 +28,7 @@
       "**/*.spec.ts",
       ".git",
       "node_modules",
-      "src/public"
+      "src/bismarck-web"
     ],
     "watch": [
       "src"
