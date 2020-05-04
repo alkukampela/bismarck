@@ -13,7 +13,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
 
   async function removeCard(card: CardType, player: string): Promise<boolean> {
     const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/games/${game.gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
+      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
       {
         method: 'DELETE',
         mode: 'cors',
@@ -24,7 +24,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
 
   async function startTrick(card: CardType, player: string): Promise<boolean> {
     const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/games/${game.gameId}/hand/trick?player=${player}`,
+      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick?player=${player}`,
       {
         method: 'POST',
         mode: 'cors',
@@ -39,7 +39,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
 
   async function addToTrick(card: CardType, player: string): Promise<boolean> {
     const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/games/${game.gameId}/hand/trick/cards?player=${player}`,
+      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick/cards?player=${player}`,
       {
         method: 'POST',
         mode: 'cors',

@@ -15,7 +15,7 @@ export const PlayersHand = ({ player }: { player: string }) => {
   React.useEffect(() => {
     const fetchCards = async (): Promise<CardType[]> => {
       const resp = await fetch(
-        `${process.env.REACT_APP_API_URL}/games/${game.gameId}/hand/cards?player=${player}`,
+        `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${player}`,
         {
           mode: 'cors',
         }

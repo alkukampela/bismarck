@@ -11,7 +11,7 @@ export const TableCards = () => {
   React.useEffect(() => {
     const fetchCards = async (): Promise<CardType[]> => {
       const resp = await fetch(
-        `${process.env.REACT_APP_API_URL}/games/${game.gameId}/hand/tablecards`,
+        `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/tablecards`,
         {
           mode: 'cors',
         }
