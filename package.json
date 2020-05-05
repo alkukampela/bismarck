@@ -14,6 +14,7 @@
   "scripts": {
     "start": "node --inspect=5858 -r ts-node/register ./src/app.ts",
     "start:watch": "nodemon",
+    "start:heroku": "NODE_ENV=production heroku local",
     "build": "npm run build:server && npm run build:ui",
     "build:server": "tsc",
     "build:ui": "rm -rf dist/public && cd src/bismarck-web && rm -rf dist && npm install && npm run build --prod && cp -r dist ../../dist/public",
