@@ -2,7 +2,7 @@ import { parse } from 'url';
 
 const initSocket = () => {
   const hups = (host: string, protocol?: string) => {
-    const wsProtocol = protocol === 'http:' ? 'ws:' : 'wss';
+    const wsProtocol = protocol === 'http:' ? 'ws:' : 'wss:';
     return `${wsProtocol}//${host}`;
   };
 
