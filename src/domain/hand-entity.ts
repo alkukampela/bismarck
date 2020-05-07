@@ -10,7 +10,6 @@ import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
 import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
-import * as statuses from 'http-status-codes';
 
 export class HandEntity {
   private _cardManager: CardManager;
@@ -21,46 +20,71 @@ export class HandEntity {
 
   private _handStatute: HandStatute;
 
-  constructor(defaulPlayerOrder: Player[], handNumber: number) {
+  constructor() {
     this._cardManager = new CardManager();
+  }
+
+  public async setUp(
+    defaulPlayerOrder: Player[],
+    handNumber: number,
+    gameId: string
+  ) {
+    this._cardManager.initDeck(gameId);
 
     this._handStatute = new HandStatuteMachine().getHandStatute(
       defaulPlayerOrder,
       handNumber,
-      this._cardManager.getTrumpSuit()
+      await this._cardManager.getTrumpSuit(gameId)
     );
 
     this._handScore = new HandScore(this._handStatute.playerOrder);
   }
 
-  public getCards(player: Player): Card[] {
-    return this._cardManager.getPlayersCards(this.getPlayersIndex(player));
+  public async getCards(player: Player, gameId: string): Promise<Card[]> {
+    return this._cardManager.getPlayersCards(
+      this.getPlayersIndex(player),
+      gameId
+    );
   }
 
-  public removeCard(player: Player, card: Card) {
+  public async removeCard(
+    player: Player,
+    card: Card,
+    gameId: string
+  ): Promise<void> {
     if (!this.isEldestHand(player)) {
-      throw Error(ErrorTypes.MUST_BE_ELDEST_HAND);
+      return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
     }
 
     const playerIndex = this.getPlayersIndex(player);
 
-    if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
-      throw Error(ErrorTypes.CARD_NOT_FOUND);
+    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+      playerIndex,
+      card,
+      gameId
+    );
+    if (!hasPlayerCardCard) {
+      return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
-    if (!this._cardManager.hasTooManyCards(playerIndex)) {
-      throw Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE);
+    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+      playerIndex,
+      gameId
+    );
+    if (!hasTooManyCards) {
+      return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
     }
 
-    this._cardManager.removeCard(card);
+    this._cardManager.removeCard(card, gameId);
+    return Promise.resolve();
   }
 
   public getStatute(): HandStatute {
     return this._handStatute;
   }
 
-  public getTableCards(): Card[] {
-    return this._cardManager.getTableCards();
+  public async getTableCards(gameId: string): Promise<Card[]> {
+    return await this._cardManager.getTableCards(gameId);
   }
 
   public chooseGameType(
@@ -93,25 +117,48 @@ export class HandEntity {
       : this.defaultTrick();
   }
 
-  public startTrick(player: Player, card: Card): TrickCards {
+  public async startTrick(
+    player: Player,
+    card: Card,
+    gameId: string
+  ): Promise<TrickCards> {
     const playerIndex = this.getPlayersIndex(player);
 
     if (
       this.isTrickOpen() ||
       !this._handStatute.handType.gameType.value ||
-      player.name !== this.getTrickLead().name ||
-      this._cardManager.hasTooManyCards(playerIndex) ||
-      !this._cardManager.hasPlayerCard(playerIndex, card)
+      player.name !== this.getTrickLead().name
     ) {
-      throw statuses.BAD_REQUEST;
+      return Promise.reject(new Error('TODO ADD ERROR'));
+    }
+
+    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+      playerIndex,
+      card,
+      gameId
+    );
+    if (!hasPlayerCardCard) {
+      return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
+    }
+
+    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+      playerIndex,
+      gameId
+    );
+    if (hasTooManyCards) {
+      return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
     }
 
     this._currentTrick = new TrickEntity(card, player, this._handStatute);
-    this._cardManager.removeCard(card);
-    return this._currentTrick.presentation();
+    this._cardManager.removeCard(card, gameId);
+    return Promise.resolve(this._currentTrick.presentation());
   }
 
-  public addCardToTrick(player: Player, card: Card): TrickCards {
+  public addCardToTrick(
+    player: Player,
+    card: Card,
+    gameId: string
+  ): TrickCards {
     if (!this._currentTrick) {
       throw Error(ErrorTypes.TRICK_NOT_STARTED);
     }
@@ -122,16 +169,16 @@ export class HandEntity {
 
     const playerIndex = this.getPlayersIndex(player);
 
-    if (!this._cardManager.hasPlayerCard(playerIndex, card)) {
+    if (!this._cardManager.hasPlayerCard(playerIndex, card, gameId)) {
       throw Error(ErrorTypes.CARD_NOT_FOUND);
     }
 
-    if (!this.checkCardsLegality(playerIndex, card)) {
+    if (!this.checkCardsLegality(playerIndex, card, gameId)) {
       throw Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
     }
 
     this._currentTrick.playCard(card, player);
-    this._cardManager.removeCard(card);
+    this._cardManager.removeCard(card, gameId);
 
     if (this._currentTrick.allCardsArePlayed()) {
       this._handScore.takeTrick(this._currentTrick.getTaker());
@@ -178,7 +225,7 @@ export class HandEntity {
     return player.name === this._handStatute.eldestHand.name;
   }
 
-  private checkCardsLegality(playerIndex: number, card: Card) {
+  private checkCardsLegality(playerIndex: number, card: Card, gameId: string) {
     if (this._currentTrick.isTrickSuit(card)) {
       return true;
     }
@@ -187,7 +234,8 @@ export class HandEntity {
       !this._currentTrick.isTrickSuit(card) &&
       this._cardManager.hasPlayerCardsOfSuit(
         playerIndex,
-        this._currentTrick.getTrickSuit()
+        this._currentTrick.getTrickSuit(),
+        gameId
       )
     ) {
       return false;
@@ -201,7 +249,8 @@ export class HandEntity {
       !this._currentTrick.isTrumpSuit(card) &&
       this._cardManager.hasPlayerCardsOfSuit(
         playerIndex,
-        this._currentTrick.getTrumpSuit()
+        this._currentTrick.getTrumpSuit(),
+        gameId
       )
     ) {
       return false;

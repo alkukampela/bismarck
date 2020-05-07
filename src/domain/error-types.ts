@@ -6,4 +6,5 @@ export enum ErrorTypes {
   OTHER_PLAYER_HAS_TURN = 'Other player has a turn',
   TRICK_NOT_STARTED = 'Trick is not started yet',
   MUST_FOLLOW_SUIT_AND_TRUMP = 'Suit and trump suit must be followed',
+  CARDS_MUST_BE_REMOVED = 'Eldest hand must remove cards before opening trick',
 }

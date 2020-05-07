@@ -1,78 +1,111 @@
 import { CardEntity } from './card-entity';
+import { CardStorage, CardContainer } from '../persistence/cards-storage';
 import { Card } from '../types/card';
 import { Suit } from '../types/suit';
 import shuffle from 'fisher-yates';
-
-type CardContainer = {
-  card: CardEntity;
-  isPlayed: boolean;
-};
 
 export class CardManager {
   private readonly PLAYERS = 4;
   private readonly CARDS_IN_HAND = 12;
 
-  private _cards: CardContainer[];
+  private _cardStorage: CardStorage;
 
   constructor() {
-    this._cards = [];
-    this.shuffledDeck()
-      .map((value: number) => {
-        return {
-          card: new CardEntity(value),
-          isPlayed: false,
-        } as CardContainer;
-      })
-      .forEach((card: CardContainer) => this._cards.push(card));
+    this._cardStorage = CardStorage.getInstance();
   }
 
-  public hasPlayerCard(player: number, card: Card): boolean {
+  public initDeck(gameId: string): void {
+    const cards: CardContainer[] = [];
+    this.shuffledDeck()
+      .map((value: number) => {
+        return new CardEntity(value).toCard();
+      })
+      .forEach((card) => cards.push({ card, isPlayed: false }));
+    this._cardStorage.store(gameId, cards);
+  }
+
+  public async hasPlayerCard(
+    player: number,
+    card: Card,
+    gameId: string
+  ): Promise<boolean> {
+    const cards = await this.getPlayersCards(player, gameId);
     return (
-      this.getPlayersCards(player).filter(
-        (pc) => pc.rank === card.rank && pc.suit === card.suit
-      ).length > 0
+      cards.filter((pc: Card) => pc.rank === card.rank && pc.suit === card.suit)
+        .length > 0
     );
   }
 
-  public removeCard(card: Card): void {
-    this._cards.filter((container) =>
-      container.card.equals(card.rank, card.suit)
-    )[0].isPlayed = true;
+  public removeCard(cardToBeRemoved: Card, gameId: string): void {
+    this._cardStorage.fetch(gameId).then((cards) => {
+      cards.find(
+        (container) =>
+          container.card.rank === cardToBeRemoved.rank &&
+          container.card.suit === cardToBeRemoved.suit
+      ).isPlayed = true;
+      this._cardStorage.store(gameId, cards);
+    });
   }
 
-  public getTableCards(): Card[] {
-    return this._cards
+  public async getTableCards(gameId: string): Promise<Card[]> {
+    const cards = await this._cardStorage.fetch(gameId);
+    return cards
       .slice(this.PLAYERS * this.CARDS_IN_HAND)
-      .map((container) => container.card)
-      .map((cardEntity) => cardEntity.toCard());
+      .map((container) => container.card);
   }
 
-  public getPlayersCards(player: number): Card[] {
-    return this._cards
+  public async getPlayersCards(
+    player: number,
+    gameId: string
+  ): Promise<Card[]> {
+    const cards = await this._cardStorage.fetch(gameId);
+    return cards
       .filter((_val, index) => this.isPlayersCard(player, index))
       .filter((container) => !container.isPlayed)
-      .sort((a, b) => a.card.getRank() - b.card.getRank())
-      .sort((a, b) => a.card.getSuit() - b.card.getSuit())
-      .map((container) => container.card.toCard());
+      .sort(
+        (a, b) =>
+          CardEntity.fromCard(a.card).getRank() -
+          CardEntity.fromCard(b.card).getRank()
+      )
+      .sort(
+        (a, b) =>
+          CardEntity.fromCard(a.card).getSuit() -
+          CardEntity.fromCard(b.card).getSuit()
+      )
+      .map((container) => container.card);
   }
 
-  public getTrumpSuit(): Suit {
-    return this._cards
-      .slice(this.PLAYERS * this.CARDS_IN_HAND)
-      .map((container) => container.card)[0]
-      .getSuit();
+  public async getTrumpSuit(gameId: string): Promise<Suit> {
+    const cards = await this._cardStorage.fetch(gameId);
+    return CardEntity.suits.get(
+      cards
+        .slice(this.PLAYERS * this.CARDS_IN_HAND)
+        .map((container) => container.card)[0].suit
+    );
   }
 
-  public hasTooManyCards(player: number): boolean {
-    return this.getPlayersCards(player).length > this.CARDS_IN_HAND;
+  public async hasTooManyCards(
+    player: number,
+    gameId: string
+  ): Promise<boolean> {
+    return this.getPlayersCards(player, gameId).then((cards) => {
+      return cards.length > this.CARDS_IN_HAND;
+    });
   }
 
-  public hasPlayerCardsOfSuit(player: number, suit: Suit): boolean {
+  public async hasPlayerCardsOfSuit(
+    player: number,
+    suit: Suit,
+    gameId: string
+  ): Promise<boolean> {
+    const cards = await this._cardStorage.fetch(gameId);
     return (
-      this._cards
+      cards
         .filter((_val, index) => this.isPlayersCard(player, index))
         .filter((container) => !container.isPlayed)
-        .filter((container) => container.card.getSuit() === suit).length > 0
+        .filter(
+          (container) => container.card.suit === CardEntity.suits.getKey(suit)
+        ).length > 0
     );
   }
 

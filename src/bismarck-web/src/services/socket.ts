@@ -8,7 +8,6 @@ const initSocket = () => {
 
   const wsUrlFromHttpUrl = (url: string): string => {
     const parsed = parse(url);
-    console.log(parsed);
     return hups(parsed.host || '', parsed.protocol);
   };
 

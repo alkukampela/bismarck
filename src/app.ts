@@ -9,10 +9,13 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
+import { Player } from './types/player';
 
 const app = express();
 
 const server = http.createServer(app);
+
+const GAME_ID = '451';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
@@ -25,15 +28,22 @@ const port = process.env.PORT || 3001;
 const router = express.Router();
 
 function newHand() {
-  return new HandEntity(
+  const handEntity = new HandEntity();
+  handEntity.setUp(
     [
       { name: 'Reijo' },
       { name: 'Kaija' },
       { name: 'Tuulikki' },
       { name: 'Yrjö' },
     ],
-    0
+    0,
+    GAME_ID
   );
+  return handEntity;
+}
+
+function playerFromQueryString(req): Player {
+  return { name: req.query.player as string };
 }
 
 let hand = newHand();
@@ -57,28 +67,30 @@ router.get('/games/:id/hand/statute', (_req, res) => {
   res.send(hand.getStatute());
 });
 
-router.get('/games/:id/hand/cards', (req, res) => {
-  const player = { name: req.query.player as string };
-  res.send(hand.getCards(player));
+router.get('/games/:id/hand/cards', async (req, res) => {
+  const player = playerFromQueryString(req);
+  const cards = await hand.getCards(player, GAME_ID);
+  res.send(cards);
 });
 
-router.delete('/games/:id/hand/cards', (req, res) => {
-  try {
-    const player = { name: req.query.player as string };
+router.delete('/games/:id/hand/cards', async (req, res) => {
+  const player = playerFromQueryString(req);
+  const card: Card = {
+    rank: req.query.rank as string,
+    suit: req.query.suit as string,
+  };
 
-    const card: Card = {
-      rank: req.query.rank as string,
-      suit: req.query.suit as string,
-    };
-
-    hand.removeCard(player, card);
-    res.sendStatus(204);
-  } catch (err) {
-    res.status(statuses.BAD_REQUEST).send({ error: err.message });
-  }
+  hand
+    .removeCard(player, card, GAME_ID)
+    .then(() => {
+      res.sendStatus(statuses.NO_CONTENT);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+    });
 });
 
-router.get('/games/:id/hand/trick', (req, res) => {
+router.get('/games/:id/hand/trick', (_req, res) => {
   try {
     res.send(hand.getCurrentTrick());
   } catch (err) {
@@ -86,24 +98,26 @@ router.get('/games/:id/hand/trick', (req, res) => {
   }
 });
 
-router.post('/games/:id/hand/trick', (req, res) => {
-  try {
-    const player = { name: req.query.player as string };
-    const card = req.body as Card;
+router.post('/games/:id/hand/trick', async (req, res) => {
+  const player = playerFromQueryString(req);
+  const card = req.body as Card;
 
-    const trick = hand.startTrick(player, card);
-    publishTrick(trick, req.params.id);
-    res.send(trick);
-  } catch (err) {
-    res.status(statuses.BAD_REQUEST).send({ error: err.message });
-  }
+  hand
+    .startTrick(player, card, GAME_ID)
+    .then((trick) => {
+      publishTrick(trick, req.params.id);
+      res.send(trick);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+    });
 });
 
 router.post('/games/:id/hand/trick/cards', (req, res) => {
   try {
-    const player = { name: req.query.player as string };
+    const player = playerFromQueryString(req);
     const card = req.body as Card;
-    const trick = hand.addCardToTrick(player, card);
+    const trick = hand.addCardToTrick(player, card, GAME_ID);
     publishTrick(trick, req.params.id);
     res.send(trick);
   } catch (err) {
@@ -116,7 +130,7 @@ router.get('/games/:id/hand/trick-count', (_req, res) => {
 });
 
 router.get('/games/:id/hand/tablecards', (_req, res) => {
-  res.send(hand.getTableCards());
+  hand.getTableCards(GAME_ID).then((cards) => res.send(cards));
 });
 
 router.get('/games/:id/score', (_req, res) => {
