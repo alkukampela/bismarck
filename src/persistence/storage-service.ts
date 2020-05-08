@@ -1,4 +1,5 @@
 import { Card } from '../types/card';
+import { HandStatute } from '../types/hand-statute';
 import { PlayerScore } from '../types/player-score';
 import Redis from 'ioredis';
 
@@ -8,10 +9,6 @@ export type CardContainer = {
 };
 
 export class StorageService {
-  private readonly CARDS_PREFIX = 'cards:';
-
-  private readonly SCORES_PREFIX = 'scores:';
-
   private static _instance: StorageService;
 
   private redis: Redis.Redis;
@@ -42,7 +39,19 @@ export class StorageService {
     return JSON.parse(result);
   }
 
-  private store(key: string, subject: CardContainer[] | PlayerScore[]): void {
+  public storeHandStatute(identifier: string, statute: HandStatute): void {
+    this.store(this.getHandStatuteKey(identifier), statute);
+  }
+
+  public async fetchHandStatute(identifier: string): Promise<HandStatute> {
+    const result = await this.fetch(this.getHandStatuteKey(identifier));
+    return JSON.parse(result);
+  }
+
+  private store(
+    key: string,
+    subject: CardContainer[] | PlayerScore[] | HandStatute
+  ): void {
     this.redis.set(key, JSON.stringify(subject));
   }
 
@@ -51,10 +60,14 @@ export class StorageService {
   }
 
   private getScoresKey(identifier: string) {
-    return this.SCORES_PREFIX + identifier;
+    return 'cards:' + identifier;
   }
 
   private getCardsKey(identifier: string) {
-    return this.CARDS_PREFIX + identifier;
+    return 'scores:' + identifier;
+  }
+
+  private getHandStatuteKey(identifier: string): string {
+    return 'statute:' + identifier;
   }
 }

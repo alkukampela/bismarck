@@ -1,5 +1,8 @@
+import { CardManager } from './domain/card-manager';
 import { HandEntity } from './domain/hand-entity';
+import { StorageService } from './persistence/storage-service';
 import { Card } from './types/card';
+import { Player } from './types/player';
 import { TrickCards } from './types/trick-cards';
 import cors from 'cors';
 import express from 'express';
@@ -9,7 +12,6 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
-import { Player } from './types/player';
 
 const app = express();
 
@@ -28,7 +30,10 @@ const port = process.env.PORT || 3001;
 const router = express.Router();
 
 function newHand() {
-  const handEntity = new HandEntity();
+  const handEntity = new HandEntity(
+    StorageService.getInstance(),
+    CardManager.getInstance()
+  );
   handEntity.setUp(
     [
       { name: 'Reijo' },
@@ -64,7 +69,9 @@ const publishTrick = (trick: TrickCards, gameId: string) => {
 };
 
 router.get('/games/:id/hand/statute', (_req, res) => {
-  res.send(hand.getStatute());
+  hand.getStatute(GAME_ID).then((statute) => {
+    res.send(statute);
+  });
 });
 
 router.get('/games/:id/hand/cards', async (req, res) => {
@@ -91,11 +98,7 @@ router.delete('/games/:id/hand/cards', async (req, res) => {
 });
 
 router.get('/games/:id/hand/trick', (_req, res) => {
-  try {
-    res.send(hand.getCurrentTrick());
-  } catch (err) {
-    res.sendStatus(err);
-  }
+  hand.getCurrentTrick(GAME_ID).then((trick) => res.send(trick));
 });
 
 router.post('/games/:id/hand/trick', async (req, res) => {
@@ -117,9 +120,11 @@ router.post('/games/:id/hand/trick/cards', (req, res) => {
   try {
     const player = playerFromQueryString(req);
     const card = req.body as Card;
-    const trick = hand.addCardToTrick(player, card, GAME_ID);
-    publishTrick(trick, req.params.id);
-    res.send(trick);
+
+    hand.addCardToTrick(player, card, GAME_ID).then((trick) => {
+      publishTrick(trick, req.params.id);
+      res.send(trick);
+    });
   } catch (err) {
     res.status(statuses.BAD_REQUEST).send({ error: err.message });
   }
@@ -156,7 +161,7 @@ wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   ws.gameId = parameters.query.gameId as string;
 
   // TODO: send trick from correct game
-  ws.send(JSON.stringify(hand.getCurrentTrick()));
+  hand.getCurrentTrick(GAME_ID).then((trick) => ws.send(JSON.stringify(trick)));
 
   ws.on('close', () => console.log('Client disconnected'));
 });

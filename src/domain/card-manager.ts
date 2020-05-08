@@ -8,10 +8,16 @@ export class CardManager {
   private readonly PLAYERS = 4;
   private readonly CARDS_IN_HAND = 12;
 
+  private static _instance: CardManager;
+
   private _storageService: StorageService;
 
-  constructor() {
+  private constructor() {
     this._storageService = StorageService.getInstance();
+  }
+
+  public static getInstance() {
+    return this._instance || (this._instance = new this());
   }
 
   public initDeck(gameId: string): void {
