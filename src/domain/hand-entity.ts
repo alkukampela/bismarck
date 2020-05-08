@@ -12,34 +12,29 @@ import { Suit } from '../types/suit';
 import { TrickCards } from '../types/trick-cards';
 
 export class HandEntity {
-  private _cardManager: CardManager;
-
   private _currentTrick: TrickEntity;
 
   private _handStatute: HandStatute;
-
-  constructor() {
-    this._cardManager = new CardManager();
-  }
 
   public async setUp(
     defaulPlayerOrder: Player[],
     handNumber: number,
     gameId: string
   ) {
-    this._cardManager.initDeck(gameId);
+    const cardManager = new CardManager();
+    cardManager.initDeck(gameId);
 
     this._handStatute = new HandStatuteMachine().getHandStatute(
       defaulPlayerOrder,
       handNumber,
-      await this._cardManager.getTrumpSuit(gameId)
+      await cardManager.getTrumpSuit(gameId)
     );
 
     new HandScore().setUp(this._handStatute.playerOrder, gameId);
   }
 
   public async getCards(player: Player, gameId: string): Promise<Card[]> {
-    return this._cardManager.getPlayersCards(
+    return new CardManager().getPlayersCards(
       this.getPlayersIndex(player),
       gameId
     );
@@ -55,8 +50,9 @@ export class HandEntity {
     }
 
     const playerIndex = this.getPlayersIndex(player);
+    const cardManager = new CardManager();
 
-    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+    const hasPlayerCardCard = await cardManager.hasPlayerCard(
       playerIndex,
       card,
       gameId
@@ -65,7 +61,7 @@ export class HandEntity {
       return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
-    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+    const hasTooManyCards = await cardManager.hasTooManyCards(
       playerIndex,
       gameId
     );
@@ -73,7 +69,7 @@ export class HandEntity {
       return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
     }
 
-    this._cardManager.removeCard(card, gameId);
+    cardManager.removeCard(card, gameId);
     return Promise.resolve();
   }
 
@@ -82,7 +78,7 @@ export class HandEntity {
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
-    return await this._cardManager.getTableCards(gameId);
+    return await new CardManager().getTableCards(gameId);
   }
 
   public chooseGameType(
@@ -121,6 +117,7 @@ export class HandEntity {
     gameId: string
   ): Promise<TrickCards> {
     const playerIndex = this.getPlayersIndex(player);
+    const cardManager = new CardManager();
 
     if (
       this.isTrickOpen() ||
@@ -130,7 +127,7 @@ export class HandEntity {
       return Promise.reject(new Error('TODO ADD ERROR'));
     }
 
-    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+    const hasPlayerCardCard = await cardManager.hasPlayerCard(
       playerIndex,
       card,
       gameId
@@ -139,7 +136,7 @@ export class HandEntity {
       return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
-    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+    const hasTooManyCards = await cardManager.hasTooManyCards(
       playerIndex,
       gameId
     );
@@ -148,7 +145,7 @@ export class HandEntity {
     }
 
     this._currentTrick = new TrickEntity(card, player, this._handStatute);
-    this._cardManager.removeCard(card, gameId);
+    cardManager.removeCard(card, gameId);
     return Promise.resolve(this._currentTrick.presentation());
   }
 
@@ -166,17 +163,18 @@ export class HandEntity {
     }
 
     const playerIndex = this.getPlayersIndex(player);
+    const cardManager = new CardManager();
 
-    if (!this._cardManager.hasPlayerCard(playerIndex, card, gameId)) {
+    if (!cardManager.hasPlayerCard(playerIndex, card, gameId)) {
       throw Error(ErrorTypes.CARD_NOT_FOUND);
     }
 
-    if (!this.checkCardsLegality(playerIndex, card, gameId)) {
+    if (!this.checkCardsLegality(playerIndex, card, gameId, cardManager)) {
       throw Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
     }
 
     this._currentTrick.playCard(card, player);
-    this._cardManager.removeCard(card, gameId);
+    cardManager.removeCard(card, gameId);
 
     if (this._currentTrick.allCardsArePlayed()) {
       new HandScore().takeTrick(this._currentTrick.getTaker(), gameId);
@@ -223,14 +221,19 @@ export class HandEntity {
     return player.name === this._handStatute.eldestHand.name;
   }
 
-  private checkCardsLegality(playerIndex: number, card: Card, gameId: string) {
+  private checkCardsLegality(
+    playerIndex: number,
+    card: Card,
+    gameId: string,
+    cardManager: CardManager
+  ) {
     if (this._currentTrick.isTrickSuit(card)) {
       return true;
     }
 
     if (
       !this._currentTrick.isTrickSuit(card) &&
-      this._cardManager.hasPlayerCardsOfSuit(
+      cardManager.hasPlayerCardsOfSuit(
         playerIndex,
         this._currentTrick.getTrickSuit(),
         gameId
@@ -245,7 +248,7 @@ export class HandEntity {
 
     if (
       !this._currentTrick.isTrumpSuit(card) &&
-      this._cardManager.hasPlayerCardsOfSuit(
+      cardManager.hasPlayerCardsOfSuit(
         playerIndex,
         this._currentTrick.getTrumpSuit(),
         gameId
