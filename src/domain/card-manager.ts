@@ -1,5 +1,5 @@
 import { CardEntity } from './card-entity';
-import { CardStorage, CardContainer } from '../persistence/cards-storage';
+import { StorageService, CardContainer } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { Suit } from '../types/suit';
 import shuffle from 'fisher-yates';
@@ -8,10 +8,10 @@ export class CardManager {
   private readonly PLAYERS = 4;
   private readonly CARDS_IN_HAND = 12;
 
-  private _cardStorage: CardStorage;
+  private _storageService: StorageService;
 
   constructor() {
-    this._cardStorage = CardStorage.getInstance();
+    this._storageService = StorageService.getInstance();
   }
 
   public initDeck(gameId: string): void {
@@ -21,7 +21,7 @@ export class CardManager {
         return new CardEntity(value).toCard();
       })
       .forEach((card) => cards.push({ card, isPlayed: false }));
-    this._cardStorage.store(gameId, cards);
+    this._storageService.storeCards(gameId, cards);
   }
 
   public async hasPlayerCard(
@@ -37,18 +37,18 @@ export class CardManager {
   }
 
   public removeCard(cardToBeRemoved: Card, gameId: string): void {
-    this._cardStorage.fetch(gameId).then((cards) => {
+    this._storageService.fetchCards(gameId).then((cards) => {
       cards.find(
         (container) =>
           container.card.rank === cardToBeRemoved.rank &&
           container.card.suit === cardToBeRemoved.suit
       ).isPlayed = true;
-      this._cardStorage.store(gameId, cards);
+      this._storageService.storeCards(gameId, cards);
     });
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
-    const cards = await this._cardStorage.fetch(gameId);
+    const cards = await this._storageService.fetchCards(gameId);
     return cards
       .slice(this.PLAYERS * this.CARDS_IN_HAND)
       .map((container) => container.card);
@@ -58,7 +58,7 @@ export class CardManager {
     player: number,
     gameId: string
   ): Promise<Card[]> {
-    const cards = await this._cardStorage.fetch(gameId);
+    const cards = await this._storageService.fetchCards(gameId);
     return cards
       .filter((_val, index) => this.isPlayersCard(player, index))
       .filter((container) => !container.isPlayed)
@@ -76,7 +76,7 @@ export class CardManager {
   }
 
   public async getTrumpSuit(gameId: string): Promise<Suit> {
-    const cards = await this._cardStorage.fetch(gameId);
+    const cards = await this._storageService.fetchCards(gameId);
     return CardEntity.suits.get(
       cards
         .slice(this.PLAYERS * this.CARDS_IN_HAND)
@@ -98,7 +98,7 @@ export class CardManager {
     suit: Suit,
     gameId: string
   ): Promise<boolean> {
-    const cards = await this._cardStorage.fetch(gameId);
+    const cards = await this._storageService.fetchCards(gameId);
     return (
       cards
         .filter((_val, index) => this.isPlayersCard(player, index))

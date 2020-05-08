@@ -125,8 +125,8 @@ router.post('/games/:id/hand/trick/cards', (req, res) => {
   }
 });
 
-router.get('/games/:id/hand/trick-count', (_req, res) => {
-  res.send(hand.getPlayersTrickCount());
+router.get('/games/:id/hand/trick-count', async (_req, res) => {
+  hand.getHandsTrickCounts(GAME_ID).then((scores) => res.send(scores));
 });
 
 router.get('/games/:id/hand/tablecards', (_req, res) => {

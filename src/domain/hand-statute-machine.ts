@@ -1,5 +1,5 @@
 import { GameType } from '../types/game-type';
-import { HandStatute, HandType } from '../types/hand-statute';
+import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 

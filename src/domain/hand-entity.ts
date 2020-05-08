@@ -16,8 +16,6 @@ export class HandEntity {
 
   private _currentTrick: TrickEntity;
 
-  private _handScore: HandScore;
-
   private _handStatute: HandStatute;
 
   constructor() {
@@ -37,7 +35,7 @@ export class HandEntity {
       await this._cardManager.getTrumpSuit(gameId)
     );
 
-    this._handScore = new HandScore(this._handStatute.playerOrder);
+    new HandScore().setUp(this._handStatute.playerOrder, gameId);
   }
 
   public async getCards(player: Player, gameId: string): Promise<Card[]> {
@@ -181,14 +179,14 @@ export class HandEntity {
     this._cardManager.removeCard(card, gameId);
 
     if (this._currentTrick.allCardsArePlayed()) {
-      this._handScore.takeTrick(this._currentTrick.getTaker());
+      new HandScore().takeTrick(this._currentTrick.getTaker(), gameId);
     }
 
     return this._currentTrick.presentation();
   }
 
-  public getPlayersTrickCount(): PlayerScore[] {
-    return this._handScore.getTricks();
+  public async getHandsTrickCounts(gameId: string): Promise<PlayerScore[]> {
+    return new HandScore().getTricks(gameId);
   }
 
   private getPlayersIndex(player: Player): number {
