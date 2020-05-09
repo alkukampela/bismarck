@@ -32,7 +32,7 @@ const router = express.Router();
 function newHand() {
   const handEntity = new HandEntity(
     StorageService.getInstance(),
-    CardManager.getInstance()
+    CardManager.getInstance(StorageService.getInstance())
   );
   handEntity.setUp(
     [

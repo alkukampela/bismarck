@@ -12,12 +12,12 @@ export class CardManager {
 
   private _storageService: StorageService;
 
-  private constructor() {
-    this._storageService = StorageService.getInstance();
+  private constructor(storageService: StorageService) {
+    this._storageService = storageService;
   }
 
-  public static getInstance() {
-    return this._instance || (this._instance = new this());
+  public static getInstance(storageService: StorageService) {
+    return this._instance || (this._instance = new this(storageService));
   }
 
   public initDeck(gameId: string): void {
