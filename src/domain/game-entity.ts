@@ -12,12 +12,12 @@ export const createGame = async (
   const storageService = StorageService.getInstance();
 
   if (players.length !== 4) {
-    Promise.reject('Must have 4 players');
+    return Promise.reject('Must have 4 players');
   }
 
   const existingGame = await storageService.fetchGame(gameId);
   if (!!existingGame) {
-    Promise.reject('Game already exists');
+    return Promise.reject('Game already exists');
   }
 
   storageService.storeGame(gameId, {
