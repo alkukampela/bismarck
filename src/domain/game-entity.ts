@@ -3,6 +3,7 @@ import { Player } from '../types/player';
 import { Game } from '../types/game';
 import { HandEntity } from './hand-entity';
 import { CardManager } from './card-manager';
+import shuffle from 'fisher-yates';
 
 export const createGame = async (
   gameId: string,
@@ -20,7 +21,7 @@ export const createGame = async (
   }
 
   storageService.storeGame(gameId, {
-    players,
+    players: shuffle(players),
     handNumber: 0,
   });
 
