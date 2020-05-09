@@ -12,12 +12,11 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
+import { createGame } from './domain/game-entity';
 
 const app = express();
 
 const server = http.createServer(app);
-
-const GAME_ID = '451';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
@@ -29,29 +28,15 @@ const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
 const router = express.Router();
 
-function newHand() {
-  const handEntity = new HandEntity(
-    StorageService.getInstance(),
-    CardManager.getInstance(StorageService.getInstance())
-  );
-  handEntity.setUp(
-    [
-      { name: 'Reijo' },
-      { name: 'Kaija' },
-      { name: 'Tuulikki' },
-      { name: 'Yrjö' },
-    ],
-    0,
-    GAME_ID
-  );
-  return handEntity;
-}
+const storageService = StorageService.getInstance();
+const hand = new HandEntity(
+  storageService,
+  CardManager.getInstance(storageService)
+);
 
 function playerFromQueryString(req): Player {
   return { name: req.query.player as string };
 }
-
-let hand = newHand();
 
 type WebSocketWithGameId = WebSocket & {
   gameId: string;
@@ -68,15 +53,15 @@ const publishTrick = (trick: TrickCards, gameId: string) => {
   console.log(`clients: ${cc}`);
 };
 
-router.get('/games/:id/hand/statute', (_req, res) => {
-  hand.getStatute(GAME_ID).then((statute) => {
+router.get('/games/:id/hand/statute', (req, res) => {
+  hand.getStatute(req.params.id).then((statute) => {
     res.send(statute);
   });
 });
 
 router.get('/games/:id/hand/cards', async (req, res) => {
   const player = playerFromQueryString(req);
-  const cards = await hand.getCards(player, GAME_ID);
+  const cards = await hand.getCards(player, req.params.id);
   res.send(cards);
 });
 
@@ -88,7 +73,7 @@ router.delete('/games/:id/hand/cards', async (req, res) => {
   };
 
   hand
-    .removeCard(player, card, GAME_ID)
+    .removeCard(player, card, req.params.id)
     .then(() => {
       res.sendStatus(statuses.NO_CONTENT);
     })
@@ -97,8 +82,8 @@ router.delete('/games/:id/hand/cards', async (req, res) => {
     });
 });
 
-router.get('/games/:id/hand/trick', (_req, res) => {
-  hand.getCurrentTrick(GAME_ID).then((trick) => res.send(trick));
+router.get('/games/:id/hand/trick', (req, res) => {
+  hand.getCurrentTrick(req.params.id).then((trick) => res.send(trick));
 });
 
 router.post('/games/:id/hand/trick', async (req, res) => {
@@ -106,7 +91,7 @@ router.post('/games/:id/hand/trick', async (req, res) => {
   const card = req.body as Card;
 
   hand
-    .startTrick(player, card, GAME_ID)
+    .startTrick(player, card, req.params.id)
     .then((trick) => {
       publishTrick(trick, req.params.id);
       res.send(trick);
@@ -121,7 +106,7 @@ router.post('/games/:id/hand/trick/cards', (req, res) => {
   const card = req.body as Card;
 
   hand
-    .addCardToTrick(player, card, GAME_ID)
+    .addCardToTrick(player, card, req.params.id)
     .then((trick) => {
       publishTrick(trick, req.params.id);
       res.send(trick);
@@ -131,12 +116,12 @@ router.post('/games/:id/hand/trick/cards', (req, res) => {
     });
 });
 
-router.get('/games/:id/hand/trick-count', async (_req, res) => {
-  hand.getHandsTrickCounts(GAME_ID).then((scores) => res.send(scores));
+router.get('/games/:id/hand/trick-count', async (req, res) => {
+  hand.getHandsTrickCounts(req.params.id).then((scores) => res.send(scores));
 });
 
-router.get('/games/:id/hand/tablecards', (_req, res) => {
-  hand.getTableCards(GAME_ID).then((cards) => res.send(cards));
+router.get('/games/:id/hand/tablecards', (req, res) => {
+  hand.getTableCards(req.params.id).then((cards) => res.send(cards));
 });
 
 router.get('/games/:id/score', (_req, res) => {
@@ -148,10 +133,14 @@ router.get('/games/:id/score', (_req, res) => {
   }
 });
 
-// TODO remove when no longer needed
-router.get('/games/{:id}/reset', (_req, res) => {
-  hand = newHand();
-  res.sendStatus(statuses.NO_CONTENT);
+router.post('/games/:id', (req, res) => {
+  const players = req.body.players as Player[];
+
+  createGame(req.params.id, players)
+    .then((game) => res.send(game))
+    .catch(() => {
+      res.sendStatus(statuses.BAD_REQUEST);
+    });
 });
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
@@ -161,8 +150,9 @@ wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
 
   ws.gameId = parameters.query.gameId as string;
 
-  // TODO: send trick from correct game
-  hand.getCurrentTrick(GAME_ID).then((trick) => ws.send(JSON.stringify(trick)));
+  hand
+    .getCurrentTrick(ws.gameId)
+    .then((trick) => ws.send(JSON.stringify(trick)));
 
   ws.on('close', () => console.log('Client disconnected'));
 });
