@@ -16,7 +16,7 @@ export class StorageService {
   private redis: Redis.Redis;
 
   private constructor() {
-    this.redis = new Redis();
+    this.redis = new Redis(process.env.REDIS_URL);
   }
 
   public static getInstance() {
