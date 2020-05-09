@@ -2,23 +2,20 @@ import { GameType } from '../types/game-type';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
+import { Game } from '../types/game';
 
 export class HandStatuteMachine {
-  public getHandStatute(
-    defaultPlayerOrder: Player[],
-    handNumber: number,
-    trumpSuit: Suit
-  ): HandStatute {
+  public getHandStatute(game: Game, trumpSuit: Suit): HandStatute {
     const handType = {
-      isChoice: this.isChoiceTurn(handNumber, defaultPlayerOrder.length),
+      isChoice: this.isChoiceTurn(game.handNumber, game.players.length),
       gameType: this.determineGameType(
-        handNumber,
-        defaultPlayerOrder.length,
+        game.handNumber,
+        game.players.length,
         trumpSuit
       ),
     };
 
-    const playerOrder = this.switchTurns(defaultPlayerOrder, handNumber);
+    const playerOrder = this.switchTurns(game.players, game.handNumber);
 
     return {
       eldestHand: playerOrder[0],

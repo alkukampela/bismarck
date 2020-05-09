@@ -3,6 +3,7 @@ import { HandStatute } from '../types/hand-statute';
 import { PlayerScore } from '../types/player-score';
 import Redis from 'ioredis';
 import { Trick } from '../types/trick';
+import { Game } from '../types/game';
 
 export type CardContainer = {
   card: Card;
@@ -20,6 +21,15 @@ export class StorageService {
 
   public static getInstance() {
     return this._instance || (this._instance = new this());
+  }
+
+  public storeGame(identifier: string, game: Game): void {
+    this.store(this.getGamesKey(identifier), game);
+  }
+
+  public async fetchGame(identifier: string): Promise<Game> {
+    const result = await this.fetch(this.getGamesKey(identifier));
+    return JSON.parse(result);
   }
 
   public storeCards(identifier: string, cards: CardContainer[]): void {
@@ -60,13 +70,17 @@ export class StorageService {
 
   private store(
     key: string,
-    subject: CardContainer[] | PlayerScore[] | HandStatute | Trick
+    subject: CardContainer[] | PlayerScore[] | HandStatute | Trick | Game
   ): void {
     this.redis.set(key, JSON.stringify(subject));
   }
 
   private async fetch(key: string): Promise<string> {
     return this.redis.get(key);
+  }
+
+  private getGamesKey(identifier: string): string {
+    return 'game:' + identifier;
   }
 
   private getScoresKey(identifier: string) {

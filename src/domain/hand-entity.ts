@@ -18,6 +18,7 @@ import {
   hasPlayerTurn,
   playCard,
 } from './trick-machine';
+import { Game } from '../types/game';
 
 export class HandEntity {
   private _storageService: StorageService;
@@ -28,16 +29,11 @@ export class HandEntity {
     this._cardManager = cardManager;
   }
 
-  public async setUp(
-    defaulPlayerOrder: Player[],
-    handNumber: number,
-    gameId: string
-  ) {
+  public async setUp(gameId: string, game: Game) {
     this._cardManager.initDeck(gameId);
 
     const handStatute = new HandStatuteMachine().getHandStatute(
-      defaulPlayerOrder,
-      handNumber,
+      game,
       await this._cardManager.getTrumpSuit(gameId)
     );
 
