@@ -2,7 +2,6 @@ import { CardManager } from './card-manager';
 import { ErrorTypes } from './error-types';
 import { HandScore } from './hand-score';
 import { HandStatuteMachine } from './hand-statute-machine';
-import { TrickEntity } from './trick-entity';
 import { StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { GameType } from '../types/game-type';
@@ -10,11 +9,17 @@ import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
 import { Suit } from '../types/suit';
+import { Trick } from '../types/trick';
 import { TrickCards } from '../types/trick-cards';
+import {
+  initTrick,
+  allCardsArePlayed,
+  getTaker,
+  hasPlayerTurn,
+  playCard,
+} from './trick-machine';
 
 export class HandEntity {
-  private _currentTrick: TrickEntity;
-
   private _storageService: StorageService;
   private _cardManager: CardManager;
 
@@ -53,34 +58,36 @@ export class HandEntity {
     player: Player,
     card: Card,
     gameId: string
-  ): Promise<void> {
-    this._storageService.fetchHandStatute(gameId).then(async (statute) => {
-      if (!this.isEldestHand(player, statute)) {
-        return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
-      }
+  ): Promise<Card> {
+    return this._storageService
+      .fetchHandStatute(gameId)
+      .then(async (statute) => {
+        if (!this.isEldestHand(player, statute)) {
+          return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
+        }
 
-      const playerIndex = this.getPlayersIndex(player, statute);
+        const playerIndex = this.getPlayersIndex(player, statute);
 
-      const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
-        playerIndex,
-        card,
-        gameId
-      );
-      if (!hasPlayerCardCard) {
-        return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
-      }
+        const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+          playerIndex,
+          card,
+          gameId
+        );
+        if (!hasPlayerCardCard) {
+          return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
+        }
 
-      const hasTooManyCards = await this._cardManager.hasTooManyCards(
-        playerIndex,
-        gameId
-      );
-      if (!hasTooManyCards) {
-        return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
-      }
+        const hasTooManyCards = await this._cardManager.hasTooManyCards(
+          playerIndex,
+          gameId
+        );
+        if (!hasTooManyCards) {
+          return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
+        }
 
-      this._cardManager.removeCard(card, gameId);
-      return Promise.resolve();
-    });
+        this._cardManager.removeCard(card, gameId);
+        return card;
+      });
   }
 
   public async getStatute(gameId: string): Promise<HandStatute> {
@@ -121,9 +128,14 @@ export class HandEntity {
   }
 
   public async getCurrentTrick(gameId: string): Promise<TrickCards> {
-    return !!this._currentTrick
-      ? this._currentTrick.presentation()
-      : this.defaultTrick(gameId);
+    return this.getTrick(gameId)
+      .then((trick) => {
+        return { cards: trick.trickCards };
+      })
+      .catch(async () => {
+        const trick = await this.defaultTrick(gameId);
+        return trick;
+      });
   }
 
   public async startTrick(
@@ -136,12 +148,18 @@ export class HandEntity {
       .then(async (handStatute) => {
         const playerIndex = this.getPlayersIndex(player, handStatute);
 
-        if (
-          this.isTrickOpen() ||
-          !handStatute.handType.gameType.value ||
-          player.name !== this.getTrickLead(handStatute).name
-        ) {
-          return Promise.reject(new Error('TODO ADD ERROR'));
+        const isOpen = await this.isTrickOpen(gameId);
+        if (isOpen) {
+          return Promise.reject(new Error(ErrorTypes.TRICK_ALREADY_STARTED));
+        }
+
+        if (!handStatute.handType.gameType.value) {
+          return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
+        }
+
+        const trickLead = await this.getTrickLead(gameId, handStatute);
+        if (player.name !== trickLead.name) {
+          return Promise.reject(new Error(ErrorTypes.NOT_TRICK_LEAD));
         }
 
         const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
@@ -162,9 +180,14 @@ export class HandEntity {
           return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
         }
 
-        this._currentTrick = new TrickEntity(card, player, handStatute);
+        const trick = initTrick(card, player, handStatute);
+
         this._cardManager.removeCard(card, gameId);
-        return Promise.resolve(this._currentTrick.presentation());
+        this.saveTrick(gameId, trick);
+
+        return Promise.resolve({
+          cards: trick.trickCards,
+        });
       });
   }
 
@@ -173,35 +196,40 @@ export class HandEntity {
     card: Card,
     gameId: string
   ): Promise<TrickCards> {
-    if (!this._currentTrick) {
-      throw Error(ErrorTypes.TRICK_NOT_STARTED);
+    const isOpen = await this.isTrickOpen(gameId);
+    if (!isOpen) {
+      return Promise.reject(new Error(ErrorTypes.TRICK_NOT_STARTED));
     }
 
-    if (!this._currentTrick.hasPlayerTurn(player)) {
-      throw Error(ErrorTypes.OTHER_PLAYER_HAS_TURN);
+    const trick = await this.getTrick(gameId);
+    if (!hasPlayerTurn(trick, player)) {
+      return Promise.reject(Error(ErrorTypes.OTHER_PLAYER_HAS_TURN));
     }
 
     return this._storageService.fetchHandStatute(gameId).then((statute) => {
       const playerIndex = this.getPlayersIndex(player, statute);
 
       if (!this._cardManager.hasPlayerCard(playerIndex, card, gameId)) {
-        throw Error(ErrorTypes.CARD_NOT_FOUND);
+        return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
       }
 
       if (
         !this.checkCardsLegality(playerIndex, card, gameId, this._cardManager)
       ) {
-        throw Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
+        return Promise.reject(Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP));
       }
 
-      this._currentTrick.playCard(card, player);
+      const updatedTrick = playCard(trick, player, card);
       this._cardManager.removeCard(card, gameId);
 
-      if (this._currentTrick.allCardsArePlayed()) {
-        new HandScore().takeTrick(this._currentTrick.getTaker(), gameId);
+      if (allCardsArePlayed(updatedTrick)) {
+        new HandScore().takeTrick(getTaker(updatedTrick), gameId);
       }
 
-      return this._currentTrick.presentation();
+      this.saveTrick(gameId, updatedTrick);
+      return {
+        cards: updatedTrick.trickCards,
+      };
     });
   }
 
@@ -213,12 +241,14 @@ export class HandEntity {
     return handStatute.playerOrder.findIndex((x) => player.name === x.name);
   }
 
-  private isTrickOpen(): boolean {
-    if (!this._currentTrick) {
-      return false;
-    }
-
-    return !this._currentTrick.allCardsArePlayed();
+  private async isTrickOpen(gameId: string): Promise<boolean> {
+    return this.getTrick(gameId)
+      .then((trick) => {
+        return !allCardsArePlayed(trick);
+      })
+      .catch(() => {
+        return false;
+      });
   }
 
   private async defaultTrick(gameId: string): Promise<TrickCards> {
@@ -231,12 +261,17 @@ export class HandEntity {
     });
   }
 
-  private getTrickLead(handStatute: HandStatute): Player {
-    if (this._currentTrick) {
-      return this._currentTrick.getTaker();
-    }
-
-    return handStatute.eldestHand;
+  private async getTrickLead(
+    gameId: string,
+    handStatute: HandStatute
+  ): Promise<Player> {
+    return this.getTrick(gameId)
+      .then((trick) => {
+        return getTaker(trick);
+      })
+      .catch(() => {
+        return handStatute.eldestHand;
+      });
   }
 
   private isEldestHand(player: Player, handStatute: HandStatute) {
@@ -250,6 +285,7 @@ export class HandEntity {
     gameId: string,
     cardManager: CardManager
   ) {
+    /*
     if (this._currentTrick.isTrickSuit(card)) {
       return true;
     }
@@ -278,8 +314,16 @@ export class HandEntity {
       )
     ) {
       return false;
-    }
+    }*/
 
     return true;
+  }
+
+  private async getTrick(gameId: string): Promise<Trick> {
+    return this._storageService.fetchTrick(gameId);
+  }
+
+  private saveTrick(gameId: string, trick: Trick) {
+    this._storageService.storeTrick(gameId, trick);
   }
 }

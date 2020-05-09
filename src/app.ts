@@ -117,17 +117,18 @@ router.post('/games/:id/hand/trick', async (req, res) => {
 });
 
 router.post('/games/:id/hand/trick/cards', (req, res) => {
-  try {
-    const player = playerFromQueryString(req);
-    const card = req.body as Card;
+  const player = playerFromQueryString(req);
+  const card = req.body as Card;
 
-    hand.addCardToTrick(player, card, GAME_ID).then((trick) => {
+  hand
+    .addCardToTrick(player, card, GAME_ID)
+    .then((trick) => {
       publishTrick(trick, req.params.id);
       res.send(trick);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
     });
-  } catch (err) {
-    res.status(statuses.BAD_REQUEST).send({ error: err.message });
-  }
 });
 
 router.get('/games/:id/hand/trick-count', async (_req, res) => {

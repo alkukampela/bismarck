@@ -46,7 +46,7 @@ export class HandScore {
     );
   }
 
-  countHandScore(
+  private countHandScore(
     playerScore: PlayerScore,
     scores: PlayerScore[],
     gameType: GameType

@@ -2,6 +2,7 @@ import { Card } from '../types/card';
 import { HandStatute } from '../types/hand-statute';
 import { PlayerScore } from '../types/player-score';
 import Redis from 'ioredis';
+import { Trick } from '../types/trick';
 
 export type CardContainer = {
   card: Card;
@@ -48,9 +49,18 @@ export class StorageService {
     return JSON.parse(result);
   }
 
+  public storeTrick(identifier: string, trick: Trick): void {
+    this.store(this.getTrickKey(identifier), trick);
+  }
+
+  public async fetchTrick(identifier: string): Promise<Trick> {
+    const result = await this.fetch(this.getTrickKey(identifier));
+    return JSON.parse(result);
+  }
+
   private store(
     key: string,
-    subject: CardContainer[] | PlayerScore[] | HandStatute
+    subject: CardContainer[] | PlayerScore[] | HandStatute | Trick
   ): void {
     this.redis.set(key, JSON.stringify(subject));
   }
@@ -69,5 +79,9 @@ export class StorageService {
 
   private getHandStatuteKey(identifier: string): string {
     return 'statute:' + identifier;
+  }
+
+  private getTrickKey(identifier: string): string {
+    return 'trick:' + identifier;
   }
 }
