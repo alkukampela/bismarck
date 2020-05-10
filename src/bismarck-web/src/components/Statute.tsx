@@ -69,7 +69,6 @@ export const StatuteSummary = () => {
       {typeof statute.handType.gameType?.trumpSuit !== 'undefined' && (
         <div>Valtti: {trumpSuitName(statute.handType.gameType.trumpSuit)}</div>
       )}
-      <hr />
     </div>
   );
 };
