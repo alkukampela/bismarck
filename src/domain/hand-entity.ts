@@ -19,6 +19,7 @@ import {
   playCard,
 } from './trick-machine';
 import { Game } from '../types/game';
+import { CardEntity } from './card-entity';
 
 export class HandEntity {
   private _storageService: StorageService;
@@ -200,13 +201,22 @@ export class HandEntity {
     const statute = await this._storageService.fetchHandStatute(gameId);
     const playerIndex = this.getPlayersIndex(player, statute);
 
-    if (!this._cardManager.hasPlayerCard(playerIndex, card, gameId)) {
+    const hasPlayerCard = await this._cardManager.hasPlayerCard(
+      playerIndex,
+      card,
+      gameId
+    );
+    if (!hasPlayerCard) {
       return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
-    if (
-      !this.checkCardsLegality(playerIndex, card, gameId, this._cardManager)
-    ) {
+    const isMoveLegal = await this.checkCardsLegality(
+      playerIndex,
+      card,
+      trick,
+      gameId
+    );
+    if (!isMoveLegal) {
       return Promise.reject(Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP));
     }
 
@@ -268,45 +278,46 @@ export class HandEntity {
     return player.name === handStatute.eldestHand.name;
   }
 
-  // TODO Fix this crap
-  private checkCardsLegality(
+  private async checkCardsLegality(
     playerIndex: number,
     card: Card,
-    gameId: string,
-    cardManager: CardManager
+    trick: Trick,
+    gameId: string
   ) {
-    /*
-    if (this._currentTrick.isTrickSuit(card)) {
+    if (CardEntity.suits.get(card.suit) === trick.trickSuit) {
+      console.log('Playing trick card');
       return true;
     }
 
-    if (
-      !this._currentTrick.isTrickSuit(card) &&
-      cardManager.hasPlayerCardsOfSuit(
-        playerIndex,
-        this._currentTrick.getTrickSuit(),
-        gameId
-      )
-    ) {
+    const playersCards = await this._cardManager.getPlayersCards(
+      playerIndex,
+      gameId
+    );
+
+    if (this.playerHasCardsOfSuit(trick.trickSuit, playersCards)) {
+      console.log('Not following trick suit');
       return false;
     }
 
-    if (this._currentTrick.isTrumpSuit(card)) {
+    if (CardEntity.suits.get(card.suit) === trick.trumpSuit) {
+      console.log('Playing trump card');
       return true;
     }
 
-    if (
-      !this._currentTrick.isTrumpSuit(card) &&
-      cardManager.hasPlayerCardsOfSuit(
-        playerIndex,
-        this._currentTrick.getTrumpSuit(),
-        gameId
-      )
-    ) {
+    if (this.playerHasCardsOfSuit(trick.trumpSuit, playersCards)) {
+      console.log('Not playing trump suit');
       return false;
-    }*/
+    }
 
     return true;
+  }
+
+  private playerHasCardsOfSuit(trickSuit: Suit, playersCards: Card[]): boolean {
+    return (
+      playersCards.filter(
+        (card) => CardEntity.suits.get(card.suit) === trickSuit
+      ).length > 0
+    );
   }
 
   private async getTrick(gameId: string): Promise<Trick> {
