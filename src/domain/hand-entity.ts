@@ -55,35 +55,33 @@ export class HandEntity {
     card: Card,
     gameId: string
   ): Promise<Card> {
-    return this._storageService
-      .fetchHandStatute(gameId)
-      .then(async (statute) => {
-        if (!this.isEldestHand(player, statute)) {
-          return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
-        }
+    const statute = await this._storageService.fetchHandStatute(gameId);
 
-        const playerIndex = this.getPlayersIndex(player, statute);
+    if (!this.isEldestHand(player, statute)) {
+      return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
+    }
 
-        const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
-          playerIndex,
-          card,
-          gameId
-        );
-        if (!hasPlayerCardCard) {
-          return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
-        }
+    const playerIndex = this.getPlayersIndex(player, statute);
 
-        const hasTooManyCards = await this._cardManager.hasTooManyCards(
-          playerIndex,
-          gameId
-        );
-        if (!hasTooManyCards) {
-          return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
-        }
+    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+      playerIndex,
+      card,
+      gameId
+    );
+    if (!hasPlayerCardCard) {
+      return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
+    }
 
-        this._cardManager.removeCard(card, gameId);
-        return card;
-      });
+    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+      playerIndex,
+      gameId
+    );
+    if (!hasTooManyCards) {
+      return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
+    }
+
+    this._cardManager.removeCard(card, gameId);
+    return card;
   }
 
   public async getStatute(gameId: string): Promise<HandStatute> {
@@ -100,27 +98,27 @@ export class HandEntity {
     chosenGameType: GameType,
     suit?: Suit
   ): Promise<HandStatute> {
-    return this._storageService.fetchHandStatute(gameId).then((statute) => {
-      if (!this.isEldestHand(player, statute)) {
-        throw Error(ErrorTypes.MUST_BE_ELDEST_HAND);
-      }
+    const statute = await this._storageService.fetchHandStatute(gameId);
 
-      if (statute.handType.gameType.value) {
-        throw Error(ErrorTypes.GAME_TYPE_CHOSEN);
-      }
+    if (!this.isEldestHand(player, statute)) {
+      return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
+    }
 
-      // TODO check that suit is passed if game type is trump and
-      // not passed in other game types
+    if (statute.handType.gameType.value) {
+      return Promise.reject(Error(ErrorTypes.GAME_TYPE_CHOSEN));
+    }
 
-      const chosenStatute = new HandStatuteMachine().chooseGameType(
-        statute,
-        chosenGameType,
-        suit
-      );
+    // TODO check that suit is passed if game type is trump and
+    // not passed in other game types
 
-      this._storageService.storeHandStatute(gameId, chosenStatute);
-      return chosenStatute;
-    });
+    const chosenStatute = new HandStatuteMachine().chooseGameType(
+      statute,
+      chosenGameType,
+      suit
+    );
+
+    this._storageService.storeHandStatute(gameId, chosenStatute);
+    return chosenStatute;
   }
 
   public async getCurrentTrick(gameId: string): Promise<TrickCards> {
@@ -139,52 +137,49 @@ export class HandEntity {
     card: Card,
     gameId: string
   ): Promise<TrickCards> {
-    return this._storageService
-      .fetchHandStatute(gameId)
-      .then(async (handStatute) => {
-        const playerIndex = this.getPlayersIndex(player, handStatute);
+    const isOpen = await this.isTrickOpen(gameId);
+    if (isOpen) {
+      return Promise.reject(new Error(ErrorTypes.TRICK_ALREADY_STARTED));
+    }
 
-        const isOpen = await this.isTrickOpen(gameId);
-        if (isOpen) {
-          return Promise.reject(new Error(ErrorTypes.TRICK_ALREADY_STARTED));
-        }
+    const statute = await this._storageService.fetchHandStatute(gameId);
+    const playerIndex = this.getPlayersIndex(player, statute);
 
-        if (!handStatute.handType.gameType.value) {
-          return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
-        }
+    if (!statute.handType.gameType.value) {
+      return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
+    }
 
-        const trickLead = await this.getTrickLead(gameId, handStatute);
-        if (player.name !== trickLead.name) {
-          return Promise.reject(new Error(ErrorTypes.NOT_TRICK_LEAD));
-        }
+    const trickLead = await this.getTrickLead(gameId, statute);
+    if (player.name !== trickLead.name) {
+      return Promise.reject(new Error(ErrorTypes.NOT_TRICK_LEAD));
+    }
 
-        const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
-          playerIndex,
-          card,
-          gameId
-        );
-        if (!hasPlayerCardCard) {
-          return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
-        }
+    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+      playerIndex,
+      card,
+      gameId
+    );
+    if (!hasPlayerCardCard) {
+      return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
+    }
 
-        const hasTooManyCards = await this._cardManager.hasTooManyCards(
-          playerIndex,
-          gameId
-        );
+    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+      playerIndex,
+      gameId
+    );
 
-        if (hasTooManyCards) {
-          return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
-        }
+    if (hasTooManyCards) {
+      return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
+    }
 
-        const trick = initTrick(card, player, handStatute);
+    const trick = initTrick(card, player, statute);
 
-        this._cardManager.removeCard(card, gameId);
-        this.saveTrick(gameId, trick);
+    this._cardManager.removeCard(card, gameId);
+    this.saveTrick(gameId, trick);
 
-        return Promise.resolve({
-          cards: trick.trickCards,
-        });
-      });
+    return Promise.resolve({
+      cards: trick.trickCards,
+    });
   }
 
   public async addCardToTrick(
@@ -202,31 +197,30 @@ export class HandEntity {
       return Promise.reject(Error(ErrorTypes.OTHER_PLAYER_HAS_TURN));
     }
 
-    return this._storageService.fetchHandStatute(gameId).then((statute) => {
-      const playerIndex = this.getPlayersIndex(player, statute);
+    const statute = await this._storageService.fetchHandStatute(gameId);
+    const playerIndex = this.getPlayersIndex(player, statute);
 
-      if (!this._cardManager.hasPlayerCard(playerIndex, card, gameId)) {
-        return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
-      }
+    if (!this._cardManager.hasPlayerCard(playerIndex, card, gameId)) {
+      return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
+    }
 
-      if (
-        !this.checkCardsLegality(playerIndex, card, gameId, this._cardManager)
-      ) {
-        return Promise.reject(Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP));
-      }
+    if (
+      !this.checkCardsLegality(playerIndex, card, gameId, this._cardManager)
+    ) {
+      return Promise.reject(Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP));
+    }
 
-      const updatedTrick = playCard(trick, player, card);
-      this._cardManager.removeCard(card, gameId);
+    const updatedTrick = playCard(trick, player, card);
+    this._cardManager.removeCard(card, gameId);
 
-      if (allCardsArePlayed(updatedTrick)) {
-        new HandScore().takeTrick(getTaker(updatedTrick), gameId);
-      }
+    if (allCardsArePlayed(updatedTrick)) {
+      new HandScore().takeTrick(getTaker(updatedTrick), gameId);
+    }
 
-      this.saveTrick(gameId, updatedTrick);
-      return {
-        cards: updatedTrick.trickCards,
-      };
-    });
+    this.saveTrick(gameId, updatedTrick);
+    return {
+      cards: updatedTrick.trickCards,
+    };
   }
 
   public async getHandsTrickCounts(gameId: string): Promise<PlayerScore[]> {
