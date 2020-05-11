@@ -21,6 +21,7 @@ export class HandStatuteMachine {
       eldestHand: playerOrder[0],
       handType,
       playerOrder,
+      playersInGame: playerOrder.length,
     };
   }
 

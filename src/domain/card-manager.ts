@@ -5,8 +5,7 @@ import { Suit } from '../types/suit';
 import shuffle from 'fisher-yates';
 
 export class CardManager {
-  private readonly PLAYERS = 4;
-  private readonly CARDS_IN_HAND = 12;
+  private readonly TABLE_CARDS = 4;
 
   private static _instance: CardManager;
 
@@ -32,10 +31,11 @@ export class CardManager {
 
   public async hasPlayerCard(
     player: number,
+    playersInGame: number,
     card: Card,
     gameId: string
   ): Promise<boolean> {
-    const cards = await this.getPlayersCards(player, gameId);
+    const cards = await this.getPlayersCards(player, playersInGame, gameId);
     return (
       cards.filter((pc: Card) => pc.rank === card.rank && pc.suit === card.suit)
         .length > 0
@@ -56,17 +56,18 @@ export class CardManager {
   public async getTableCards(gameId: string): Promise<Card[]> {
     const cards = await this._storageService.fetchCards(gameId);
     return cards
-      .slice(this.PLAYERS * this.CARDS_IN_HAND)
+      .slice(-1 * this.TABLE_CARDS)
       .map((container) => container.card);
   }
 
   public async getPlayersCards(
     player: number,
+    playersInGame: number,
     gameId: string
   ): Promise<Card[]> {
     const cards = await this._storageService.fetchCards(gameId);
     return cards
-      .filter((_val, index) => this.isPlayersCard(player, index))
+      .filter((_val, index) => this.isPlayersCard(player, playersInGame, index))
       .filter((container) => !container.isPlayed)
       .sort(
         (a, b) =>
@@ -84,30 +85,33 @@ export class CardManager {
   public async getTrumpSuit(gameId: string): Promise<Suit> {
     const cards = await this._storageService.fetchCards(gameId);
     return CardEntity.suits.get(
-      cards
-        .slice(this.PLAYERS * this.CARDS_IN_HAND)
-        .map((container) => container.card)[0].suit
+      cards.slice(-1 * this.TABLE_CARDS).map((container) => container.card)[0]
+        .suit
     );
   }
 
   public async hasTooManyCards(
     player: number,
+    playersInGame: number,
     gameId: string
   ): Promise<boolean> {
-    return this.getPlayersCards(player, gameId).then((cards) => {
-      return cards.length > this.CARDS_IN_HAND;
+    return this.getPlayersCards(player, playersInGame, gameId).then((cards) => {
+      return cards.length > this.cardsInHand(playersInGame);
     });
   }
 
   public async hasPlayerCardsOfSuit(
     player: number,
+    playersInGame: number,
     suit: Suit,
     gameId: string
   ): Promise<boolean> {
     const cards = await this._storageService.fetchCards(gameId);
     return (
       cards
-        .filter((_val, index) => this.isPlayersCard(player, index))
+        .filter((_val, index) =>
+          this.isPlayersCard(player, playersInGame, index)
+        )
         .filter((container) => !container.isPlayed)
         .filter(
           (container) => container.card.suit === CardEntity.suits.getKey(suit)
@@ -115,8 +119,20 @@ export class CardManager {
     );
   }
 
-  private isPlayersCard(player: number, index: number): boolean {
-    return Math.trunc((index / this.CARDS_IN_HAND) % this.PLAYERS) === player;
+  private isPlayersCard(
+    player: number,
+    playersInGame: number,
+    cardIndex: number
+  ): boolean {
+    return (
+      Math.trunc(
+        (cardIndex / this.cardsInHand(playersInGame)) % playersInGame
+      ) === player
+    );
+  }
+
+  private cardsInHand(playersInGame: number): number {
+    return (52 - this.TABLE_CARDS) / playersInGame;
   }
 
   private shuffledDeck(): number[] {

@@ -11,8 +11,8 @@ export const createGame = async (
 ): Promise<Game> => {
   const storageService = StorageService.getInstance();
 
-  if (players.length !== 4) {
-    return Promise.reject('Must have 4 players');
+  if (players.length < 3 || players.length > 4) {
+    return Promise.reject('Must have 3 or 4 players');
   }
 
   const existingGame = await storageService.fetchGame(gameId);

@@ -13,6 +13,7 @@ export const StatuteSummary = () => {
       isChoice: false,
     },
     playerOrder: [],
+    playersInGame: 0,
   });
 
   React.useEffect(() => {

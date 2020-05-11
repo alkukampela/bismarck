@@ -43,12 +43,12 @@ export class HandEntity {
   }
 
   public async getCards(player: Player, gameId: string): Promise<Card[]> {
-    return this._storageService.fetchHandStatute(gameId).then((statute) => {
-      return this._cardManager.getPlayersCards(
-        this.getPlayersIndex(player, statute),
-        gameId
-      );
-    });
+    const statute = await this._storageService.fetchHandStatute(gameId);
+    return this._cardManager.getPlayersCards(
+      this.getPlayersIndex(player, statute),
+      statute.playersInGame,
+      gameId
+    );
   }
 
   public async removeCard(
@@ -66,6 +66,7 @@ export class HandEntity {
 
     const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
       playerIndex,
+      statute.playersInGame,
       card,
       gameId
     );
@@ -75,6 +76,7 @@ export class HandEntity {
 
     const hasTooManyCards = await this._cardManager.hasTooManyCards(
       playerIndex,
+      statute.playersInGame,
       gameId
     );
     if (!hasTooManyCards) {
@@ -157,6 +159,7 @@ export class HandEntity {
 
     const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
       playerIndex,
+      statute.playersInGame,
       card,
       gameId
     );
@@ -166,6 +169,7 @@ export class HandEntity {
 
     const hasTooManyCards = await this._cardManager.hasTooManyCards(
       playerIndex,
+      statute.playersInGame,
       gameId
     );
 
@@ -203,6 +207,7 @@ export class HandEntity {
 
     const hasPlayerCard = await this._cardManager.hasPlayerCard(
       playerIndex,
+      statute.playersInGame,
       card,
       gameId
     );
@@ -291,6 +296,7 @@ export class HandEntity {
 
     const playersCards = await this._cardManager.getPlayersCards(
       playerIndex,
+      trick.trickCards.length,
       gameId
     );
 
