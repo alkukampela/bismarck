@@ -59,6 +59,7 @@ export const playCard = (trick: Trick, player: Player, card: Card): Trick => {
 
 const playerWithTopRankedCardBySuit = (trick: Trick, suit: Suit): Player => {
   const playersCard = trick.trickCards
+    .filter((pc) => !!pc.card)
     .filter((pc) => CardEntity.getSuit(pc.card) === suit)
     .sort((a, b) => CardEntity.getRank(b.card) - CardEntity.getRank(a.card))[0];
   if (!!playersCard) {

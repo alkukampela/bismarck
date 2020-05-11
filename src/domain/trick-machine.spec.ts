@@ -3,6 +3,7 @@ import {
   hasPlayerTurn,
   allCardsArePlayed,
   playCard,
+  getTaker,
 } from './trick-machine';
 import { GameType } from '../types/game-type';
 import { Suit } from '../types/suit';
@@ -168,4 +169,84 @@ test('Ensure card is played properly', () => {
   expect(actual.trickCards[1].card).toBe(playersCard);
   expect(actual.trickCards[2].player).toBe(PLAYER_3);
   expect(actual.trickCards[2].card).toBe(undefined);
+});
+
+test('Ensure first player wins with higher rank', () => {
+  const card1 = { rank: 'J', suit: '♦️' };
+  const card2 = { rank: '3', suit: '♦️' };
+
+  const trick = {
+    trickCards: [
+      { player: PLAYER_1, card: card1 },
+      { player: PLAYER_2, card: card2 },
+    ],
+    trumpSuit: Suit.DIAMOND,
+    trickSuit: Suit.DIAMOND,
+  };
+
+  expect(getTaker(trick)).toBe(PLAYER_1);
+});
+
+test('Ensure second player wins with higher rank', () => {
+  const card1 = { rank: '2', suit: '♥️' };
+  const card2 = { rank: '3', suit: '♥️' };
+
+  const trick = {
+    trickCards: [
+      { player: PLAYER_1, card: card1 },
+      { player: PLAYER_2, card: card2 },
+    ],
+    trumpSuit: Suit.HEART,
+    trickSuit: Suit.HEART,
+  };
+
+  expect(getTaker(trick)).toBe(PLAYER_2);
+});
+
+test('Ensure lower rank with trick suit wins when no trump', () => {
+  const card1 = { rank: '2', suit: '♥️' };
+  const card2 = { rank: '9', suit: '♠️' };
+
+  const trick = {
+    trickCards: [
+      { player: PLAYER_1, card: card1 },
+      { player: PLAYER_2, card: card2 },
+    ],
+    trumpSuit: Suit.HEART,
+    trickSuit: Suit.HEART,
+  };
+
+  expect(getTaker(trick)).toBe(PLAYER_1);
+});
+
+test('Ensure lower rank with trump suit wins when trump', () => {
+  const card1 = { rank: '2', suit: '♦️' };
+  const card2 = { rank: 'A', suit: '♠️' };
+
+  const trick = {
+    trickCards: [
+      { player: PLAYER_1, card: card1 },
+      { player: PLAYER_2, card: card2 },
+    ],
+    trumpSuit: Suit.DIAMOND,
+    trickSuit: Suit.SPADE,
+  };
+
+  expect(getTaker(trick)).toBe(PLAYER_1);
+});
+
+test('Ensure highest rank trick card wins when no trump cards in trick', () => {
+  const card1 = { rank: '4', suit: '♦️' };
+  const card2 = { rank: '5', suit: '♦️' };
+
+  const trick = {
+    trickCards: [
+      { player: PLAYER_1, card: card1 },
+      { player: PLAYER_2, card: card2 },
+    ],
+    trumpSuit: Suit.HEART,
+    trickSuit: Suit.DIAMOND,
+  };
+
+  expect(getTaker(trick)).toBe(PLAYER_2);
 });

@@ -43,7 +43,7 @@ export class CardEntity {
   }
 
   static getRank(card: Card): number {
-    throw CardEntity.ranks.get(card.rank);
+    return CardEntity.ranks.get(card.rank);
   }
 
   public toCard(): Card {
