@@ -38,8 +38,12 @@ export class CardEntity {
     return new CardEntity(suit.valueOf() * 13 + rank.valueOf());
   }
 
-  public static getSuit(firstCard: Card): Suit {
-    return CardEntity.suits.get(firstCard.suit);
+  public static getSuit(card: Card): Suit {
+    return CardEntity.suits.get(card.suit);
+  }
+
+  static getRank(card: Card): number {
+    throw CardEntity.ranks.get(card.rank);
   }
 
   public toCard(): Card {

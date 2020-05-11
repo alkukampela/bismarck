@@ -305,7 +305,7 @@ export class HandEntity {
       return false;
     }
 
-    if (CardEntity.suits.get(card.suit) === trick.trumpSuit) {
+    if (CardEntity.getSuit(card) === trick.trumpSuit) {
       console.log('Playing trump card');
       return true;
     }
@@ -320,9 +320,8 @@ export class HandEntity {
 
   private playerHasCardsOfSuit(trickSuit: Suit, playersCards: Card[]): boolean {
     return (
-      playersCards.filter(
-        (card) => CardEntity.suits.get(card.suit) === trickSuit
-      ).length > 0
+      playersCards.filter((card) => CardEntity.getSuit(card) === trickSuit)
+        .length > 0
     );
   }
 
