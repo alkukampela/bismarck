@@ -58,7 +58,7 @@ export class CardEntity {
   }
 
   public getSuit(): Suit {
-    return Math.trunc(this._value / 13);
+    return Math.trunc(this._value / 13) + 1;
   }
 
   public equals(rank: string, suit: string): boolean {

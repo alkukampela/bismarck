@@ -80,6 +80,29 @@ test('Ensure trump trick is initialized correctly', () => {
   expect(actual.trumpSuit).toBe(Suit.SPADE);
 });
 
+test('Ensure trump trick is initialized correctly with diamond suit', () => {
+  const card = { rank: '3', suit: '♠️' };
+
+  const actual = initTrick(card, PLAYER_1, {
+    playerOrder: PLAYERS,
+    playersInGame: hasPlayerTurn.length,
+    handType: {
+      isChoice: false,
+      gameType: {
+        value: GameType.TRUMP,
+        trumpSuit: Suit.DIAMOND,
+      },
+    },
+    eldestHand: PLAYER_1,
+  });
+
+  expect(actual.trickCards.length).toBe(3);
+  expect(actual.trickCards[0].player).toBe(PLAYER_1);
+  expect(actual.trickCards[0].card).toBe(card);
+  expect(actual.trickSuit).toBe(Suit.SPADE);
+  expect(actual.trumpSuit).toBe(Suit.DIAMOND);
+});
+
 test('Ensure all cards are not played when trick is ongoing', () => {
   const card = { rank: '3', suit: '♦️' };
 
