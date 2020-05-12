@@ -4,6 +4,7 @@ import { HandScore } from './hand-score';
 import { HandStatuteMachine } from './hand-statute-machine';
 import { StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
+import { Game } from '../types/game';
 import { GameType } from '../types/game-type';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
@@ -18,8 +19,7 @@ import {
   hasPlayerTurn,
   playCard,
 } from './trick-machine';
-import { Game } from '../types/game';
-import { CardEntity } from './card-entity';
+import { getSuit } from './card-helper';
 
 export class HandEntity {
   private _storageService: StorageService;
@@ -289,8 +289,7 @@ export class HandEntity {
     trick: Trick,
     gameId: string
   ) {
-    if (CardEntity.suits.get(card.suit) === trick.trickSuit) {
-      console.log('Playing trick card');
+    if (getSuit(card) === trick.trickSuit) {
       return true;
     }
 
@@ -301,17 +300,14 @@ export class HandEntity {
     );
 
     if (this.playerHasCardsOfSuit(trick.trickSuit, playersCards)) {
-      console.log('Not following trick suit');
       return false;
     }
 
-    if (CardEntity.getSuit(card) === trick.trumpSuit) {
-      console.log('Playing trump card');
+    if (getSuit(card) === trick.trumpSuit) {
       return true;
     }
 
     if (this.playerHasCardsOfSuit(trick.trumpSuit, playersCards)) {
-      console.log('Not playing trump suit');
       return false;
     }
 
@@ -320,8 +316,7 @@ export class HandEntity {
 
   private playerHasCardsOfSuit(trickSuit: Suit, playersCards: Card[]): boolean {
     return (
-      playersCards.filter((card) => CardEntity.getSuit(card) === trickSuit)
-        .length > 0
+      playersCards.filter((card) => getSuit(card) === trickSuit).length > 0
     );
   }
 

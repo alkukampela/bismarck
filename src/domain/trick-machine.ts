@@ -1,10 +1,10 @@
-import { CardEntity } from './card-entity';
 import { Card } from '../types/card';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Trick } from '../types/trick';
 import { TrickCard } from '../types/trick-cards';
 import { Suit } from '../types/suit';
+import { getSuit, getRank } from './card-helper';
 
 const initTrickCards = (
   trickLead: Player,
@@ -37,9 +37,8 @@ export const initTrick = (
 ): Trick => {
   return {
     trickCards: initTrickCards(trickLead, handStatute.playerOrder, firstCard),
-    trumpSuit:
-      handStatute.handType.gameType.trumpSuit || CardEntity.getSuit(firstCard),
-    trickSuit: CardEntity.getSuit(firstCard),
+    trumpSuit: handStatute.handType.gameType.trumpSuit || getSuit(firstCard),
+    trickSuit: getSuit(firstCard),
   };
 };
 
@@ -60,8 +59,8 @@ export const playCard = (trick: Trick, player: Player, card: Card): Trick => {
 const playerWithTopRankedCardBySuit = (trick: Trick, suit: Suit): Player => {
   const playersCard = trick.trickCards
     .filter((pc) => !!pc.card)
-    .filter((pc) => CardEntity.getSuit(pc.card) === suit)
-    .sort((a, b) => CardEntity.getRank(b.card) - CardEntity.getRank(a.card))[0];
+    .filter((pc) => getSuit(pc.card) === suit)
+    .sort((a, b) => getRank(b.card) - getRank(a.card))[0];
   if (!!playersCard) {
     return playersCard.player;
   }

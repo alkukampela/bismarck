@@ -1,5 +1,5 @@
-import { CardEntity } from './card-entity';
-import { StorageService, CardContainer } from '../persistence/storage-service';
+import { fromNumber, getRank, getSuit } from './card-helper';
+import { CardContainer, StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { Suit } from '../types/suit';
 import shuffle from 'fisher-yates';
@@ -23,7 +23,7 @@ export class CardManager {
     const cards: CardContainer[] = [];
     this.shuffledDeck()
       .map((value: number) => {
-        return CardEntity.fromNumber(value);
+        return fromNumber(value);
       })
       .forEach((card) => cards.push({ card, isPlayed: false }));
     this._storageService.storeCards(gameId, cards);
@@ -69,16 +69,15 @@ export class CardManager {
     return cards
       .filter((_val, index) => this.isPlayersCard(player, playersInGame, index))
       .filter((container) => !container.isPlayed)
-      .sort((a, b) => CardEntity.getRank(a.card) - CardEntity.getRank(b.card))
-      .sort((a, b) => CardEntity.getSuit(a.card) - CardEntity.getSuit(b.card))
+      .sort((a, b) => getRank(a.card) - getRank(b.card))
+      .sort((a, b) => getSuit(a.card) - getSuit(b.card))
       .map((container) => container.card);
   }
 
   public async getTrumpSuit(gameId: string): Promise<Suit> {
     const cards = await this._storageService.fetchCards(gameId);
-    return CardEntity.suits.get(
+    return getSuit(
       cards.slice(-1 * this.TABLE_CARDS).map((container) => container.card)[0]
-        .suit
     );
   }
 
@@ -105,9 +104,7 @@ export class CardManager {
           this.isPlayersCard(player, playersInGame, index)
         )
         .filter((container) => !container.isPlayed)
-        .filter(
-          (container) => container.card.suit === CardEntity.suits.getKey(suit)
-        ).length > 0
+        .filter((container) => getSuit(container.card) === suit).length > 0
     );
   }
 
