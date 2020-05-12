@@ -1,4 +1,4 @@
-import { fromNumber, getRank, getSuit } from './card-helper';
+import { fromNumber, getRank, getSuit } from './card-mapper';
 import { CardContainer, StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { Suit } from '../types/suit';
@@ -6,6 +6,7 @@ import shuffle from 'fisher-yates';
 
 export class CardManager {
   private readonly TABLE_CARDS = 4;
+  private readonly DECK_SIZE = 52;
 
   private static _instance: CardManager;
 
@@ -121,11 +122,11 @@ export class CardManager {
   }
 
   private cardsInHand(playersInGame: number): number {
-    return (52 - this.TABLE_CARDS) / playersInGame;
+    return (this.DECK_SIZE - this.TABLE_CARDS) / playersInGame;
   }
 
   private shuffledDeck(): number[] {
-    const deck = [...this.sequenceGenerator(0, 52)];
+    const deck = [...this.sequenceGenerator(0, this.DECK_SIZE)];
     return shuffle(deck);
   }
 
