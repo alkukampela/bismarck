@@ -23,7 +23,7 @@ export class CardManager {
     const cards: CardContainer[] = [];
     this.shuffledDeck()
       .map((value: number) => {
-        return new CardEntity(value).toCard();
+        return CardEntity.fromNumber(value);
       })
       .forEach((card) => cards.push({ card, isPlayed: false }));
     this._storageService.storeCards(gameId, cards);
@@ -69,16 +69,8 @@ export class CardManager {
     return cards
       .filter((_val, index) => this.isPlayersCard(player, playersInGame, index))
       .filter((container) => !container.isPlayed)
-      .sort(
-        (a, b) =>
-          CardEntity.fromCard(a.card).getRank() -
-          CardEntity.fromCard(b.card).getRank()
-      )
-      .sort(
-        (a, b) =>
-          CardEntity.fromCard(a.card).getSuit() -
-          CardEntity.fromCard(b.card).getSuit()
-      )
+      .sort((a, b) => CardEntity.getRank(a.card) - CardEntity.getRank(b.card))
+      .sort((a, b) => CardEntity.getSuit(a.card) - CardEntity.getSuit(b.card))
       .map((container) => container.card);
   }
 

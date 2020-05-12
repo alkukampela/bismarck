@@ -26,58 +26,26 @@ export class CardEntity {
     '♠️': Suit.SPADE,
   });
 
-  private _value: number;
-
-  constructor(value: number) {
-    this._value = value;
-  }
-
-  public static fromCard(card: Card): CardEntity {
-    const suit = CardEntity.suits.get(card.suit);
-    const rank = CardEntity.ranks.get(card.rank);
-    return new CardEntity(suit.valueOf() * 13 + rank.valueOf());
+  public static fromNumber(value: number): Card {
+    return {
+      rank: CardEntity.ranks.getKey(CardEntity.rankFrom(value)),
+      suit: CardEntity.suits.getKey(CardEntity.suitFrom(value)),
+    };
   }
 
   public static getSuit(card: Card): Suit {
     return CardEntity.suits.get(card.suit);
   }
 
-  static getRank(card: Card): number {
+  public static getRank(card: Card): number {
     return CardEntity.ranks.get(card.rank);
   }
 
-  public toCard(): Card {
-    return {
-      rank: this.printRank(),
-      suit: this.printSuit(),
-    };
+  private static rankFrom(value: number): number {
+    return value % 13;
   }
 
-  public getRank(): number {
-    return this._value % 13;
-  }
-
-  public getSuit(): Suit {
-    return Math.trunc(this._value / 13) + 1;
-  }
-
-  public equals(rank: string, suit: string): boolean {
-    return this.rankEquals(rank) && this.suitEquals(suit);
-  }
-
-  private rankEquals(rank: string): boolean {
-    return this.getRank() === CardEntity.ranks.get(rank);
-  }
-
-  private suitEquals(suit: string): boolean {
-    return this.getSuit() === CardEntity.suits.get(suit);
-  }
-
-  private printRank(): string {
-    return CardEntity.ranks.getKey(this.getRank());
-  }
-
-  private printSuit(): string {
-    return CardEntity.suits.getKey(this.getSuit());
+  private static suitFrom(value: number): Suit {
+    return Math.trunc(value / 13) + 1;
   }
 }
