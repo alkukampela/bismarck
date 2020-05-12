@@ -19,7 +19,7 @@ import {
   hasPlayerTurn,
   playCard,
 } from './trick-machine';
-import { getSuit } from './card-helper';
+import { getSuit } from './card-mapper';
 
 export class HandEntity {
   private _storageService: StorageService;

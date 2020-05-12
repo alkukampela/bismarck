@@ -4,7 +4,7 @@ import { Player } from '../types/player';
 import { Trick } from '../types/trick';
 import { TrickCard } from '../types/trick-cards';
 import { Suit } from '../types/suit';
-import { getSuit, getRank } from './card-helper';
+import { getSuit, getRank } from './card-mapper';
 
 const initTrickCards = (
   trickLead: Player,
