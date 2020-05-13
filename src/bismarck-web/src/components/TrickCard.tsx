@@ -8,7 +8,7 @@ export const TrickCard = ({
   trickCard: TrickCardType;
 }) => {
   return (
-    <div>
+    <div className="trick-card-container">
       {!!trickCard.card ? (
         <Card card={trickCard.card} />
       ) : (

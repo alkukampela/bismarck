@@ -23,6 +23,10 @@ hr {
   column-count: 4;
 }
 
+.trick-card-container {
+  padding-bottom: 1rem;
+}
+
 .players-cards {
   display: flex;
   justify-content: space-between;
@@ -75,4 +79,8 @@ hr {
   -webkit-box-shadow: none;
   box-shadow: none;
   background-color: inherit;
+}
+
+.deal-button {
+  margin-bottom: 1rem;
 }

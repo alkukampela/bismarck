@@ -1,5 +1,6 @@
 import { CardManager } from './domain/card-manager';
-import { HandEntity } from './domain/hand-entity';
+import { createGame, initHand } from './domain/game-service';
+import { HandService } from './domain/hand-service';
 import { StorageService } from './persistence/storage-service';
 import { Card } from './types/card';
 import { Player } from './types/player';
@@ -12,7 +13,6 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
-import { createGame } from './domain/game-entity';
 
 const app = express();
 
@@ -29,7 +29,7 @@ const port = process.env.PORT || 3001;
 const router = express.Router();
 
 const storageService = StorageService.getInstance();
-const hand = new HandEntity(
+const hand = new HandService(
   storageService,
   CardManager.getInstance(storageService)
 );
@@ -54,9 +54,14 @@ const publishTrick = (trick: TrickCards, gameId: string) => {
 };
 
 router.get('/games/:id/hand/statute', (req, res) => {
-  hand.getStatute(req.params.id).then((statute) => {
-    res.send(statute);
-  });
+  hand
+    .getStatute(req.params.id)
+    .then((statute) => {
+      res.send(statute);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+    });
 });
 
 router.get('/games/:id/hand/cards', async (req, res) => {
@@ -117,7 +122,9 @@ router.post('/games/:id/hand/trick/cards', (req, res) => {
 });
 
 router.get('/games/:id/hand/trick-count', async (req, res) => {
-  hand.getHandsTrickCounts(req.params.id).then((scores) => res.send(scores));
+  hand.getHandsTrickCounts(req.params.id).then((scores) => {
+    res.send(scores);
+  });
 });
 
 router.get('/games/:id/hand/tablecards', (req, res) => {
@@ -143,6 +150,16 @@ router.post('/games/:id', (req, res) => {
     });
 });
 
+router.post('/games/:id/hand', (req, res) => {
+  initHand(req.params.id)
+    .then((statute) => {
+      res.send(statute);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+    });
+});
+
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');
 
@@ -150,9 +167,9 @@ wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
 
   ws.gameId = parameters.query.gameId as string;
 
-  hand
-    .getCurrentTrick(ws.gameId)
-    .then((trick) => ws.send(JSON.stringify(trick)));
+  hand.getCurrentTrick(ws.gameId).then((trick) => {
+    ws.send(JSON.stringify(trick));
+  });
 
   ws.on('close', () => console.log('Client disconnected'));
 });

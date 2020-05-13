@@ -11,7 +11,10 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
     return `card ${['♦️', '♥️'].includes(suit) ? 'red-card' : 'black-card'}`;
   };
 
-  async function removeCard(card: CardType, player: string): Promise<boolean> {
+  const removeCard = async (
+    card: CardType,
+    player: string
+  ): Promise<boolean> => {
     const resp = await fetch(
       `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
       {
@@ -20,9 +23,12 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
       }
     );
     return resp.ok;
-  }
+  };
 
-  async function startTrick(card: CardType, player: string): Promise<boolean> {
+  const startTrick = async (
+    card: CardType,
+    player: string
+  ): Promise<boolean> => {
     const resp = await fetch(
       `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick?player=${player}`,
       {
@@ -35,9 +41,12 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
       }
     );
     return resp.ok;
-  }
+  };
 
-  async function addToTrick(card: CardType, player: string): Promise<boolean> {
+  const addToTrick = async (
+    card: CardType,
+    player: string
+  ): Promise<boolean> => {
     const resp = await fetch(
       `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick/cards?player=${player}`,
       {
@@ -50,7 +59,7 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
       }
     );
     return resp.ok;
-  }
+  };
 
   const tryEverything = () => {
     if (!player) {

@@ -12,10 +12,10 @@ export class HandScore {
 
   public setUp(players: Player[], gameId: string): void {
     this._storageService.storeScores(
-      gameId,
       players.map((player) => {
         return { player, score: 0 } as PlayerScore;
-      })
+      }),
+      gameId
     );
   }
 
@@ -24,7 +24,7 @@ export class HandScore {
       scores
         .filter((score) => player.name === score.player.name)
         .forEach((x) => x.score++);
-      this._storageService.storeScores(gameId, scores);
+      this._storageService.storeScores(scores, gameId);
     });
   }
 

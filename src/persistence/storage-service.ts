@@ -23,7 +23,7 @@ export class StorageService {
     return this._instance || (this._instance = new this());
   }
 
-  public storeGame(identifier: string, game: Game): void {
+  public storeGame(game: Game, identifier: string): void {
     this.store(this.getGamesKey(identifier), game);
   }
 
@@ -32,7 +32,7 @@ export class StorageService {
     return JSON.parse(result);
   }
 
-  public storeCards(identifier: string, cards: CardContainer[]): void {
+  public storeCards(cards: CardContainer[], identifier: string): void {
     this.store(this.getCardsKey(identifier), cards);
   }
 
@@ -41,7 +41,7 @@ export class StorageService {
     return JSON.parse(result);
   }
 
-  public storeScores(identifier: string, scores: PlayerScore[]): void {
+  public storeScores(scores: PlayerScore[], identifier: string): void {
     this.store(this.getScoresKey(identifier), scores);
   }
 
@@ -50,7 +50,7 @@ export class StorageService {
     return JSON.parse(result);
   }
 
-  public storeHandStatute(identifier: string, statute: HandStatute): void {
+  public storeHandStatute(statute: HandStatute, identifier: string): void {
     this.store(this.getHandStatuteKey(identifier), statute);
   }
 

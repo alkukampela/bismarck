@@ -27,7 +27,7 @@ export class CardManager {
         return fromNumber(value);
       })
       .forEach((card) => cards.push({ card, isPlayed: false }));
-    this._storageService.storeCards(gameId, cards);
+    this._storageService.storeCards(cards, gameId);
   }
 
   public async hasPlayerCard(
@@ -50,12 +50,15 @@ export class CardManager {
           container.card.rank === cardToBeRemoved.rank &&
           container.card.suit === cardToBeRemoved.suit
       ).isPlayed = true;
-      this._storageService.storeCards(gameId, cards);
+      this._storageService.storeCards(cards, gameId);
     });
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
     const cards = await this._storageService.fetchCards(gameId);
+    if (!cards) {
+      return [];
+    }
     return cards
       .slice(-1 * this.TABLE_CARDS)
       .map((container) => container.card);
@@ -107,6 +110,11 @@ export class CardManager {
         .filter((container) => !container.isPlayed)
         .filter((container) => getSuit(container.card) === suit).length > 0
     );
+  }
+
+  public async noCardsLeft(gameId: string): Promise<boolean> {
+    const cards = await this._storageService.fetchCards(gameId);
+    return !cards || cards.filter((card) => !card.isPlayed).length === 0;
   }
 
   private isPlayersCard(

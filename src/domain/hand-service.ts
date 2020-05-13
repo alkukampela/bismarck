@@ -21,7 +21,7 @@ import {
 } from './trick-machine';
 import { getSuit } from './card-mapper';
 
-export class HandEntity {
+export class HandService {
   private _storageService: StorageService;
   private _cardManager: CardManager;
 
@@ -39,11 +39,14 @@ export class HandEntity {
     );
 
     new HandScore().setUp(handStatute.playerOrder, gameId);
-    this._storageService.storeHandStatute(gameId, handStatute);
+    this._storageService.storeHandStatute(handStatute, gameId);
   }
 
   public async getCards(player: Player, gameId: string): Promise<Card[]> {
     const statute = await this._storageService.fetchHandStatute(gameId);
+    if (!statute) {
+      return [];
+    }
     return this._cardManager.getPlayersCards(
       this.getPlayersIndex(player, statute),
       statute.playersInGame,
@@ -88,7 +91,11 @@ export class HandEntity {
   }
 
   public async getStatute(gameId: string): Promise<HandStatute> {
-    return this._storageService.fetchHandStatute(gameId);
+    const statute = await this._storageService.fetchHandStatute(gameId);
+    if (!statute) {
+      return Promise.reject(new Error(ErrorTypes.NOT_FOUND));
+    }
+    return statute;
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
@@ -120,11 +127,12 @@ export class HandEntity {
       suit
     );
 
-    this._storageService.storeHandStatute(gameId, chosenStatute);
+    this._storageService.storeHandStatute(chosenStatute, gameId);
     return chosenStatute;
   }
 
   public async getCurrentTrick(gameId: string): Promise<TrickCards> {
+    // TODO: add optional winner to return type
     return this.getTrick(gameId)
       .then((trick) => {
         return { cards: trick.trickCards };
@@ -232,6 +240,8 @@ export class HandEntity {
       new HandScore().takeTrick(getTaker(updatedTrick), gameId);
     }
 
+    // TODO: check if trick is finished and if it is save score
+
     this.saveTrick(gameId, updatedTrick);
     return {
       cards: updatedTrick.trickCards,
@@ -239,7 +249,16 @@ export class HandEntity {
   }
 
   public async getHandsTrickCounts(gameId: string): Promise<PlayerScore[]> {
-    return new HandScore().getTricks(gameId);
+    const scores = await new HandScore().getTricks(gameId);
+    if (!scores) {
+      return [];
+    }
+    return scores;
+  }
+
+  public async isHandFinished(gameId: string): Promise<boolean> {
+    const noCardsLeft = await this._cardManager.noCardsLeft(gameId);
+    return noCardsLeft;
   }
 
   private getPlayersIndex(player: Player, handStatute: HandStatute): number {
@@ -257,13 +276,18 @@ export class HandEntity {
   }
 
   private async defaultTrick(gameId: string): Promise<TrickCards> {
-    return this._storageService.fetchHandStatute(gameId).then((statute) => {
-      return {
-        cards: statute.playerOrder.map((player) => {
-          return { player };
-        }),
-      };
-    });
+    return this._storageService
+      .fetchHandStatute(gameId)
+      .then((statute) => {
+        return {
+          cards: statute.playerOrder.map((player) => {
+            return { player };
+          }),
+        };
+      })
+      .catch(() => {
+        return { cards: [] };
+      });
   }
 
   private async getTrickLead(

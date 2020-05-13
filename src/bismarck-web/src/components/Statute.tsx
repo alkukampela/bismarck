@@ -7,14 +7,16 @@ import { GameContext } from '../GameContext';
 export const StatuteSummary = () => {
   const game = React.useContext(GameContext);
 
-  const [statute, setStatute] = React.useState<HandStatute>({
+  const emptyStatue = {
     eldestHand: { name: '' },
     handType: {
       isChoice: false,
     },
     playerOrder: [],
     playersInGame: 0,
-  });
+  };
+
+  const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
 
   React.useEffect(() => {
     const fetchStatute = async (): Promise<HandStatute> => {
@@ -24,7 +26,8 @@ export const StatuteSummary = () => {
           mode: 'cors',
         }
       );
-      return (await resp.json()) as HandStatute;
+
+      return resp.ok ? ((await resp.json()) as HandStatute) : emptyStatue;
     };
 
     fetchStatute().then((fetchedStatute) => {

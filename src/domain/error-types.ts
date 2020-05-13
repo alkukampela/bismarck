@@ -10,4 +10,8 @@ export enum ErrorTypes {
   TRICK_ALREADY_STARTED = 'Trick is already ongoing',
   GAME_TYPE_NOT_CHOSEN = 'Game type is not chosen yet',
   NOT_TRICK_LEAD = 'Player is not trick lead',
+  CURRENT_HAND_NOT_FINISHED = "Can't start new hand when current is ongoing",
+  GAME_NOT_FOUND = 'Game not found',
+  GAME_ENDED = 'Game has ended',
+  NOT_FOUND = 'Not found',
 }
