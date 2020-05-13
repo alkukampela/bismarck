@@ -1,6 +1,6 @@
 import { CardManager } from './card-manager';
+import { getSuit } from './card-mapper';
 import { ErrorTypes } from './error-types';
-import { HandScore } from './hand-score';
 import { HandStatuteMachine } from './hand-statute-machine';
 import { StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
@@ -19,7 +19,11 @@ import {
   hasPlayerTurn,
   playCard,
 } from './trick-machine';
-import { getSuit } from './card-mapper';
+import {
+  getHandScoresTricks,
+  updateTrickTakerToHandScore,
+  setUpHandScore,
+} from './hand-score';
 
 export class HandService {
   private _storageService: StorageService;
@@ -38,7 +42,7 @@ export class HandService {
       await this._cardManager.getTrumpSuit(gameId)
     );
 
-    new HandScore().setUp(handStatute.playerOrder, gameId);
+    setUpHandScore(handStatute.playerOrder, gameId);
     this._storageService.storeHandStatute(handStatute, gameId);
   }
 
@@ -237,7 +241,7 @@ export class HandService {
     this._cardManager.removeCard(card, gameId);
 
     if (allCardsArePlayed(updatedTrick)) {
-      new HandScore().takeTrick(getTaker(updatedTrick), gameId);
+      updateTrickTakerToHandScore(getTaker(updatedTrick), gameId);
     }
 
     // TODO: check if trick is finished and if it is save score
@@ -249,7 +253,7 @@ export class HandService {
   }
 
   public async getHandsTrickCounts(gameId: string): Promise<PlayerScore[]> {
-    const scores = await new HandScore().getTricks(gameId);
+    const scores = await getHandScoresTricks(gameId);
     if (!scores) {
       return [];
     }

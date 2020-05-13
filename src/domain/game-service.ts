@@ -1,11 +1,11 @@
-import { StorageService } from '../persistence/storage-service';
-import { Player } from '../types/player';
-import { Game } from '../types/game';
-import shuffle from 'fisher-yates';
-import { HandService } from './hand-service';
 import { CardManager } from './card-manager';
-import { HandStatute } from '../types/hand-statute';
 import { ErrorTypes } from './error-types';
+import { HandService } from './hand-service';
+import { StorageService } from '../persistence/storage-service';
+import { Game } from '../types/game';
+import { HandStatute } from '../types/hand-statute';
+import { Player } from '../types/player';
+import shuffle from 'fisher-yates';
 
 const storageService = StorageService.getInstance();
 const handService = new HandService(

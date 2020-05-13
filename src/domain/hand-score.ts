@@ -3,71 +3,73 @@ import { GameType } from '../types/game-type';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
 
-export class HandScore {
-  private _storageService: StorageService;
+const storageService: StorageService = StorageService.getInstance();
 
-  constructor() {
-    this._storageService = StorageService.getInstance();
-  }
+const isEldestHand = (player: Player, scores: PlayerScore[]): boolean => {
+  return player === scores[0].player;
+};
 
-  public setUp(players: Player[], gameId: string): void {
-    this._storageService.storeScores(
-      players.map((player) => {
-        return { player, score: 0 } as PlayerScore;
-      }),
-      gameId
-    );
-  }
+const countScoreForEldestHand = (
+  tricks: number,
+  gameType: GameType
+): number => {
+  return gameType !== GameType.MISERE ? tricks - 6 : tricks * -1;
+};
 
-  public takeTrick(player: Player, gameId: string): void {
-    this._storageService.fetchScores(gameId).then((scores) => {
-      scores
-        .filter((score) => player.name === score.player.name)
-        .forEach((x) => x.score++);
-      this._storageService.storeScores(scores, gameId);
-    });
-  }
+const countScoreForNonEldestHand = (
+  tricks: number,
+  gameType: GameType
+): number => {
+  return gameType !== GameType.MISERE ? tricks - 2 : 4 - tricks;
+};
 
-  public async getTricks(gameId: string): Promise<PlayerScore[]> {
-    return this._storageService.fetchScores(gameId);
-  }
+const countHandScore = (
+  playerScore: PlayerScore,
+  scores: PlayerScore[],
+  gameType: GameType
+): number => {
+  return isEldestHand(playerScore.player, scores)
+    ? countScoreForEldestHand(playerScore.score, gameType)
+    : countScoreForNonEldestHand(playerScore.score, gameType);
+};
 
-  public async getScores(
-    gameType: GameType,
-    gameId: string
-  ): Promise<PlayerScore[]> {
-    return this._storageService.fetchScores(gameId).then((scores) =>
-      scores.map((playerScore) => {
-        return {
-          player: playerScore.player,
-          score: this.countHandScore(playerScore, scores, gameType),
-        };
-      })
-    );
-  }
+export const setUpHandScore = (players: Player[], gameId: string): void => {
+  storageService.storeScores(
+    players.map((player) => {
+      return { player, score: 0 } as PlayerScore;
+    }),
+    gameId
+  );
+};
 
-  private countHandScore(
-    playerScore: PlayerScore,
-    scores: PlayerScore[],
-    gameType: GameType
-  ): number {
-    return this.isEldestHand(playerScore.player, scores)
-      ? this.countScoreForEldestHand(playerScore.score, gameType)
-      : this.countScoreForNonEldestHand(playerScore.score, gameType);
-  }
+export const updateTrickTakerToHandScore = (
+  player: Player,
+  gameId: string
+): void => {
+  storageService.fetchScores(gameId).then((scores) => {
+    scores
+      .filter((score) => player.name === score.player.name)
+      .forEach((x) => x.score++);
+    storageService.storeScores(scores, gameId);
+  });
+};
 
-  private isEldestHand(player: Player, scores: PlayerScore[]): boolean {
-    return player === scores[0].player;
-  }
+export const getHandScoresTricks = async (
+  gameId: string
+): Promise<PlayerScore[]> => {
+  return storageService.fetchScores(gameId);
+};
 
-  private countScoreForEldestHand(tricks: number, gameType: GameType): number {
-    return gameType !== GameType.MISERE ? tricks - 6 : tricks * -1;
-  }
-
-  private countScoreForNonEldestHand(
-    tricks: number,
-    gameType: GameType
-  ): number {
-    return gameType !== GameType.MISERE ? tricks - 2 : 4 - tricks;
-  }
-}
+export const getHandsPoints = async (
+  gameType: GameType,
+  gameId: string
+): Promise<PlayerScore[]> => {
+  return storageService.fetchScores(gameId).then((scores) =>
+    scores.map((playerScore) => {
+      return {
+        player: playerScore.player,
+        score: countHandScore(playerScore, scores, gameType),
+      };
+    })
+  );
+};
