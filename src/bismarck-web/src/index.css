@@ -8,14 +8,6 @@ body {
   font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  margin-top: 50px;
-}
-
 .trick-card-container {
   padding-bottom: 1rem;
 }
@@ -76,6 +68,11 @@ body {
 
 .deal-button {
   margin-bottom: 1rem;
+  font-size: 1.6em;
+  border-radius: 5px;
+  border: 1px solid darkgrey;
+  background-color: lavender;
+  color: darkslateblue;
 }
 
 .score-board {
