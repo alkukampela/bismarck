@@ -16,10 +16,6 @@ body {
   margin-top: 50px;
 }
 
-.trick {
-  column-count: 3;
-}
-
 .trick-card-container {
   padding-bottom: 1rem;
 }
