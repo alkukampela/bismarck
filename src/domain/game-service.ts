@@ -28,7 +28,7 @@ export const createGame = async (
 
   const game = {
     players: shuffle(players),
-    handNumber: 0,
+    handNumber: 6,
   };
 
   storageService.storeGame(game, gameId);
