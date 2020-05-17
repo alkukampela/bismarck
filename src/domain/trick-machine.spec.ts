@@ -1,7 +1,7 @@
 import {
   initTrick,
   hasPlayerTurn,
-  allCardsArePlayed,
+  isTrickReady,
   playCard,
   getTaker,
 } from './trick-machine';
@@ -112,7 +112,7 @@ test('Ensure all cards are not played when trick is ongoing', () => {
     trickSuit: Suit.CLUB,
   };
 
-  const actual = allCardsArePlayed(trick);
+  const actual = isTrickReady(trick);
 
   expect(actual).toBe(false);
 });
@@ -129,7 +129,7 @@ test('Ensure all cards are played when trick is finished', () => {
     trickSuit: Suit.CLUB,
   };
 
-  const actual = allCardsArePlayed(trick);
+  const actual = isTrickReady(trick);
 
   expect(actual).toBe(true);
 });
