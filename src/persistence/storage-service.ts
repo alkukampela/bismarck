@@ -13,10 +13,10 @@ export type CardContainer = {
 export class StorageService {
   private static _instance: StorageService;
 
-  private redis: Redis.Redis;
+  private _redis: Redis.Redis;
 
   private constructor() {
-    this.redis = new Redis(process.env.REDIS_URL);
+    this._redis = new Redis(process.env.REDIS_URL);
   }
 
   public static getInstance() {
@@ -68,15 +68,38 @@ export class StorageService {
     return JSON.parse(result);
   }
 
+  public clearTrick(identifier: string) {
+    this.del(this.getTrickKey(identifier));
+  }
+
+  public storeTrickScores(trickScores: PlayerScore[][], identifier: string) {
+    this.store(this.getTrickScoresKey(identifier), trickScores);
+  }
+
+  public async fetchTrickScores(identifier: string): Promise<PlayerScore[][]> {
+    const result = await this.fetch(this.getTrickScoresKey(identifier));
+    return JSON.parse(result);
+  }
+
   private store(
     key: string,
-    subject: CardContainer[] | PlayerScore[] | HandStatute | Trick | Game
+    subject:
+      | CardContainer[]
+      | PlayerScore[]
+      | HandStatute
+      | Trick
+      | Game
+      | PlayerScore[][]
   ): void {
-    this.redis.set(key, JSON.stringify(subject));
+    this._redis.set(key, JSON.stringify(subject));
   }
 
   private async fetch(key: string): Promise<string> {
-    return this.redis.get(key);
+    return this._redis.get(key);
+  }
+
+  private del(key: string) {
+    this._redis.del(key);
   }
 
   private getGamesKey(identifier: string): string {
@@ -84,11 +107,11 @@ export class StorageService {
   }
 
   private getScoresKey(identifier: string) {
-    return 'cards:' + identifier;
+    return 'scores:' + identifier;
   }
 
   private getCardsKey(identifier: string) {
-    return 'scores:' + identifier;
+    return 'cards:' + identifier;
   }
 
   private getHandStatuteKey(identifier: string): string {
@@ -97,5 +120,9 @@ export class StorageService {
 
   private getTrickKey(identifier: string): string {
     return 'trick:' + identifier;
+  }
+
+  private getTrickScoresKey(identifier: string): string {
+    return 'trickscores:' + identifier;
   }
 }

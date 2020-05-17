@@ -13,6 +13,7 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
+import { getTotalScores } from './domain/game-score-manager';
 
 const app = express();
 
@@ -131,13 +132,8 @@ router.get('/games/:id/hand/tablecards', (req, res) => {
   hand.getTableCards(req.params.id).then((cards) => res.send(cards));
 });
 
-router.get('/games/:id/score', (_req, res) => {
-  try {
-    // TODO
-    res.sendStatus(statuses.NO_CONTENT);
-  } catch (err) {
-    res.send(err);
-  }
+router.get('/games/:id/score', (req, res) => {
+  getTotalScores(req.params.id).then((scores) => res.send(scores));
 });
 
 router.post('/games/:id', (req, res) => {
@@ -153,6 +149,7 @@ router.post('/games/:id', (req, res) => {
 router.post('/games/:id/hand', (req, res) => {
   initHand(req.params.id)
     .then((statute) => {
+      publishTrick({ cards: [] }, req.params.id);
       res.send(statute);
     })
     .catch((err) => {

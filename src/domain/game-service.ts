@@ -65,7 +65,7 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
   }
 
   handService.setUp(gameId, game);
-
+  storageService.clearTrick(gameId);
   const updatedGame = {
     ...game,
     handNumber: game.handNumber + 1,

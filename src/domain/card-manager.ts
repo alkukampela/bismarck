@@ -43,15 +43,16 @@ export class CardManager {
     );
   }
 
-  public removeCard(cardToBeRemoved: Card, gameId: string): void {
-    this._storageService.fetchCards(gameId).then((cards) => {
-      cards.find(
-        (container) =>
-          container.card.rank === cardToBeRemoved.rank &&
-          container.card.suit === cardToBeRemoved.suit
-      ).isPlayed = true;
-      this._storageService.storeCards(cards, gameId);
-    });
+  public async removeCard(cardToBeRemoved: Card, gameId: string) {
+    const cards = await this._storageService.fetchCards(gameId);
+
+    cards.find(
+      (container) =>
+        container.card.rank === cardToBeRemoved.rank &&
+        container.card.suit === cardToBeRemoved.suit
+    ).isPlayed = true;
+
+    this._storageService.storeCards(cards, gameId);
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
@@ -114,6 +115,7 @@ export class CardManager {
 
   public async noCardsLeft(gameId: string): Promise<boolean> {
     const cards = await this._storageService.fetchCards(gameId);
+    console.log(cards);
     return !cards || cards.filter((card) => !card.isPlayed).length === 0;
   }
 

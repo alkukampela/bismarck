@@ -5,32 +5,37 @@ import { PlayerScore } from '../types/player-score';
 
 const storageService: StorageService = StorageService.getInstance();
 
-const isEldestHand = (player: Player, scores: PlayerScore[]): boolean => {
-  return player === scores[0].player;
-};
-
 const countScoreForEldestHand = (
   tricks: number,
-  gameType: GameType
+  gameType: GameType,
+  players: number
 ): number => {
-  return gameType !== GameType.MISERE ? tricks - 6 : tricks * -1;
+  if (players === 4) {
+    return gameType !== GameType.MISERE ? tricks - 6 : tricks * -1;
+  }
+  return gameType !== GameType.MISERE ? tricks - 8 : 2 - tricks;
 };
 
 const countScoreForNonEldestHand = (
   tricks: number,
-  gameType: GameType
+  gameType: GameType,
+  players: number
 ): number => {
-  return gameType !== GameType.MISERE ? tricks - 2 : 4 - tricks;
+  if (players === 4) {
+    return gameType !== GameType.MISERE ? tricks - 2 : 4 - tricks;
+  }
+  return gameType !== GameType.MISERE ? tricks - 4 : 7 - tricks;
 };
 
 const countHandScore = (
   playerScore: PlayerScore,
-  scores: PlayerScore[],
+  isEldestHand: boolean,
+  players: number,
   gameType: GameType
 ): number => {
-  return isEldestHand(playerScore.player, scores)
-    ? countScoreForEldestHand(playerScore.score, gameType)
-    : countScoreForNonEldestHand(playerScore.score, gameType);
+  return isEldestHand
+    ? countScoreForEldestHand(playerScore.score, gameType, players)
+    : countScoreForNonEldestHand(playerScore.score, gameType, players);
 };
 
 export const setUpHandScore = (players: Player[], gameId: string): void => {
@@ -60,16 +65,19 @@ export const getHandScoresTricks = async (
   return storageService.fetchScores(gameId);
 };
 
-export const getHandsPoints = async (
-  gameType: GameType,
-  gameId: string
-): Promise<PlayerScore[]> => {
-  return storageService.fetchScores(gameId).then((scores) =>
-    scores.map((playerScore) => {
-      return {
-        player: playerScore.player,
-        score: countHandScore(playerScore, scores, gameType),
-      };
-    })
-  );
+export const getHandsPoints = (
+  trickTakers: PlayerScore[],
+  gameType: GameType
+): PlayerScore[] => {
+  return trickTakers.map((playerScore) => {
+    return {
+      player: playerScore.player,
+      score: countHandScore(
+        playerScore,
+        playerScore.player === trickTakers[0].player,
+        trickTakers.length,
+        gameType
+      ),
+    };
+  });
 };

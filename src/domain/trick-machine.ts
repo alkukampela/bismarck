@@ -73,7 +73,7 @@ export const getTaker = (trick: Trick): Player => {
   );
 };
 
-export const allCardsArePlayed = (trick: Trick): boolean => {
+export const isTrickReady = (trick: Trick): boolean => {
   return !trick.trickCards.filter((pc) => !pc.card).length;
 };
 

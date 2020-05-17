@@ -25,12 +25,14 @@ const suits = new BiMap<Suit>({
   '♠️': Suit.SPADE,
 });
 
+const CARDS_IN_SUIT = 4;
+
 const rankFrom = (value: number): number => {
-  return value % 13;
+  return value % CARDS_IN_SUIT;
 };
 
 const suitFrom = (value: number): Suit => {
-  return Math.trunc(value / 13) + 1;
+  return Math.trunc(value / CARDS_IN_SUIT) + 1;
 };
 
 export const fromNumber = (value: number): Card => {

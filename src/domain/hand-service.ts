@@ -14,7 +14,7 @@ import { Trick } from '../types/trick';
 import { TrickCards } from '../types/trick-cards';
 import {
   initTrick,
-  allCardsArePlayed,
+  isTrickReady,
   getTaker,
   hasPlayerTurn,
   playCard,
@@ -23,7 +23,9 @@ import {
   getHandScoresTricks,
   updateTrickTakerToHandScore,
   setUpHandScore,
+  getHandsPoints,
 } from './hand-score';
+import { saveTrickPoints } from './game-score-manager';
 
 export class HandService {
   private _storageService: StorageService;
@@ -238,15 +240,27 @@ export class HandService {
     }
 
     const updatedTrick = playCard(trick, player, card);
-    this._cardManager.removeCard(card, gameId);
+    await this._cardManager.removeCard(card, gameId);
 
-    if (allCardsArePlayed(updatedTrick)) {
+    if (isTrickReady(updatedTrick)) {
       updateTrickTakerToHandScore(getTaker(updatedTrick), gameId);
+      console.log('trick ready');
     }
 
-    // TODO: check if trick is finished and if it is save score
+    const handReady = await this._cardManager.noCardsLeft(gameId);
+    console.log(handReady);
+    if (handReady) {
+      console.log('hand ready');
+      const trickScores = await getHandScoresTricks(gameId);
+      const handScore = getHandsPoints(
+        trickScores,
+        statute.handType.gameType.value
+      );
+      saveTrickPoints(handScore, gameId);
+    }
 
     this.saveTrick(gameId, updatedTrick);
+
     return {
       cards: updatedTrick.trickCards,
     };
@@ -272,7 +286,7 @@ export class HandService {
   private async isTrickOpen(gameId: string): Promise<boolean> {
     return this.getTrick(gameId)
       .then((trick) => {
-        return !allCardsArePlayed(trick);
+        return !isTrickReady(trick);
       })
       .catch(() => {
         return false;

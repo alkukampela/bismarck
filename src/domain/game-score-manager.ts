@@ -1,42 +1,49 @@
+import { StorageService } from '../persistence/storage-service';
 import { GameScoreBoard } from '../types/game-score-board';
 import { PlayerScore } from '../types/player-score';
 
-export class GameScoreManager {
-  private _scores: PlayerScore[][];
+const storageService = StorageService.getInstance();
 
-  constructor() {
-    this._scores = [];
-  }
+const addToTotalScore = (totals: PlayerScore[], score: PlayerScore) => {
+  totals.forEach((totalrow) => {
+    if (totalrow.player.name === score.player.name) {
+      totalrow.score += score.score;
+    }
+  });
+};
 
-  public getScoreBoard(): GameScoreBoard {
-    return {
-      trickScores: this._scores,
-      totalScore: this.calculateScore(),
-    };
-  }
+const calculateScore = (allTrickPoints: PlayerScore[][]): PlayerScore[] => {
+  const totals: PlayerScore[] = [];
 
-  public saveTrick(trickScores: PlayerScore[]) {
-    this._scores.push(trickScores);
-  }
+  allTrickPoints.forEach((trickScore) => {
+    trickScore.forEach((playerTrick) => {
+      totals.filter(
+        (playerTotal) => playerTotal.player.name === playerTrick.player.name
+      ).length === 0
+        ? totals.push(playerTrick)
+        : addToTotalScore(totals, playerTrick);
+    });
+  });
 
-  private calculateScore(): PlayerScore[] {
-    const totals: PlayerScore[] = [];
+  return totals;
+};
 
-    // TODO refactor this horrornous mess
-    this._scores.forEach((trickScore) =>
-      trickScore.forEach((playerTrick) => {
-        totals.filter(
-          (playerTotal) => playerTotal.player === playerTrick.player
-        ).length === 0
-          ? totals.push({
-              player: playerTrick.player,
-              score: playerTrick.score,
-            })
-          : (totals.filter((z) => z.player === playerTrick.player)[0].score +=
-              playerTrick.score);
-      })
-    );
+export const saveTrickPoints = async (
+  trickPoints: PlayerScore[],
+  gameId: string
+) => {
+  const allTrickPoints = (await storageService.fetchTrickScores(gameId)) || [];
+  allTrickPoints.push(trickPoints);
 
-    return totals;
-  }
-}
+  storageService.storeTrickScores(allTrickPoints, gameId);
+};
+
+export const getTotalScores = async (
+  gameId: string
+): Promise<GameScoreBoard> => {
+  const allTrickPoints = (await storageService.fetchTrickScores(gameId)) || [];
+  return {
+    trickScores: allTrickPoints,
+    totalScore: calculateScore(allTrickPoints),
+  };
+};

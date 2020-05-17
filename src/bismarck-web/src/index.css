@@ -7,9 +7,6 @@ body {
   background-image: linear-gradient(90deg, #00b7fa 0%, #20374d 100%);
   font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
 }
-hr {
-  width: 100%;
-}
 
 .container {
   display: flex;
@@ -20,7 +17,7 @@ hr {
 }
 
 .trick {
-  column-count: 4;
+  column-count: 3;
 }
 
 .trick-card-container {
@@ -83,4 +80,9 @@ hr {
 
 .deal-button {
   margin-bottom: 1rem;
+}
+
+.score-board {
+  columns: 3;
+  margin-top: 2rem;
 }
