@@ -7,7 +7,7 @@ interface Cards {
   cards: CardType[];
 }
 
-export const PlayersHand = ({ player }: { player: string }) => {
+export const PlayersHand = () => {
   const game = React.useContext(GameContext);
 
   const [handCards, setHandCards] = React.useState<Cards>({ cards: [] });
@@ -15,7 +15,7 @@ export const PlayersHand = ({ player }: { player: string }) => {
   React.useEffect(() => {
     const fetchCards = async (): Promise<CardType[]> => {
       const resp = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${player}`,
+        `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${game.player}`,
         {
           mode: 'cors',
         }
@@ -31,7 +31,7 @@ export const PlayersHand = ({ player }: { player: string }) => {
   return (
     <div className="players-cards">
       {handCards.cards.map((card: CardType, index: number) => (
-        <Card card={card} key={index} player={player} />
+        <Card card={card} key={index} player={game.player} />
       ))}
     </div>
   );

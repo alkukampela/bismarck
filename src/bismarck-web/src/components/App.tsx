@@ -1,9 +1,7 @@
 import { DealButton } from './DealButton';
-import { PlayersHand } from './PlayersHand';
+import { CardContainer } from './CardContainer';
 import { StatuteSummary } from './Statute';
-import { TableCards } from './TableCards';
 import { TotalScore } from './TotalScore';
-import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
@@ -17,14 +15,12 @@ export const App = () => {
   return (
     <Provider value={game}>
       <DealButton />
-      <Trick />
-      <PlayersHand player={player} />
+      <CardContainer />
       <div className="score-board">
         <StatuteSummary />
         <TrickTakers />
         <TotalScore />
       </div>
-      <TableCards />
     </Provider>
   );
 };

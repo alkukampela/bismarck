@@ -10,6 +10,7 @@ export const DealButton = () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      mode: 'cors',
     }).finally(() => location.reload()); // <== Sad
   };
 
