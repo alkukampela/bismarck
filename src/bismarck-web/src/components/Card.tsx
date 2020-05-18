@@ -61,14 +61,28 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
     return resp.ok;
   };
 
-  const tryEverything = () => {
+  const tryEverything = async () => {
     if (!player) {
       return;
     }
 
-    removeCard(card, player).then((success) => success && setState(false));
-    startTrick(card, player).then((success) => success && setState(false));
-    addToTrick(card, player).then((success) => success && setState(false));
+    const cardRemoved = await removeCard(card, player);
+    if (cardRemoved) {
+      setState(false);
+      return;
+    }
+
+    const trickStarted = await startTrick(card, player);
+    if (trickStarted) {
+      setState(false);
+      return;
+    }
+
+    const trickAdded = await addToTrick(card, player);
+    if (trickAdded) {
+      setState(false);
+      return;
+    }
   };
 
   return (

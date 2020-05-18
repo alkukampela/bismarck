@@ -16,17 +16,15 @@ export const App = () => {
 
   return (
     <Provider value={game}>
-      <div>
-        <DealButton />
-        <Trick />
-        <PlayersHand player={player} />
-        <div className="score-board">
-          <StatuteSummary />
-          <TrickTakers />
-          <TotalScore />
-        </div>
-        <TableCards />
+      <DealButton />
+      <Trick />
+      <PlayersHand player={player} />
+      <div className="score-board">
+        <StatuteSummary />
+        <TrickTakers />
+        <TotalScore />
       </div>
+      <TableCards />
     </Provider>
   );
 };
