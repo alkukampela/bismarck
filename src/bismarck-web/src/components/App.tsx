@@ -1,5 +1,5 @@
 import { DealButton } from './DealButton';
-import { CardContainer } from './CardContainer';
+import { GameContainer } from './GameContainer';
 import { StatuteSummary } from './Statute';
 import { TotalScore } from './TotalScore';
 import { TrickTakers } from './TrickTakers';
@@ -15,7 +15,7 @@ export const App = () => {
   return (
     <Provider value={game}>
       <DealButton />
-      <CardContainer />
+      <GameContainer />
       <div className="score-board">
         <StatuteSummary />
         <TrickTakers />
