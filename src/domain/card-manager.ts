@@ -115,7 +115,6 @@ export class CardManager {
 
   public async noCardsLeft(gameId: string): Promise<boolean> {
     const cards = await this._storageService.fetchCards(gameId);
-    console.log(cards);
     return !cards || cards.filter((card) => !card.isPlayed).length === 0;
   }
 
