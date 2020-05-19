@@ -1,8 +1,5 @@
 import { DealButton } from './DealButton';
 import { GameContainer } from './GameContainer';
-import { StatuteSummary } from './Statute';
-import { TotalScore } from './TotalScore';
-import { TrickTakers } from './TrickTakers';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
 import * as React from 'react';
@@ -16,11 +13,6 @@ export const App = () => {
     <Provider value={game}>
       <DealButton />
       <GameContainer />
-      <div className="score-board">
-        <StatuteSummary />
-        <TrickTakers />
-        <TotalScore />
-      </div>
     </Provider>
   );
 };
