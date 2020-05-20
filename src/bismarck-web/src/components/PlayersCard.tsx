@@ -6,9 +6,11 @@ import * as React from 'react';
 export const PlayersCard = ({
   card,
   player,
+  onCardRemoval,
 }: {
   card: CardType;
   player: string;
+  onCardRemoval: Function;
 }) => {
   const game = React.useContext(GameContext);
 
@@ -68,6 +70,7 @@ export const PlayersCard = ({
     const cardRemoved = await removeCard(card, player);
     if (cardRemoved) {
       setState(false);
+      onCardRemoval();
       return;
     }
 

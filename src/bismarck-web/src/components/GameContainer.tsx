@@ -22,7 +22,10 @@ export const GameContainer = () => {
   };
 
   const [tableCards, setTableCards] = React.useState<Card[]>([]);
-  const [handCards, setHandCards] = React.useState<Card[]>([]);
+  const [playersHand, setPlayersHand] = React.useState<PlayersHand>({
+    cards: [],
+    extraCards: 0,
+  });
   const [trickCards, setTrickCards] = React.useState<TrickCards>({
     cards: [],
   });
@@ -93,7 +96,7 @@ export const GameContainer = () => {
       setTableCards(cards);
     });
     fetchHand().then((hand) => {
-      setHandCards(hand.cards);
+      setPlayersHand(hand);
     });
     updateTrickTakers();
     updateTotalScores();
@@ -114,7 +117,7 @@ export const GameContainer = () => {
   return (
     <div>
       <Trick trickCards={trickCards} />
-      <PlayersCards cards={handCards} />
+      <PlayersCards hand={playersHand} />
       <TableCards cards={tableCards} show={tableCardsAreVisible(trickCards)} />
       <div className="score-board">
         <StatuteSummary />
