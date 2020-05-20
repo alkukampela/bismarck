@@ -1,36 +1,8 @@
 import { GameScoreBoard } from '../../../types/game-score-board';
-import { GameContext } from '../GameContext';
-import * as React from 'react';
 import { PlayerScore } from '../../../types/player-score';
+import * as React from 'react';
 
-export const TotalScore = () => {
-  const game = React.useContext(GameContext);
-
-  const emptyScores: GameScoreBoard = {
-    trickScores: [],
-    totalScore: [],
-  };
-
-  const fetchScores = async (): Promise<GameScoreBoard> => {
-    const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/score`,
-      {
-        mode: 'cors',
-      }
-    );
-    return resp.ok ? ((await resp.json()) as GameScoreBoard) : emptyScores;
-  };
-
-  const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      fetchScores()
-        .then((takers) => setScores(takers))
-        .catch();
-    }, 3000);
-  });
-
+export const TotalScore = ({ scores }: { scores: GameScoreBoard }) => {
   return (
     <div>
       <h2>Tilanne</h2>

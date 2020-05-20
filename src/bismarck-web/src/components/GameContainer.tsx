@@ -11,9 +11,15 @@ import { TrickCards } from '../../../types/trick-cards';
 import { GameContext } from '../GameContext';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
+import { GameScoreBoard } from '../../../types/game-score-board';
 
 export const GameContainer = () => {
   const game = React.useContext(GameContext);
+
+  const emptyScores: GameScoreBoard = {
+    trickScores: [],
+    totalScore: [],
+  };
 
   const [tableCards, setTableCards] = React.useState<Card[]>([]);
   const [handCards, setHandCards] = React.useState<Card[]>([]);
@@ -21,6 +27,7 @@ export const GameContainer = () => {
     cards: [],
   });
   const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
+  const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
 
   const socket = SocketFactory.getSocket(game.gameId);
 
@@ -54,9 +61,31 @@ export const GameContainer = () => {
     return resp.ok ? ((await resp.json()) as PlayerScore[]) : [];
   };
 
+  const fetchScores = async (): Promise<GameScoreBoard> => {
+    const resp = await fetch(
+      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/score`,
+      {
+        mode: 'cors',
+      }
+    );
+    return resp.ok ? ((await resp.json()) as GameScoreBoard) : emptyScores;
+  };
+
   const tableCardsAreVisible = (trickCards: TrickCards): boolean => {
     // TODO: check if hand has any previous tricks
     return trickCards.cards.filter((tc) => !!tc.card).length === 0;
+  };
+
+  const updateTrickTakers = () => {
+    fetchTrickTakers().then((takers) => {
+      setTrickTakers(takers);
+    });
+  };
+
+  const updateTotalScores = () => {
+    fetchScores().then((scores) => {
+      setScores(scores);
+    });
   };
 
   React.useEffect(() => {
@@ -66,16 +95,16 @@ export const GameContainer = () => {
     fetchHand().then((hand) => {
       setHandCards(hand.cards);
     });
-    fetchTrickTakers().then((takers) => {
-      setTrickTakers(takers);
-    });
+    updateTrickTakers();
+    updateTotalScores();
+
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickCards;
       setTrickCards(trick);
       if (!trick.cards.filter((tc) => !tc.card).length) {
-        fetchTrickTakers().then((takers) => {
-          setTrickTakers(takers);
-        });
+        updateTrickTakers();
+        // TODO: this is fetched too often
+        updateTotalScores();
       }
     };
   }, []);
@@ -90,7 +119,7 @@ export const GameContainer = () => {
       <div className="score-board">
         <StatuteSummary />
         <TrickTakers trickTakers={trickTakers} />
-        <TotalScore />
+        <TotalScore scores={scores} />
       </div>
     </div>
   );
