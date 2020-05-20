@@ -1,4 +1,4 @@
-import { PlayersHand } from './PlayersHand';
+import { PlayersCards } from './PlayersCards';
 import { StatuteSummary } from './Statute';
 import { TableCards } from './TableCards';
 import { TotalScore } from './TotalScore';
@@ -6,6 +6,7 @@ import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
 import { Card } from '../../../types/card';
 import { PlayerScore } from '../../../types/player-score';
+import { PlayersHand } from '../../../types/players-hand';
 import { TrickCards } from '../../../types/trick-cards';
 import { GameContext } from '../GameContext';
 import { SocketFactory } from '../services/socket-factory';
@@ -33,14 +34,14 @@ export const GameContainer = () => {
     return (await resp.json()) as Card[];
   };
 
-  const fetchHandCards = async (): Promise<Card[]> => {
+  const fetchHand = async (): Promise<PlayersHand> => {
     const resp = await fetch(
       `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${game.player}`,
       {
         mode: 'cors',
       }
     );
-    return (await resp.json()) as Card[];
+    return (await resp.json()) as PlayersHand;
   };
 
   const fetchTrickTakers = async (): Promise<PlayerScore[]> => {
@@ -62,8 +63,8 @@ export const GameContainer = () => {
     fetchTableCards().then((cards) => {
       setTableCards(cards);
     });
-    fetchHandCards().then((cards) => {
-      setHandCards(cards);
+    fetchHand().then((hand) => {
+      setHandCards(hand.cards);
     });
     fetchTrickTakers().then((takers) => {
       setTrickTakers(takers);
@@ -84,7 +85,7 @@ export const GameContainer = () => {
   return (
     <div>
       <Trick trickCards={trickCards} />
-      <PlayersHand cards={handCards} />
+      <PlayersCards cards={handCards} />
       <TableCards cards={tableCards} show={tableCardsAreVisible(trickCards)} />
       <div className="score-board">
         <StatuteSummary />

@@ -96,6 +96,10 @@ export class CardManager {
     });
   }
 
+  public extraCardsAmount(cards: number, playersInGame: number): number {
+    return Math.max(cards - this.cardsInHand(playersInGame), 0);
+  }
+
   public async hasPlayerCardsOfSuit(
     player: number,
     playersInGame: number,

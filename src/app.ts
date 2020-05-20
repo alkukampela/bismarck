@@ -67,7 +67,7 @@ router.get('/games/:id/hand/statute', (req, res) => {
 
 router.get('/games/:id/hand/cards', async (req, res) => {
   const player = playerFromQueryString(req);
-  const cards = await hand.getCards(player, req.params.id);
+  const cards = await hand.getPlayersHand(player, req.params.id);
   res.send(cards);
 });
 

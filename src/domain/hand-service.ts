@@ -26,6 +26,7 @@ import {
   getHandsPoints,
 } from './hand-score';
 import { saveTrickPoints } from './game-score-manager';
+import { PlayersHand } from '../types/players-hand';
 
 export class HandService {
   private _storageService: StorageService;
@@ -48,16 +49,26 @@ export class HandService {
     this._storageService.storeHandStatute(handStatute, gameId);
   }
 
-  public async getCards(player: Player, gameId: string): Promise<Card[]> {
+  public async getPlayersHand(
+    player: Player,
+    gameId: string
+  ): Promise<PlayersHand> {
     const statute = await this._storageService.fetchHandStatute(gameId);
     if (!statute) {
-      return [];
+      return { cards: [], extraCards: 0 };
     }
-    return this._cardManager.getPlayersCards(
+    const cards = await this._cardManager.getPlayersCards(
       this.getPlayersIndex(player, statute),
       statute.playersInGame,
       gameId
     );
+    return {
+      cards,
+      extraCards: this._cardManager.extraCardsAmount(
+        cards.length,
+        statute.playersInGame
+      ),
+    };
   }
 
   public async removeCard(
@@ -186,7 +197,6 @@ export class HandService {
       statute.playersInGame,
       gameId
     );
-
     if (hasTooManyCards) {
       return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
     }
@@ -248,7 +258,7 @@ export class HandService {
     }
 
     const handReady = await this._cardManager.noCardsLeft(gameId);
-    console.log(handReady);
+
     if (handReady) {
       console.log('hand ready');
       const trickScores = await getHandScoresTricks(gameId);
