@@ -3,7 +3,7 @@ import { Card as CardType } from '../../../types/card';
 import { GameContext } from '../GameContext';
 import * as React from 'react';
 
-export const PlayersCards = ({ cards: cards }: { cards: CardType[] }) => {
+export const PlayersCards = ({ cards }: { cards: CardType[] }) => {
   const game = React.useContext(GameContext);
 
   return (

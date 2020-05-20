@@ -1,7 +1,9 @@
 import { CardManager } from './card-manager';
 import { getSuit } from './card-mapper';
 import { ErrorTypes } from './error-types';
+import { saveTrickPoints } from './game-score-manager';
 import { HandStatuteMachine } from './hand-statute-machine';
+import { Trick } from '../persistence/trick';
 import { StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { Game } from '../types/game';
@@ -9,8 +11,8 @@ import { GameType } from '../types/game-type';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
+import { PlayersHand } from '../types/players-hand';
 import { Suit } from '../types/suit';
-import { Trick } from '../types/trick';
 import { TrickCards } from '../types/trick-cards';
 import {
   initTrick,
@@ -25,8 +27,6 @@ import {
   setUpHandScore,
   getHandsPoints,
 } from './hand-score';
-import { saveTrickPoints } from './game-score-manager';
-import { PlayersHand } from '../types/players-hand';
 
 export class HandService {
   private _storageService: StorageService;
@@ -149,10 +149,12 @@ export class HandService {
   }
 
   public async getCurrentTrick(gameId: string): Promise<TrickCards> {
-    // TODO: add optional winner to return type
     return this.getTrick(gameId)
       .then((trick) => {
-        return { cards: trick.trickCards };
+        return {
+          cards: trick.trickCards,
+          taker: isTrickReady(trick) && getTaker(trick),
+        };
       })
       .catch(async () => {
         const trick = await this.defaultTrick(gameId);
@@ -273,6 +275,7 @@ export class HandService {
 
     return {
       cards: updatedTrick.trickCards,
+      taker: isTrickReady(updatedTrick) && getTaker(updatedTrick),
     };
   }
 

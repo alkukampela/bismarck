@@ -2,7 +2,7 @@ import { PlayerScore } from '../../../types/player-score';
 import * as React from 'react';
 
 export const TrickTakers = ({
-  trickTakers: trickTakers,
+  trickTakers,
 }: {
   trickTakers: PlayerScore[];
 }) => {

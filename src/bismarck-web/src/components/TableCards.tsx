@@ -3,8 +3,8 @@ import { Card as CardType } from '../../../types/card';
 import * as React from 'react';
 
 export const TableCards = ({
-  cards: cards,
-  show: show,
+  cards,
+  show,
 }: {
   cards: CardType[];
   show: boolean;

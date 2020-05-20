@@ -1,9 +1,9 @@
+import { Trick } from './trick';
 import { Card } from '../types/card';
+import { Game } from '../types/game';
 import { HandStatute } from '../types/hand-statute';
 import { PlayerScore } from '../types/player-score';
 import Redis from 'ioredis';
-import { Trick } from '../types/trick';
-import { Game } from '../types/game';
 
 export type CardContainer = {
   card: Card;

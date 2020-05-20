@@ -1,10 +1,10 @@
+import { getRank, getSuit } from './card-mapper';
+import { Trick } from '../persistence/trick';
 import { Card } from '../types/card';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
-import { Trick } from '../types/trick';
-import { TrickCard } from '../types/trick-cards';
 import { Suit } from '../types/suit';
-import { getSuit, getRank } from './card-mapper';
+import { TrickCard } from '../types/trick-card';
 
 const initTrickCards = (
   trickLead: Player,
