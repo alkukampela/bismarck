@@ -1,7 +1,7 @@
 import { GameContext } from '../GameContext';
 import * as React from 'react';
 
-export const DealButton = () => {
+export const PanicButton = () => {
   const game = React.useContext(GameContext);
 
   const initHand = () => {
@@ -18,10 +18,10 @@ export const DealButton = () => {
     <button
       type="button"
       onClick={initHand}
-      className="deal-button"
+      className="panic-button"
       style={{ display: !!game.player ? 'block' : 'none' }}
     >
-      Jaa kortit
+      Paniikki
     </button>
   );
 };

@@ -66,13 +66,21 @@ body {
   background-color: inherit;
 }
 
-.deal-button {
-  margin-bottom: 1rem;
-  font-size: 1.6em;
+.panic-button {
   border-radius: 5px;
-  border: 1px solid darkgrey;
-  background-color: lavender;
-  color: darkslateblue;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 2rem;
+  color: rgb(255, 255, 255);
+  border: 0;
+  outline: none;
+  padding: 1rem 2rem;
+  background-image: linear-gradient(
+    19deg,
+    rgb(0, 0, 0) 0%,
+    rgb(183, 33, 255) 100%
+  );
+  font-size: 1.6em;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .score-board {

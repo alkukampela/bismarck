@@ -1,4 +1,4 @@
-import { DealButton } from './DealButton';
+import { PanicButton } from './PanicButton';
 import { GameContainer } from './GameContainer';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
@@ -11,7 +11,7 @@ export const App = () => {
 
   return (
     <Provider value={game}>
-      <DealButton />
+      <PanicButton />
       <GameContainer />
     </Provider>
   );
