@@ -1,4 +1,4 @@
-import { Card } from './Card';
+import { ReadOnlyCard } from './ReadOnlyCard';
 import { TrickCard as TrickCardType } from '../../../types/trick-cards';
 import * as React from 'react';
 
@@ -10,7 +10,7 @@ export const TrickCard = ({
   return (
     <div className="trick-card-container">
       {!!trickCard.card ? (
-        <Card card={trickCard.card} />
+        <ReadOnlyCard card={trickCard.card} />
       ) : (
         <div className="card empty-card" />
       )}

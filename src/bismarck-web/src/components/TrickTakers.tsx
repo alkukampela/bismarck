@@ -1,30 +1,11 @@
 import { PlayerScore } from '../../../types/player-score';
-import { GameContext } from '../GameContext';
 import * as React from 'react';
 
-export const TrickTakers = () => {
-  const game = React.useContext(GameContext);
-
-  const fetchScores = async (): Promise<PlayerScore[]> => {
-    const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick-count`,
-      {
-        mode: 'cors',
-      }
-    );
-    return resp.ok ? ((await resp.json()) as PlayerScore[]) : [];
-  };
-
-  const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      fetchScores()
-        .then((takers) => setTrickTakers(takers))
-        .catch();
-    }, 3000);
-  });
-
+export const TrickTakers = ({
+  trickTakers: trickTakers,
+}: {
+  trickTakers: PlayerScore[];
+}) => {
   return (
     <div>
       <h2>Tikit</h2>

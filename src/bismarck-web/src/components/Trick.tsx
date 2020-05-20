@@ -1,27 +1,22 @@
-import { TrickDisplay } from './TrickDisplay';
+import { TrickCard } from './TrickCard';
 import * as TC from '../../../types/trick-cards';
-import { GameContext } from '../GameContext';
-import { SocketFactory } from '../services/socket-factory';
+import * as CSS from 'csstype';
 import * as React from 'react';
 
-export const Trick = () => {
-  const game = React.useContext(GameContext);
-
-  const [cards, setCards] = React.useState<TC.TrickCards>({ cards: [] });
-  const socket = SocketFactory.getSocket(game.gameId);
-
-  React.useEffect(() => {
-    socket.onmessage = (msg) => {
-      const trick = JSON.parse(msg.data);
-      setCards(trick);
-    };
-  });
-
-  React.useEffect(() => () => socket.close(), [socket]);
+export const Trick = ({
+  trickCards: trickCards,
+}: {
+  trickCards: TC.TrickCards;
+}) => {
+  const getColumns = (numberOfCards: number): CSS.Properties => {
+    return { columnCount: numberOfCards };
+  };
 
   return (
-    <div>
-      <TrickDisplay trickCards={cards} />
+    <div className="trick" style={getColumns(trickCards.cards.length)}>
+      {trickCards.cards.map((playerCard: TC.TrickCard, index: number) => (
+        <TrickCard trickCard={playerCard} key={index} />
+      ))}
     </div>
   );
 };

@@ -1,14 +1,20 @@
-import { Card } from './Card';
+import { ReadOnlyCard } from './ReadOnlyCard';
 import { Card as CardType } from '../../../types/card';
 import * as React from 'react';
 
-export const TableCards = ({ cards: cards }: { cards: CardType[] }) => {
+export const TableCards = ({
+  cards: cards,
+  show: show,
+}: {
+  cards: CardType[];
+  show: boolean;
+}) => {
   return (
-    <div>
+    <div style={{ display: show ? 'block' : 'none' }}>
       <h2>Pöytäkortit</h2>
       <div className="table-cards">
         {cards.map((card: CardType, index: number) => (
-          <Card card={card} key={index} />
+          <ReadOnlyCard card={card} key={index} />
         ))}
       </div>
     </div>

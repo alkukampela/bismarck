@@ -2,11 +2,12 @@ import { Card as CardType } from '../../../types/card';
 import { GameContext } from '../GameContext';
 import * as React from 'react';
 
-export const Card = ({ card, player }: { card: CardType; player?: string }) => {
+export const Card = ({ card, player }: { card: CardType; player: string }) => {
   const game = React.useContext(GameContext);
 
   const [showCard, setState] = React.useState<boolean>(true);
 
+  // TODO: move to somewhere else
   const getCardClass = (suit: string) => {
     return `card ${['♦️', '♥️'].includes(suit) ? 'red-card' : 'black-card'}`;
   };
@@ -62,10 +63,6 @@ export const Card = ({ card, player }: { card: CardType; player?: string }) => {
   };
 
   const tryEverything = async () => {
-    if (!player) {
-      return;
-    }
-
     const cardRemoved = await removeCard(card, player);
     if (cardRemoved) {
       setState(false);
