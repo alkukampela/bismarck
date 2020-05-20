@@ -1,4 +1,4 @@
-import { Card } from './Card';
+import { PlayersCard } from './PlayersCard';
 import { Card as CardType } from '../../../types/card';
 import { GameContext } from '../GameContext';
 import * as React from 'react';
@@ -9,7 +9,7 @@ export const PlayersCards = ({ cards }: { cards: CardType[] }) => {
   return (
     <div className="players-cards">
       {cards.map((card: CardType, index: number) => (
-        <Card card={card} key={index} player={game.player} />
+        <PlayersCard card={card} key={index} player={game.player} />
       ))}
     </div>
   );
