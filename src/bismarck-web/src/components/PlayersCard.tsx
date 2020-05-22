@@ -1,6 +1,7 @@
 import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
 import { GameContext } from '../GameContext';
+import { addToTrick, removeCard, startTrick } from '../services/api-service';
 import * as React from 'react';
 
 export const PlayersCard = ({
@@ -16,71 +17,21 @@ export const PlayersCard = ({
 
   const [showCard, setState] = React.useState<boolean>(true);
 
-  const removeCard = async (
-    card: CardType,
-    player: string
-  ): Promise<boolean> => {
-    const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
-      {
-        method: 'DELETE',
-        mode: 'cors',
-      }
-    );
-    return resp.ok;
-  };
-
-  const startTrick = async (
-    card: CardType,
-    player: string
-  ): Promise<boolean> => {
-    const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick?player=${player}`,
-      {
-        method: 'POST',
-        mode: 'cors',
-        body: JSON.stringify(card),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return resp.ok;
-  };
-
-  const addToTrick = async (
-    card: CardType,
-    player: string
-  ): Promise<boolean> => {
-    const resp = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/trick/cards?player=${player}`,
-      {
-        method: 'POST',
-        mode: 'cors',
-        body: JSON.stringify(card),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return resp.ok;
-  };
-
   const tryEverything = async () => {
-    const cardRemoved = await removeCard(card, player);
+    const cardRemoved = await removeCard(player, game.gameId, card);
     if (cardRemoved) {
       setState(false);
       onCardRemoval();
       return;
     }
 
-    const trickStarted = await startTrick(card, player);
+    const trickStarted = await startTrick(player, game.gameId, card);
     if (trickStarted) {
       setState(false);
       return;
     }
 
-    const trickAdded = await addToTrick(card, player);
+    const trickAdded = await addToTrick(player, game.gameId, card);
     if (trickAdded) {
       setState(false);
       return;
