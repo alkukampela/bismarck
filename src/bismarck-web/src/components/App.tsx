@@ -4,9 +4,13 @@ import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
 import * as React from 'react';
 
+const parseQueryString = (key: string): string => {
+  return (QueryString.parse(location.search)[key] as string) || '';
+};
+
 export const App = () => {
-  const player = (QueryString.parse(location.search).player as string) || '';
-  const gameId = (QueryString.parse(location.search).game as string) || '';
+  const player = parseQueryString('player');
+  const gameId = parseQueryString('game');
   const game = { player, gameId };
 
   return (

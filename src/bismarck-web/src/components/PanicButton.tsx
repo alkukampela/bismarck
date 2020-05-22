@@ -1,23 +1,18 @@
 import { GameContext } from '../GameContext';
 import * as React from 'react';
+import { initHand } from '../services/api-service';
 
 export const PanicButton = () => {
   const game = React.useContext(GameContext);
 
-  const initHand = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
-    }).finally(() => location.reload()); // <== Sad
+  const gottaGetSomeAction = () => {
+    initHand(game.gameId).finally(() => location.reload()); // <== Sad
   };
 
   return (
     <button
       type="button"
-      onClick={initHand}
+      onClick={gottaGetSomeAction}
       className="panic-button"
       style={{ display: !!game.player ? 'block' : 'none' }}
     >

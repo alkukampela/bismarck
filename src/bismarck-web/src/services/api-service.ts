@@ -99,3 +99,7 @@ export const removeCard = async (
     `${gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`
   );
 };
+
+export const initHand = (gameId: string): Promise<boolean> => {
+  return performPost(`${gameId}/hand/`, {});
+};
