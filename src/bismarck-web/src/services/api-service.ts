@@ -2,6 +2,7 @@ import { Card } from '../../../types/card';
 import { PlayersHand } from '../../../types/players-hand';
 import { PlayerScore } from '../../../types/player-score';
 import { GameScoreBoard } from '../../../types/game-score-board';
+import { HandStatute } from '../../../types/hand-statute';
 
 const performGet = async <T>(
   resourcePath: string,
@@ -40,4 +41,11 @@ export const fetchScores = async (
   fallbackValue: GameScoreBoard
 ): Promise<GameScoreBoard> => {
   return performGet<GameScoreBoard>(`${gameId}/score`, fallbackValue);
+};
+
+export const fetchStatute = async (
+  gameId: string,
+  fallbackValue: HandStatute
+): Promise<HandStatute> => {
+  return performGet<HandStatute>(`${gameId}/hand/statute`, fallbackValue);
 };

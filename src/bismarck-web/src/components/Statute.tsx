@@ -3,6 +3,7 @@ import { HandStatute } from '../../../types/hand-statute';
 import { Suit } from '../../../types/suit';
 import * as React from 'react';
 import { GameContext } from '../GameContext';
+import { fetchStatute } from '../services/api-service';
 
 export const StatuteSummary = () => {
   const game = React.useContext(GameContext);
@@ -19,18 +20,8 @@ export const StatuteSummary = () => {
   const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
 
   React.useEffect(() => {
-    const fetchStatute = async (): Promise<HandStatute> => {
-      const resp = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/games/${game.gameId}/hand/statute`,
-        {
-          mode: 'cors',
-        }
-      );
-
-      return resp.ok ? ((await resp.json()) as HandStatute) : emptyStatue;
-    };
-
-    fetchStatute().then((fetchedStatute) => {
+    // TODO: move http request to parent
+    fetchStatute(game.gameId, emptyStatue).then((fetchedStatute) => {
       setStatute(fetchedStatute);
     });
   }, []);
