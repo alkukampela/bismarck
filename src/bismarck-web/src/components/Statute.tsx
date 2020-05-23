@@ -2,29 +2,9 @@ import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
 import { Suit } from '../../../types/suit';
 import * as React from 'react';
-import { GameContext } from '../GameContext';
-import { fetchStatute } from '../services/api-service';
 
-export const StatuteSummary = () => {
-  const game = React.useContext(GameContext);
-
-  const emptyStatue = {
-    eldestHand: { name: '' },
-    handType: {
-      isChoice: false,
-    },
-    playerOrder: [],
-    playersInGame: 0,
-  };
-
-  const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
-
-  React.useEffect(() => {
-    // TODO: move http request to parent
-    fetchStatute(game.gameId, emptyStatue).then((fetchedStatute) => {
-      setStatute(fetchedStatute);
-    });
-  }, []);
+export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
+  React.useEffect(() => {}, []);
 
   const gameTypeName = (type: GameType): string => {
     switch (type) {

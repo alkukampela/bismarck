@@ -6,6 +6,7 @@ import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
 import { Card } from '../../../types/card';
 import { GameScoreBoard } from '../../../types/game-score-board';
+import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
 import { TrickCards } from '../../../types/trick-cards';
@@ -17,34 +18,42 @@ import {
   fetchScores,
   fetchTableCards,
   fetchHand,
+  fetchStatute,
 } from '../services/api-service';
+import {
+  emptyHand,
+  emptyScores,
+  emptyTrick,
+  emptyStatue,
+} from '../domain/default-objects';
 
 export const GameContainer = () => {
   const game = React.useContext(GameContext);
 
-  const emptyScores: GameScoreBoard = {
-    trickScores: [],
-    totalScore: [],
-  };
-
-  const emptyHand: PlayersHand = {
-    cards: [],
-    extraCards: 0,
-  };
-
   const [tableCards, setTableCards] = React.useState<Card[]>([]);
   const [playersHand, setPlayersHand] = React.useState<PlayersHand>(emptyHand);
-  const [trickCards, setTrickCards] = React.useState<TrickCards>({
-    cards: [],
-  });
+  const [trickCards, setTrickCards] = React.useState<TrickCards>(emptyTrick);
   const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
+  const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
 
   const socket = SocketFactory.getSocket(game.gameId);
 
   const tableCardsAreVisible = (trickCards: TrickCards): boolean => {
     // TODO: check if hand has any previous tricks
     return trickCards.cards.filter((tc) => !!tc.card).length === 0;
+  };
+
+  const updateTableCards = () => {
+    fetchTableCards(game.gameId).then((cards) => {
+      setTableCards(cards);
+    });
+  };
+
+  const updateHand = () => {
+    fetchHand(game.gameId, game.player, emptyHand).then((hand) => {
+      setPlayersHand(hand);
+    });
   };
 
   const updateTrickTakers = () => {
@@ -59,15 +68,18 @@ export const GameContainer = () => {
     });
   };
 
+  const updateStatute = () => {
+    fetchStatute(game.gameId, emptyStatue).then((fetchedStatute) => {
+      setStatute(fetchedStatute);
+    });
+  };
+
   React.useEffect(() => {
-    fetchTableCards(game.gameId).then((cards) => {
-      setTableCards(cards);
-    });
-    fetchHand(game.gameId, game.player, emptyHand).then((hand) => {
-      setPlayersHand(hand);
-    });
+    updateTableCards();
+    updateHand();
     updateTrickTakers();
     updateTotalScores();
+    updateStatute();
 
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickCards;
@@ -88,7 +100,7 @@ export const GameContainer = () => {
       <PlayersCards hand={playersHand} />
       <TableCards cards={tableCards} show={tableCardsAreVisible(trickCards)} />
       <div className="score-board">
-        <StatuteSummary />
+        <StatuteSummary statute={statute} />
         <TrickTakers trickTakers={trickTakers} />
         <TotalScore scores={scores} />
       </div>
