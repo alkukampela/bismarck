@@ -15,7 +15,8 @@ const handService = new HandService(
 
 export const createGame = async (
   gameId: string,
-  players: Player[]
+  players: Player[],
+  handNumber?: number
 ): Promise<Game> => {
   if (players.length < 3 || players.length > 4) {
     return Promise.reject('Must have 3 or 4 players');
@@ -28,7 +29,7 @@ export const createGame = async (
 
   const game = {
     players: shuffle(players),
-    handNumber: 0,
+    handNumber: handNumber || 0,
   };
 
   storageService.storeGame(game, gameId);

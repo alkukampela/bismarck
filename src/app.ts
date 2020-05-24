@@ -153,8 +153,8 @@ router.get('/games/:id/score', (req, res) => {
 
 router.post('/games/:id', (req, res) => {
   const players = req.body.players as Player[];
-
-  createGame(req.params.id, players)
+  const handNumber = parseInt(req.query.hand as string, 10);
+  createGame(req.params.id, players, handNumber)
     .then((game) => res.send(game))
     .catch(() => {
       res.sendStatus(statuses.BAD_REQUEST);
