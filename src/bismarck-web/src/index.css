@@ -52,12 +52,13 @@ button {
 
 .players-cards {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
 .players-card {
   padding-bottom: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .choice-buttons {
@@ -72,7 +73,7 @@ button {
   columns: 4;
   display: flex;
   justify-content: space-between;
-  padding-bottom: 1rem;
+  padding-bottom: 3rem;
 }
 
 .red-card {
@@ -102,7 +103,7 @@ button {
 .card > .suit {
   position: relative;
   top: -0.2rem;
-  font-size: 2.9em;
+  font-size: 2.8em;
   text-align: center;
 }
 
