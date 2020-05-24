@@ -6,7 +6,9 @@ export const PanicButton = () => {
   const game = React.useContext(GameContext);
 
   const gottaGetSomeAction = () => {
-    initHand(game.gameId).finally(() => location.reload()); // <== Sad
+    initHand(game.gameId).finally(
+      () => location.reload() // <== Sad
+    );
   };
 
   return (

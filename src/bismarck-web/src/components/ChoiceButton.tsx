@@ -13,7 +13,9 @@ export const ChoiceButton = ({
   const game = React.useContext(GameContext);
 
   const chooseGameType = () => {
-    postChoice(game.player, game.gameId, gameTypeChoice);
+    postChoice(game.player, game.gameId, gameTypeChoice).finally(
+      () => location.reload() // Ugly haxxx
+    );
   };
 
   return (
