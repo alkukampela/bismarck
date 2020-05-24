@@ -3,6 +3,7 @@ import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 import { Game } from '../types/game';
+import { GameTypeChoice } from '../types/game-type-choice';
 
 export class HandStatuteMachine {
   public getHandStatute(game: Game, trumpSuit: Suit): HandStatute {
@@ -27,14 +28,15 @@ export class HandStatuteMachine {
 
   public chooseGameType(
     handStatute: HandStatute,
-    chosenGameType: GameType,
-    trumpSuit?: Suit
+    gameTypeChoice: GameTypeChoice
   ): HandStatute {
     const handType = {
       isChoice: true,
       gameType: {
-        value: chosenGameType,
-        ...(chosenGameType === GameType.TRUMP && { trumpSuit }),
+        value: gameTypeChoice.gameType,
+        ...(gameTypeChoice.gameType === GameType.TRUMP && {
+          trumpSuit: gameTypeChoice.trumpSuit,
+        }),
       },
     };
 

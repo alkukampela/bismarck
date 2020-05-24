@@ -38,6 +38,7 @@ export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
     <div className="statute">
       <h2>Käden pelimuoto</h2>
       <div>Etumies: {statute.eldestHand.name}</div>
+      {statute.handType.isChoice && <div>Valinta</div>}
       {statute.handType.gameType && (
         <div>Pelityyppi: {gameTypeName(statute.handType.gameType.value)}</div>
       )}

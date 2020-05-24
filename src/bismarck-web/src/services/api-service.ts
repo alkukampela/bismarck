@@ -1,5 +1,6 @@
 import { Card } from '../../../types/card';
 import { GameScoreBoard } from '../../../types/game-score-board';
+import { GameTypeChoice } from '../../../types/game-type-choice';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
@@ -39,67 +40,65 @@ const performDelete = async (resourcePath: string): Promise<boolean> => {
   return resp.ok;
 };
 
-export const fetchTableCards = async (gameId: string): Promise<Card[]> => {
-  return performGet<Card[]>(`${gameId}/hand/tablecards`, []);
-};
+export const fetchTableCards = async (gameId: string): Promise<Card[]> =>
+  performGet<Card[]>(`${gameId}/hand/tablecards`, []);
 
 export const fetchHand = async (
   gameId: string,
   player: string,
   fallbackValue: PlayersHand
-): Promise<PlayersHand> => {
-  return performGet<PlayersHand>(
+): Promise<PlayersHand> =>
+  performGet<PlayersHand>(
     `${gameId}/hand/cards?player=${player}`,
     fallbackValue
   );
-};
 
 export const fetchTrickTakers = async (
   gameId: string
-): Promise<PlayerScore[]> => {
-  return performGet<PlayerScore[]>(`${gameId}/hand/trick-count`, []);
-};
+): Promise<PlayerScore[]> =>
+  performGet<PlayerScore[]>(`${gameId}/hand/trick-count`, []);
 
 export const fetchScores = async (
   gameId: string,
   fallbackValue: GameScoreBoard
-): Promise<GameScoreBoard> => {
-  return performGet<GameScoreBoard>(`${gameId}/score`, fallbackValue);
-};
+): Promise<GameScoreBoard> =>
+  performGet<GameScoreBoard>(`${gameId}/score`, fallbackValue);
 
 export const fetchStatute = async (
   gameId: string,
   fallbackValue: HandStatute
-): Promise<HandStatute> => {
-  return performGet<HandStatute>(`${gameId}/hand/statute`, fallbackValue);
-};
+): Promise<HandStatute> =>
+  performGet<HandStatute>(`${gameId}/hand/statute`, fallbackValue);
 
 export const startTrick = async (
   player: string,
   gameId: string,
   card: Card
-): Promise<boolean> => {
-  return performPost(`${gameId}/hand/trick?player=${player}`, card);
-};
+): Promise<boolean> =>
+  performPost(`${gameId}/hand/trick?player=${player}`, card);
 
 export const addToTrick = async (
   player: string,
   gameId: string,
   card: Card
-): Promise<boolean> => {
-  return performPost(`${gameId}/hand/trick/cards?player=${player}`, card);
-};
+): Promise<boolean> =>
+  performPost(`${gameId}/hand/trick/cards?player=${player}`, card);
 
 export const removeCard = async (
   player: string,
   gameId: string,
   card: Card
-): Promise<boolean> => {
-  return performDelete(
+): Promise<boolean> =>
+  performDelete(
     `${gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`
   );
-};
 
-export const initHand = (gameId: string): Promise<boolean> => {
-  return performPost(`${gameId}/hand/`, {});
-};
+export const initHand = (gameId: string): Promise<boolean> =>
+  performPost(`${gameId}/hand/`, {});
+
+export const fumps = (
+  player: string,
+  gameId: string,
+  gameTypeChoice: GameTypeChoice
+): Promise<boolean> =>
+  performPost(`${gameId}/hand/statute?player=${player}`, gameTypeChoice);

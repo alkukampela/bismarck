@@ -1,8 +1,10 @@
 import { CardManager } from './domain/card-manager';
+import { getTotalScores } from './domain/game-score-manager';
 import { createGame, initHand } from './domain/game-service';
 import { HandService } from './domain/hand-service';
 import { StorageService } from './persistence/storage-service';
 import { Card } from './types/card';
+import { GameTypeChoice } from './types/game-type-choice';
 import { Player } from './types/player';
 import { TrickCards } from './types/trick-cards';
 import cors from 'cors';
@@ -13,7 +15,6 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
-import { getTotalScores } from './domain/game-score-manager';
 
 const app = express();
 
@@ -57,6 +58,20 @@ const publishTrick = (trick: TrickCards, gameId: string) => {
 router.get('/games/:id/hand/statute', (req, res) => {
   hand
     .getStatute(req.params.id)
+    .then((statute) => {
+      res.send(statute);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+    });
+});
+
+router.post('/games/:id/hand/statute', (req, res) => {
+  const player = playerFromQueryString(req);
+  const gameTypeChoice = req.body as GameTypeChoice;
+
+  hand
+    .chooseGameType(player, gameTypeChoice, req.params.id)
     .then((statute) => {
       res.send(statute);
     })

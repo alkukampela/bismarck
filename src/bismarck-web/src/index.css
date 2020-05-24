@@ -4,6 +4,10 @@
   box-sizing: inherit;
 }
 
+#root {
+  margin: 2rem;
+}
+
 body {
   background-image: linear-gradient(90deg, #f7a10d 0%, #5f6f48 100%);
   font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
@@ -21,7 +25,25 @@ h6 {
 
 h2 {
   font-size: 2em;
+  margin-block-start: 0.2em;
   margin-block-end: 0.2em;
+}
+
+button {
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 2rem;
+  color: rgb(255, 255, 255);
+  border: 0;
+  outline: none;
+  padding: 1rem 2rem;
+  background-image: linear-gradient(
+    19deg,
+    rgb(0, 0, 0) 0%,
+    rgb(183, 33, 255) 100%
+  );
+  font-size: 1.6em;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .trick-card-container {
@@ -33,10 +55,18 @@ h2 {
   justify-content: space-between;
 }
 
+.choice-buttons {
+  columns: 6;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+}
+
 .table-cards {
   columns: 4;
   display: flex;
   justify-content: space-between;
+  padding-bottom: 1rem;
 }
 
 .red-card {
@@ -82,23 +112,6 @@ h2 {
   -webkit-box-shadow: none;
   box-shadow: none;
   background-color: inherit;
-}
-
-.panic-button {
-  border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 0 2rem;
-  color: rgb(255, 255, 255);
-  border: 0;
-  outline: none;
-  padding: 1rem 2rem;
-  background-image: linear-gradient(
-    19deg,
-    rgb(0, 0, 0) 0%,
-    rgb(183, 33, 255) 100%
-  );
-  font-size: 1.6em;
-  margin-bottom: 1rem;
-  cursor: pointer;
 }
 
 .score-board {

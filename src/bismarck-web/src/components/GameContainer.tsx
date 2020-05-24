@@ -1,3 +1,4 @@
+import { GameTypeChooser } from './GameTypeChooser';
 import { PlayersCards } from './PlayersCards';
 import { StatuteSummary } from './Statute';
 import { TableCards } from './TableCards';
@@ -74,6 +75,17 @@ export const GameContainer = () => {
     });
   };
 
+  const showGameChooseType = (
+    statute: HandStatute,
+    player: string
+  ): boolean => {
+    return (
+      player === statute.eldestHand.name &&
+      statute.handType.isChoice &&
+      !statute.handType.gameType
+    );
+  };
+
   React.useEffect(() => {
     updateTableCards();
     updateHand();
@@ -97,8 +109,9 @@ export const GameContainer = () => {
   return (
     <div>
       <Trick trickCards={trickCards} />
-      <PlayersCards hand={playersHand} />
+      {showGameChooseType(statute, game.player) && <GameTypeChooser />}
       <TableCards cards={tableCards} show={tableCardsAreVisible(trickCards)} />
+      <PlayersCards hand={playersHand} />
       <div className="score-board">
         <StatuteSummary statute={statute} />
         <TrickTakers trickTakers={trickTakers} />

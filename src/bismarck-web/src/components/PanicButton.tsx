@@ -1,6 +1,6 @@
 import { GameContext } from '../GameContext';
-import * as React from 'react';
 import { initHand } from '../services/api-service';
+import * as React from 'react';
 
 export const PanicButton = () => {
   const game = React.useContext(GameContext);
@@ -13,7 +13,6 @@ export const PanicButton = () => {
     <button
       type="button"
       onClick={gottaGetSomeAction}
-      className="panic-button"
       style={{ display: !!game.player ? 'block' : 'none' }}
     >
       Paniikki

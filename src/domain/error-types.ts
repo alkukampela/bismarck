@@ -14,4 +14,5 @@ export enum ErrorTypes {
   GAME_NOT_FOUND = 'Game not found',
   GAME_ENDED = 'Game has ended',
   NOT_FOUND = 'Not found',
+  ILLEGAL_CHOICE = 'Illegal game type choice',
 }

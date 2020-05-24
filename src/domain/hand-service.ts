@@ -27,6 +27,7 @@ import {
   setUpHandScore,
   getHandsPoints,
 } from './hand-score';
+import { GameTypeChoice } from '../types/game-type-choice';
 
 export class HandService {
   private _storageService: StorageService;
@@ -54,7 +55,10 @@ export class HandService {
     gameId: string
   ): Promise<PlayersHand> {
     const statute = await this._storageService.fetchHandStatute(gameId);
-    if (!statute) {
+    if (
+      !statute ||
+      (statute.handType.isChoice && !statute.handType.gameType.value)
+    ) {
       return { cards: [], extraCards: 0 };
     }
     const cards = await this._cardManager.getPlayersCards(
@@ -82,6 +86,9 @@ export class HandService {
       return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
     }
 
+    if (!statute.handType.gameType.value) {
+      return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
+    }
     const playerIndex = this.getPlayersIndex(player, statute);
 
     const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
@@ -121,28 +128,33 @@ export class HandService {
 
   public async chooseGameType(
     player: Player,
-    gameId: string,
-    chosenGameType: GameType,
-    suit?: Suit
+    gameTypeChoice: GameTypeChoice,
+    gameId: string
   ): Promise<HandStatute> {
     const statute = await this._storageService.fetchHandStatute(gameId);
 
     if (!this.isEldestHand(player, statute)) {
-      return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
+      return Promise.reject(new Error(ErrorTypes.MUST_BE_ELDEST_HAND));
     }
 
-    if (statute.handType.gameType.value) {
-      return Promise.reject(Error(ErrorTypes.GAME_TYPE_CHOSEN));
+    if (!!statute.handType.gameType) {
+      return Promise.reject(new Error(ErrorTypes.GAME_TYPE_CHOSEN));
     }
 
-    // TODO check that suit is passed if game type is trump and
-    // not passed in other game types
+    if (
+      (gameTypeChoice.gameType === GameType.TRUMP &&
+        !gameTypeChoice.trumpSuit) ||
+      (gameTypeChoice.gameType !== GameType.TRUMP && !!gameTypeChoice.trumpSuit)
+    ) {
+      return Promise.reject(new Error(ErrorTypes.ILLEGAL_CHOICE));
+    }
 
     const chosenStatute = new HandStatuteMachine().chooseGameType(
       statute,
-      chosenGameType,
-      suit
+      gameTypeChoice
     );
+
+    console.log(chosenStatute);
 
     this._storageService.storeHandStatute(chosenStatute, gameId);
     return chosenStatute;
