@@ -42,6 +42,7 @@ export const PlayersCard = ({
     <div
       onClick={tryEverything}
       style={{ display: showCard ? 'block' : 'none' }}
+      className="players-card"
     >
       <Card card={card} />
     </div>
