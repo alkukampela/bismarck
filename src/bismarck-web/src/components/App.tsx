@@ -1,22 +1,19 @@
-import { PanicButton } from './PanicButton';
-import { GameContainer } from './GameContainer';
-import { GameContextProvider as Provider } from '../GameContext';
-import * as QueryString from 'query-string';
+import { Create } from './Create';
+import { Game } from './Game';
 import * as React from 'react';
-
-const parseQueryString = (key: string): string => {
-  return (QueryString.parse(location.search)[key] as string) || '';
-};
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 export const App = () => {
-  const player = parseQueryString('player');
-  const gameId = parseQueryString('game');
-  const game = { player, gameId };
-
   return (
-    <Provider value={game}>
-      <PanicButton />
-      <GameContainer />
-    </Provider>
+    <Router>
+      <Switch>
+        <Route path="/create">
+          <Create />
+        </Route>
+        <Route path="/">
+          <Game />
+        </Route>
+      </Switch>
+    </Router>
   );
 };
