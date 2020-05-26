@@ -4,7 +4,7 @@ import shuffle from 'fisher-yates';
 import { v4 as uuid } from 'uuid';
 import UuidEncoder from 'uuid-encoder';
 import { Game } from '../types/game';
-import { sendGameLink } from './email-service';
+import { sendGameLink } from '../service/email-service';
 
 const storageService = StorageService.getInstance();
 

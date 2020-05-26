@@ -17,6 +17,8 @@ import url from 'url';
 import * as WebSocket from 'ws';
 import { RegisterPlayer } from './types/register-player';
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
+import { tokenFor } from './service/token-service';
+import * as dotenv from 'dotenv';
 
 const app = express();
 
@@ -25,6 +27,7 @@ const server = http.createServer(app);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
 } else {
+  dotenv.config();
   app.use(express.static(path.join(__dirname, 'bismarck-web/dist')));
 }
 
@@ -177,6 +180,16 @@ router.post('/games/:id/hand', (req, res) => {
     .then((statute) => {
       publishTrick({ cards: [] }, req.params.id);
       res.send(statute);
+    })
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+    });
+});
+
+router.get('/tokens/:id', (req, res) => {
+  tokenFor(req.params.id)
+    .then((result) => {
+      res.send(result);
     })
     .catch((err) => {
       res.status(statuses.BAD_REQUEST).send({ error: err.message });
