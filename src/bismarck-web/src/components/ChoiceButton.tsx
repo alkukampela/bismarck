@@ -1,7 +1,7 @@
 import { GameContext } from '../GameContext';
 import { GameTypeChoice } from '../../../types/game-type-choice';
 import * as React from 'react';
-import { fumps as postChoice } from '../services/api-service';
+import { postChoice } from '../services/api-service';
 
 export const ChoiceButton = ({
   text,

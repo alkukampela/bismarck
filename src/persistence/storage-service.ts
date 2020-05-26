@@ -1,3 +1,4 @@
+import { GamePlayer } from './game-player';
 import { Trick } from './trick';
 import { Card } from '../types/card';
 import { Game } from '../types/game';
@@ -81,6 +82,15 @@ export class StorageService {
     return JSON.parse(result);
   }
 
+  public storeGamePlayer(gamePlayer: GamePlayer, identifier: string) {
+    this.store(this.getGamePlayerKey(identifier), gamePlayer);
+  }
+
+  public async fetchGamePlayer(identifier: string): Promise<GamePlayer> {
+    const result = await this.fetch(this.getGamePlayerKey(identifier));
+    return JSON.parse(result);
+  }
+
   private store(
     key: string,
     subject:
@@ -90,7 +100,9 @@ export class StorageService {
       | Trick
       | Game
       | PlayerScore[][]
+      | GamePlayer
   ): void {
+    // TODO: expire keys, 24 hours?
     this._redis.set(key, JSON.stringify(subject));
   }
 
@@ -124,5 +136,9 @@ export class StorageService {
 
   private getTrickScoresKey(identifier: string): string {
     return 'trickscores:' + identifier;
+  }
+
+  private getGamePlayerKey(identifier: string): string {
+    return 'gameplayer:' + identifier;
   }
 }

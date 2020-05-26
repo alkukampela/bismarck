@@ -4,6 +4,7 @@ import { GameTypeChoice } from '../../../types/game-type-choice';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
+import { RegisterPlayer } from '../../../types/register-player';
 
 const baseUrl = `${process.env.REACT_APP_API_URL}/api/games`;
 
@@ -29,6 +30,7 @@ const performPost = async <T>(
       'Content-Type': 'application/json',
     },
   });
+  // TODO better error handling
   return resp.ok;
 };
 
@@ -96,9 +98,12 @@ export const removeCard = async (
 export const initHand = (gameId: string): Promise<boolean> =>
   performPost(`${gameId}/hand/`, {});
 
-export const fumps = (
+export const postChoice = (
   player: string,
   gameId: string,
   gameTypeChoice: GameTypeChoice
 ): Promise<boolean> =>
   performPost(`${gameId}/hand/statute?player=${player}`, gameTypeChoice);
+
+export const createGame = (players: any): Promise<boolean> =>
+  performPost('', players);

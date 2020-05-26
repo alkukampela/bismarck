@@ -15,6 +15,8 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
+import { RegisterPlayer } from './types/register-player';
+import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 
 const app = express();
 
@@ -158,6 +160,15 @@ router.post('/games/:id', (req, res) => {
     .then((game) => res.send(game))
     .catch(() => {
       res.sendStatus(statuses.BAD_REQUEST);
+    });
+});
+
+router.post('/games', (req, res) => {
+  const players = req.body.players as RegisterPlayer[];
+  createGameAndInvitatePlayers(players)
+    .then((game) => res.send(game))
+    .catch((err) => {
+      res.status(statuses.BAD_REQUEST).send({ error: err.message });
     });
 });
 
