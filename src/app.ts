@@ -24,12 +24,14 @@ const app = express();
 
 const server = http.createServer(app);
 
+let reactPath: string;
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')));
+  reactPath = path.join(__dirname, 'public');
 } else {
   dotenv.config();
-  app.use(express.static(path.join(__dirname, 'bismarck-web/dist')));
+  reactPath = path.join(__dirname, 'bismarck-web/dist');
 }
+app.use(express.static(reactPath));
 
 const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
@@ -194,6 +196,10 @@ router.get('/tokens/:id', (req, res) => {
     .catch((err) => {
       res.status(statuses.BAD_REQUEST).send({ error: err.message });
     });
+});
+
+router.get('*', (_req, res) => {
+  res.sendFile(`${reactPath}/index.html`);
 });
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
