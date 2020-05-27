@@ -198,11 +198,6 @@ router.get('/tokens/:id', (req, res) => {
     });
 });
 
-/*
-router.get('*', (_req, res) => {
-  res.sendFile(`${reactPath}/index.html`);
-});*/
-
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');
 

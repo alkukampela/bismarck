@@ -4,8 +4,6 @@ import { Suit } from '../../../types/suit';
 import * as React from 'react';
 
 export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
-  React.useEffect(() => {}, []);
-
   const gameTypeName = (type: GameType): string => {
     switch (type) {
       case GameType.TRUMP:

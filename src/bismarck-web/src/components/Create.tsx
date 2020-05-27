@@ -40,6 +40,7 @@ export const Create = () => {
       resetPlayerName2();
       resetPlayerName3();
     });
+    // TODO: add gameid to response and redirect to game
   };
 
   return (
