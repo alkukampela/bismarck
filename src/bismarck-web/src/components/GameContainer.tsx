@@ -40,7 +40,7 @@ export const GameContainer = () => {
 
   const socket = SocketFactory.getSocket(game.gameId);
 
-  const tableCardsAreVisible = (trickCards: TrickCards): boolean => {
+  const tableCardsAreVisible = (): boolean => {
     // TODO: check if hand has any previous tricks
     return trickCards.cards.filter((tc) => !!tc.card).length === 0;
   };
@@ -64,8 +64,8 @@ export const GameContainer = () => {
   };
 
   const updateTotalScores = () => {
-    fetchScores(game.gameId, emptyScores).then((scores) => {
-      setScores(scores);
+    fetchScores(game.gameId, emptyScores).then((fetchedScores) => {
+      setScores(fetchedScores);
     });
   };
 
@@ -76,13 +76,13 @@ export const GameContainer = () => {
   };
 
   const showGameChooseType = (
-    statute: HandStatute,
+    handStatute: HandStatute,
     player: string
   ): boolean => {
     return (
-      player === statute.eldestHand.name &&
-      statute.handType.isChoice &&
-      !statute.handType.gameType
+      player === handStatute.eldestHand.name &&
+      handStatute.handType.isChoice &&
+      !handStatute.handType.gameType
     );
   };
 
@@ -110,7 +110,7 @@ export const GameContainer = () => {
     <div>
       <Trick trickCards={trickCards} />
       {showGameChooseType(statute, game.player) && <GameTypeChooser />}
-      <TableCards cards={tableCards} show={tableCardsAreVisible(trickCards)} />
+      <TableCards cards={tableCards} show={tableCardsAreVisible()} />
       <PlayersCards hand={playersHand} />
       <div className="score-board">
         <StatuteSummary statute={statute} />

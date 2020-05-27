@@ -18,12 +18,11 @@ export const Login: React.SFC<Identifier> = (props) => {
     fetchToken(identifier, { gameId: '', token: '' });
 
   React.useEffect(() => {
-    console.log(props.match.params.identifier);
     getTokenResponse(props.match.params.identifier).then((tokenResponse) => {
       if (!!tokenResponse.gameId) {
+        sessionStorage.setItem(tokenResponse.gameId, tokenResponse.token);
         setGameId(tokenResponse.gameId);
       }
-      // TODO: add token to react context
     });
   }, []);
 

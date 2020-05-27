@@ -11,7 +11,8 @@ const parseQueryString = (key: string): string => {
 export const Game = () => {
   const player = parseQueryString('player');
   const gameId = parseQueryString('game');
-  const game = { player, gameId };
+  const token = sessionStorage.getItem(gameId) || '';
+  const game = { player, gameId, token };
 
   return (
     <Provider value={game}>

@@ -1,8 +1,8 @@
 import { Create } from './Create';
 import { Game } from './Game';
+import { Login } from './Login';
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Login } from './Login';
 
 export const App = () => {
   return (
