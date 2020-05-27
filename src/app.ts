@@ -198,9 +198,10 @@ router.get('/tokens/:id', (req, res) => {
     });
 });
 
+/*
 router.get('*', (_req, res) => {
   res.sendFile(`${reactPath}/index.html`);
-});
+});*/
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');
@@ -220,6 +221,9 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api', router);
+app.get('*', (_req, res) => {
+  res.sendFile(`${reactPath}/index.html`);
+});
 
 server.listen(port, () => {
   console.log(`Server is listening on ${port}`);
