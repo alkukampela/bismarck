@@ -8,6 +8,18 @@ import { TokenResponse } from '../../../types/token-response';
 
 const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
 
+interface HeaderValue {
+  key: string;
+  value: string;
+}
+
+const createAuthHeader = (token: string): HeaderValue => {
+  return {
+    key: 'Authorizaton',
+    value: `Bearer ${token}`,
+  };
+};
+
 const performGet = async <T>(
   resourcePath: string,
   fallbackValue: T
@@ -20,24 +32,35 @@ const performGet = async <T>(
 
 const performPost = async <T>(
   resourcePath: string,
-  payload: T
+  payload: T,
+  authHeader?: HeaderValue
 ): Promise<boolean> => {
+  const headers = new Headers();
+  headers.set('Content-Type', 'application/json');
+  if (!!authHeader) {
+    headers.set(authHeader.key, authHeader.value);
+  }
+
   const resp = await fetch(`${baseUrl}/${resourcePath}`, {
     method: 'POST',
     mode: 'cors',
     body: JSON.stringify(payload),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
   });
   // TODO better error handling
   return resp.ok;
 };
 
-const performDelete = async (resourcePath: string): Promise<boolean> => {
+const performDelete = async (
+  resourcePath: string,
+  authHeader: HeaderValue
+): Promise<boolean> => {
+  const headers = new Headers();
+  headers.set(authHeader.key, authHeader.value);
   const resp = await fetch(`${baseUrl}/${resourcePath}`, {
     method: 'DELETE',
     mode: 'cors',
+    headers,
   });
   return resp.ok;
 };
@@ -73,37 +96,54 @@ export const fetchStatute = async (
   performGet<HandStatute>(`games/${gameId}/hand/statute`, fallbackValue);
 
 export const startTrick = async (
+  authToken: string,
   player: string,
   gameId: string,
   card: Card
 ): Promise<boolean> =>
-  performPost(`games/${gameId}/hand/trick?player=${player}`, card);
+  performPost(
+    `games/${gameId}/hand/trick?player=${player}`,
+    card,
+    createAuthHeader(authToken)
+  );
 
 export const addToTrick = async (
+  authToken: string,
   player: string,
   gameId: string,
   card: Card
 ): Promise<boolean> =>
-  performPost(`games/${gameId}/hand/trick/cards?player=${player}`, card);
+  performPost(
+    `games/${gameId}/hand/trick/cards?player=${player}`,
+    card,
+    createAuthHeader(authToken)
+  );
 
 export const removeCard = async (
+  authToken: string,
   player: string,
   gameId: string,
   card: Card
 ): Promise<boolean> =>
   performDelete(
-    `games/${gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`
+    `games/${gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
+    createAuthHeader(authToken)
   );
 
-export const initHand = (gameId: string): Promise<boolean> =>
-  performPost(`${gameId}/hand/`, {});
+export const initHand = (authToken: string, gameId: string): Promise<boolean> =>
+  performPost(`${gameId}/hand/`, {}, createAuthHeader(authToken));
 
 export const postChoice = (
+  authToken: string,
   player: string,
   gameId: string,
   gameTypeChoice: GameTypeChoice
 ): Promise<boolean> =>
-  performPost(`games/${gameId}/hand/statute?player=${player}`, gameTypeChoice);
+  performPost(
+    `games/${gameId}/hand/statute?player=${player}`,
+    gameTypeChoice,
+    createAuthHeader(authToken)
+  );
 
 export const createGame = (players: any): Promise<boolean> =>
   performPost('', players);
