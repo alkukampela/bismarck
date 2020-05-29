@@ -28,7 +28,6 @@ export const Login: React.SFC<Identifier> = (props) => {
 
   return (
     <div>
-      <h1>{props.match.params.identifier}</h1>
       {!!gameId && (
         <Redirect
           push
@@ -38,6 +37,7 @@ export const Login: React.SFC<Identifier> = (props) => {
           }}
         />
       )}
+      <h1>Virheellinen tunniste</h1>
     </div>
   );
 };

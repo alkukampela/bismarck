@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import UuidEncoder from 'uuid-encoder';
 import { Game } from '../types/game';
 import { sendGameLink } from '../service/email-service';
+import { CreateGameResponse } from '../types/create-game-response';
 
 const storageService = StorageService.getInstance();
 
@@ -32,7 +33,7 @@ function generateGameIdentifier(): string {
 
 export const createGameAndInvitatePlayers = async (
   players: RegisterPlayer[]
-): Promise<Game> => {
+): Promise<CreateGameResponse> => {
   if (players.length < 3 || players.length > 4) {
     return Promise.reject(new Error('Must have 3 or 4 players'));
   }
@@ -60,5 +61,8 @@ export const createGameAndInvitatePlayers = async (
 
   storageService.storeGame(game, gameId);
 
-  return game;
+  return {
+    id: gameId,
+    game,
+  };
 };

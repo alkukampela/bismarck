@@ -5,6 +5,7 @@ import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
 import { TokenResponse } from '../../../types/token-response';
+import { CreateGameResponse } from '../../../types/create-game-response';
 
 const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
 
@@ -34,20 +35,27 @@ const performPost = async <T>(
   resourcePath: string,
   payload: T,
   authHeader?: HeaderValue
-): Promise<boolean> => {
+): Promise<Response> => {
   const headers = new Headers();
   headers.set('Content-Type', 'application/json');
   if (!!authHeader) {
     headers.set(authHeader.key, authHeader.value);
   }
 
-  const resp = await fetch(`${baseUrl}/${resourcePath}`, {
+  return await fetch(`${baseUrl}/${resourcePath}`, {
     method: 'POST',
     mode: 'cors',
     body: JSON.stringify(payload),
     headers,
   });
-  // TODO better error handling
+};
+
+const postAndForget = async <T>(
+  resourcePath: string,
+  payload: T,
+  authHeader?: HeaderValue
+): Promise<boolean> => {
+  const resp = await performPost(resourcePath, payload, authHeader);
   return resp.ok;
 };
 
@@ -101,7 +109,7 @@ export const startTrick = async (
   gameId: string,
   card: Card
 ): Promise<boolean> =>
-  performPost(
+  postAndForget(
     `games/${gameId}/hand/trick?player=${player}`,
     card,
     createAuthHeader(authToken)
@@ -113,7 +121,7 @@ export const addToTrick = async (
   gameId: string,
   card: Card
 ): Promise<boolean> =>
-  performPost(
+  postAndForget(
     `games/${gameId}/hand/trick/cards?player=${player}`,
     card,
     createAuthHeader(authToken)
@@ -131,7 +139,7 @@ export const removeCard = async (
   );
 
 export const initHand = (authToken: string, gameId: string): Promise<boolean> =>
-  performPost(`${gameId}/hand/`, {}, createAuthHeader(authToken));
+  postAndForget(`${gameId}/hand/`, {}, createAuthHeader(authToken));
 
 export const postChoice = (
   authToken: string,
@@ -139,14 +147,16 @@ export const postChoice = (
   gameId: string,
   gameTypeChoice: GameTypeChoice
 ): Promise<boolean> =>
-  performPost(
+  postAndForget(
     `games/${gameId}/hand/statute?player=${player}`,
     gameTypeChoice,
     createAuthHeader(authToken)
   );
 
-export const createGame = (players: any): Promise<boolean> =>
-  performPost('', players);
+export const createGame = async (players: any): Promise<CreateGameResponse> => {
+  const createdGame = await performPost('games', players);
+  return ((await createdGame.json()) as CreateGameResponse) || Promise.reject;
+};
 
 export const fetchToken = async (
   identifier: string,

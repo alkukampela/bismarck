@@ -2,26 +2,17 @@ import { useInput } from '../hooks/useInput';
 import { RegisterPlayer } from '../../../types/register-player';
 import * as React from 'react';
 import { createGame } from '../services/api-service';
+import { Redirect } from 'react-router-dom';
 
 export const Create = () => {
-  const { value: email1, bind: bindEmail1, reset: resetEmail1 } = useInput('');
-  const { value: email2, bind: bindEmail2, reset: resetEmail2 } = useInput('');
-  const { value: email3, bind: bindEmail3, reset: resetEmail3 } = useInput('');
-  const {
-    value: playerName1,
-    bind: bindPlayerName1,
-    reset: resetPlayerName1,
-  } = useInput('');
-  const {
-    value: playerName2,
-    bind: bindPlayerName2,
-    reset: resetPlayerName2,
-  } = useInput('');
-  const {
-    value: playerName3,
-    bind: bindPlayerName3,
-    reset: resetPlayerName3,
-  } = useInput('');
+  const [gameId, setGameId] = React.useState<string>('');
+
+  const { value: email1, bind: bindEmail1 } = useInput('');
+  const { value: email2, bind: bindEmail2 } = useInput('');
+  const { value: email3, bind: bindEmail3 } = useInput('');
+  const { value: playerName1, bind: bindPlayerName1 } = useInput('');
+  const { value: playerName2, bind: bindPlayerName2 } = useInput('');
+  const { value: playerName3, bind: bindPlayerName3 } = useInput('');
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -32,15 +23,9 @@ export const Create = () => {
       { email: email3, player: { name: playerName3 } },
     ];
 
-    createGame({ players: registerPlayers }).then(() => {
-      resetEmail1();
-      resetEmail2();
-      resetEmail3();
-      resetPlayerName1();
-      resetPlayerName2();
-      resetPlayerName3();
+    createGame({ players: registerPlayers }).then((response) => {
+      setGameId(response.id);
     });
-    // TODO: add gameid to response and redirect to game
   };
 
   return (
@@ -86,6 +71,15 @@ export const Create = () => {
         </div>
         <input type="submit" value="Submit" />
       </form>
+      {!!gameId && (
+        <Redirect
+          push
+          to={{
+            pathname: '/',
+            search: `game=${gameId}`,
+          }}
+        />
+      )}
     </div>
   );
 };
