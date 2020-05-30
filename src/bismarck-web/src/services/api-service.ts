@@ -139,7 +139,7 @@ export const removeCard = async (
   );
 
 export const initHand = (authToken: string, gameId: string): Promise<boolean> =>
-  postAndForget(`${gameId}/hand/`, {}, createAuthHeader(authToken));
+  postAndForget(`games/${gameId}/hand/`, {}, createAuthHeader(authToken));
 
 export const postChoice = (
   authToken: string,
