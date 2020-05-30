@@ -20,6 +20,7 @@ export const Login: React.SFC<Identifier> = (props) => {
   React.useEffect(() => {
     getTokenResponse(props.match.params.identifier).then((tokenResponse) => {
       if (!!tokenResponse.gameId) {
+        console.log(tokenResponse.token);
         sessionStorage.setItem(tokenResponse.gameId, tokenResponse.token);
         setGameId(tokenResponse.gameId);
       }

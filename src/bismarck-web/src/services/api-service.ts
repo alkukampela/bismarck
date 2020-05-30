@@ -16,17 +16,24 @@ interface HeaderValue {
 
 const createAuthHeader = (token: string): HeaderValue => {
   return {
-    key: 'Authorizaton',
+    key: 'Authorization',
     value: `Bearer ${token}`,
   };
 };
 
 const performGet = async <T>(
   resourcePath: string,
-  fallbackValue: T
+  fallbackValue: T,
+  authHeader?: HeaderValue
 ): Promise<T> => {
+  const headers = new Headers();
+  if (!!authHeader) {
+    headers.set(authHeader.key, authHeader.value);
+  }
+
   const resp = await fetch(`${baseUrl}/${resourcePath}`, {
     mode: 'cors',
+    headers,
   });
   return resp.ok ? ((await resp.json()) as T) : fallbackValue;
 };
@@ -77,13 +84,15 @@ export const fetchTableCards = async (gameId: string): Promise<Card[]> =>
   performGet<Card[]>(`games/${gameId}/hand/tablecards`, []);
 
 export const fetchHand = async (
+  authToken: string,
   gameId: string,
   player: string,
   fallbackValue: PlayersHand
 ): Promise<PlayersHand> =>
   performGet<PlayersHand>(
     `games/${gameId}/hand/cards?player=${player}`,
-    fallbackValue
+    fallbackValue,
+    createAuthHeader(authToken)
   );
 
 export const fetchTrickTakers = async (

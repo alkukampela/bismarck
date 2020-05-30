@@ -11,11 +11,15 @@ export const PanicButton = () => {
     );
   };
 
+  const showButton = (): boolean => {
+    return !!game.player || !!game.token;
+  };
+
   return (
     <button
       type="button"
       onClick={gottaGetSomeAction}
-      style={{ display: !!game.player ? 'block' : 'none' }}
+      style={{ display: showButton() ? 'block' : 'none' }}
     >
       Paniikki
     </button>
