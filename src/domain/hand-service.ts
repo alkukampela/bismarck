@@ -154,8 +154,6 @@ export class HandService {
       gameTypeChoice
     );
 
-    console.log(chosenStatute);
-
     this._storageService.storeHandStatute(chosenStatute, gameId);
     return chosenStatute;
   }
