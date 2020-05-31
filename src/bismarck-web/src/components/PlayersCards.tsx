@@ -25,7 +25,7 @@ export const PlayersCards = ({ hand }: { hand: PlayersHand }) => {
           <PlayersCard
             card={card}
             key={index}
-            player={game.player}
+            inRemovalStage={extraCards > 0}
             onCardRemoval={handleExtraCardRemoval}
           />
         ))}
