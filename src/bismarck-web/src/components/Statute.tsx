@@ -7,11 +7,11 @@ export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
   const gameTypeName = (type: GameType): string => {
     switch (type) {
       case GameType.TRUMP:
-        return 'Valtti';
+        return 'valtti';
       case GameType.NO_TRUMP:
-        return 'Grandi';
+        return 'grandi';
       case GameType.MISERE:
-        return 'Misääri';
+        return 'misääri';
       default:
         return '';
     }
@@ -20,13 +20,13 @@ export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
   const trumpSuitName = (trumpSuit: Suit): string => {
     switch (trumpSuit) {
       case Suit.DIAMOND:
-        return 'Ruutu';
+        return 'ruutu';
       case Suit.CLUB:
-        return 'Risti';
+        return 'risti';
       case Suit.HEART:
-        return 'Hertta';
+        return 'hertta';
       case Suit.SPADE:
-        return 'Pata';
+        return 'pata';
       default:
         return '';
     }
@@ -36,12 +36,16 @@ export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
     <div className="statute">
       <h2>Käsi</h2>
       <div>Etumies: {statute.eldestHand.name}</div>
-      {statute.handType.isChoice && <div>Valinta</div>}
-      {statute.handType.gameType && (
-        <div>{gameTypeName(statute.handType.gameType.value)}</div>
-      )}
+      <div>
+        Pelimuoto:&nbsp;
+        {statute.handType.isChoice && 'valinta/'}
+        {statute.handType.gameType &&
+          gameTypeName(statute.handType.gameType.value)}
+      </div>
       {typeof statute.handType.gameType?.trumpSuit !== 'undefined' && (
-        <div>{trumpSuitName(statute.handType.gameType.trumpSuit)}</div>
+        <div>
+          Valttimaa: {trumpSuitName(statute.handType.gameType.trumpSuit)}
+        </div>
       )}
     </div>
   );
