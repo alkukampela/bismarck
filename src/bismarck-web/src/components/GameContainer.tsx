@@ -52,7 +52,7 @@ export const GameContainer = () => {
   };
 
   const updateHand = () => {
-    fetchHand(game.token, game.gameId, game.player, emptyHand).then((hand) => {
+    fetchHand(game.token, game.gameId, emptyHand).then((hand) => {
       setPlayersHand(hand);
     });
   };

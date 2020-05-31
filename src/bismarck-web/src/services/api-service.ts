@@ -86,11 +86,10 @@ export const fetchTableCards = async (gameId: string): Promise<Card[]> =>
 export const fetchHand = async (
   authToken: string,
   gameId: string,
-  player: string,
   fallbackValue: PlayersHand
 ): Promise<PlayersHand> =>
   performGet<PlayersHand>(
-    `games/${gameId}/hand/cards?player=${player}`,
+    `games/${gameId}/hand/cards`,
     fallbackValue,
     createAuthHeader(authToken)
   );
@@ -114,36 +113,33 @@ export const fetchStatute = async (
 
 export const startTrick = async (
   authToken: string,
-  player: string,
   gameId: string,
   card: Card
 ): Promise<boolean> =>
   postAndForget(
-    `games/${gameId}/hand/trick?player=${player}`,
+    `games/${gameId}/hand/trick`,
     card,
     createAuthHeader(authToken)
   );
 
 export const addToTrick = async (
   authToken: string,
-  player: string,
   gameId: string,
   card: Card
 ): Promise<boolean> =>
   postAndForget(
-    `games/${gameId}/hand/trick/cards?player=${player}`,
+    `games/${gameId}/hand/trick/cards}`,
     card,
     createAuthHeader(authToken)
   );
 
 export const removeCard = async (
   authToken: string,
-  player: string,
   gameId: string,
   card: Card
 ): Promise<boolean> =>
   performDelete(
-    `games/${gameId}/hand/cards?player=${player}&rank=${card.rank}&suit=${card.suit}`,
+    `games/${gameId}/hand/cards?rank=${card.rank}&suit=${card.suit}`,
     createAuthHeader(authToken)
   );
 
@@ -152,12 +148,11 @@ export const initHand = (authToken: string, gameId: string): Promise<boolean> =>
 
 export const postChoice = (
   authToken: string,
-  player: string,
   gameId: string,
   gameTypeChoice: GameTypeChoice
 ): Promise<boolean> =>
   postAndForget(
-    `games/${gameId}/hand/statute?player=${player}`,
+    `games/${gameId}/hand/statute`,
     gameTypeChoice,
     createAuthHeader(authToken)
   );

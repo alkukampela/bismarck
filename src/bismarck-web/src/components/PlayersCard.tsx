@@ -18,25 +18,20 @@ export const PlayersCard = ({
   const [showCard, setState] = React.useState<boolean>(true);
 
   const tryEverything = async () => {
-    const cardRemoved = await removeCard(game.token, player, game.gameId, card);
+    const cardRemoved = await removeCard(game.token, game.gameId, card);
     if (cardRemoved) {
       setState(false);
       onCardRemoval();
       return;
     }
 
-    const trickStarted = await startTrick(
-      game.token,
-      player,
-      game.gameId,
-      card
-    );
+    const trickStarted = await startTrick(game.token, game.gameId, card);
     if (trickStarted) {
       setState(false);
       return;
     }
 
-    const trickAdded = await addToTrick(game.token, player, game.gameId, card);
+    const trickAdded = await addToTrick(game.token, game.gameId, card);
     if (trickAdded) {
       setState(false);
       return;

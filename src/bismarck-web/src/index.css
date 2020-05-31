@@ -132,3 +132,7 @@ button {
 .taker {
   text-decoration: underline;
 }
+
+.my-score {
+  font-style: italic;
+}

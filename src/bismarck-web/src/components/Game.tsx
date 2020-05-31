@@ -9,9 +9,9 @@ const parseQueryString = (key: string): string => {
 };
 
 export const Game = () => {
-  const player = parseQueryString('player');
   const gameId = parseQueryString('game');
-  const token = sessionStorage.getItem(gameId) || '';
+  const player = sessionStorage.getItem(`player_${gameId}`) || '';
+  const token = sessionStorage.getItem(`token_${gameId}`) || '';
   const game = { player, gameId, token };
 
   return (

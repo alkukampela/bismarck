@@ -24,9 +24,6 @@ export const playerExtractor = (
         next();
       }
     );
-  } else if (!!req.query.player) {
-    req.player = { name: req.query.player as string };
-    next();
   } else {
     res.sendStatus(401);
   }

@@ -19,6 +19,7 @@ export const tokenFor = async (id: string): Promise<TokenResponse> => {
   console.log(token);
   return {
     token,
+    player: gamePlayer.player,
     gameId: gamePlayer.gameId,
   };
 };

@@ -15,13 +15,20 @@ export const Login: React.SFC<Identifier> = (props) => {
   const [gameId, setGameId] = React.useState<string>('');
 
   const getTokenResponse = async (identifier: string): Promise<TokenResponse> =>
-    fetchToken(identifier, { gameId: '', token: '' });
+    fetchToken(identifier, { gameId: '', player: { name: '' }, token: '' });
 
   React.useEffect(() => {
     getTokenResponse(props.match.params.identifier).then((tokenResponse) => {
       if (!!tokenResponse.gameId) {
         console.log(tokenResponse.token);
-        sessionStorage.setItem(tokenResponse.gameId, tokenResponse.token);
+        sessionStorage.setItem(
+          `token_${tokenResponse.gameId}`,
+          tokenResponse.token
+        );
+        sessionStorage.setItem(
+          `player_${tokenResponse.gameId}`,
+          tokenResponse.player.name
+        );
         setGameId(tokenResponse.gameId);
       }
     });
