@@ -44,9 +44,14 @@ export const sendGameLink = (
   const sgMail = new MailService();
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-  sgMail.send(message).catch((err) => {
-    // TODO throw error and inform about failed game creation
-    console.log(err);
-    console.log(err.response.body.errors);
-  });
+  sgMail
+    .send(message)
+    .then(() => {
+      console.log(`Sent email to ${message.to}`);
+    })
+    .catch((err) => {
+      // TODO throw error and inform about failed game creation
+      console.log(err);
+      console.log(err.response.body.errors);
+    });
 };
