@@ -128,7 +128,7 @@ export const addToTrick = async (
   card: Card
 ): Promise<boolean> =>
   postAndForget(
-    `games/${gameId}/hand/trick/cards}`,
+    `games/${gameId}/hand/trick/cards`,
     card,
     createAuthHeader(authToken)
   );
