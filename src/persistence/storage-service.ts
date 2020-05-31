@@ -11,6 +11,8 @@ export type CardContainer = {
   isPlayed: boolean;
 };
 
+const ONE_DAY_EXPIRATION = 86400;
+
 export class StorageService {
   private static _instance: StorageService;
 
@@ -102,8 +104,7 @@ export class StorageService {
       | PlayerScore[][]
       | GamePlayer
   ): void {
-    // TODO: expire keys, 24 hours?
-    this._redis.set(key, JSON.stringify(subject));
+    this._redis.set(key, JSON.stringify(subject), 'EX', ONE_DAY_EXPIRATION);
   }
 
   private async fetch(key: string): Promise<string> {
