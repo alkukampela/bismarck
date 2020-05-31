@@ -1,12 +1,13 @@
-import * as express from 'express';
-import { verify, VerifyErrors } from 'jsonwebtoken';
 import { PlayerRequest } from './player-request';
 import { GamePlayer } from '../persistence/game-player';
+import * as express from 'express';
+import * as statuses from 'http-status-codes';
+import { verify, VerifyErrors } from 'jsonwebtoken';
 
 export const playerExtractor = (
   req: PlayerRequest,
   res: express.Response,
-  next
+  next: () => void
 ) => {
   const authHeader = req.headers.authorization;
 
@@ -18,13 +19,13 @@ export const playerExtractor = (
       process.env.JWT_SECRET,
       (err: VerifyErrors, gamePlayer: GamePlayer) => {
         if (!!err) {
-          return res.sendStatus(403);
+          return res.sendStatus(statuses.FORBIDDEN);
         }
         req.player = gamePlayer.player;
         next();
       }
     );
   } else {
-    res.sendStatus(401);
+    res.sendStatus(statuses.UNAUTHORIZED);
   }
 };
