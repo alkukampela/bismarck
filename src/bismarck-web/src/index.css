@@ -144,7 +144,11 @@ table.score-sheet {
 
 table.score-sheet td,
 table.score-sheet th {
-  padding: 0.5rem;
+  padding: 0.2rem 0.5rem;
+}
+
+table.score-sheet td {
+  text-align: right;
 }
 
 tr.trump,
