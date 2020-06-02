@@ -5,7 +5,6 @@ import { TrickCards } from '../../../types/trick-cards';
 
 export const emptyScores: GameScoreBoard = {
   trickScores: [],
-  totalScore: [],
 };
 
 export const emptyHand: PlayersHand = {

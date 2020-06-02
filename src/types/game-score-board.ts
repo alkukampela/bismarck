@@ -1,6 +1,5 @@
-import { PlayerScore } from './player-score';
+import { TrickScore } from './trick-score';
 
 export interface GameScoreBoard {
-  totalScore: PlayerScore[];
-  trickScores: PlayerScore[][];
+  trickScores: TrickScore[];
 }

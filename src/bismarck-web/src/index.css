@@ -9,7 +9,7 @@
 }
 
 body {
-  background-image: linear-gradient(90deg, #5f6f48 0%, #f7a10d 100%);
+  background-image: linear-gradient(90deg, #75ba15 0%, #d184f0 100%);
   font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
 }
 
@@ -135,4 +135,19 @@ button {
 
 .my-score {
   font-style: italic;
+}
+
+table.score-sheet {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table.score-sheet td,
+table.score-sheet th {
+  padding: 0.5rem;
+}
+
+tr.trump,
+tr.misere {
+  background: rgba(124, 126, 124, 0.25);
 }

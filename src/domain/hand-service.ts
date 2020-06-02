@@ -278,7 +278,7 @@ export class HandService {
         trickScores,
         statute.handType.gameType.value
       );
-      saveTrickPoints(handScore, gameId);
+      saveTrickPoints(handScore, statute, gameId);
     }
 
     this.saveTrick(gameId, updatedTrick);

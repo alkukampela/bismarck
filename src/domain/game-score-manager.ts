@@ -1,39 +1,55 @@
 import { StorageService } from '../persistence/storage-service';
 import { GameScoreBoard } from '../types/game-score-board';
 import { PlayerScore } from '../types/player-score';
+import { HandStatute } from '../types/hand-statute';
+import { TrickScore } from '../types/trick-score';
+import { Player } from '../types/player';
 
 const storageService = StorageService.getInstance();
 
-const addToTotalScore = (totals: PlayerScore[], score: PlayerScore) => {
-  totals.forEach((totalrow) => {
-    if (totalrow.player.name === score.player.name) {
-      totalrow.score += score.score;
-    }
-  });
+const pointsSoFar = (
+  previousTrickScore: TrickScore,
+  player: Player
+): number => {
+  return (
+    (!!previousTrickScore &&
+      previousTrickScore.scores.find(
+        (currentScore) => currentScore.player.name === player.name
+      ).totalPoints) ||
+    0
+  );
 };
 
-const calculateScore = (allTrickPoints: PlayerScore[][]): PlayerScore[] => {
-  const totals: PlayerScore[] = [];
-
-  allTrickPoints.forEach((trickScore) => {
-    trickScore.forEach((playerTrick) => {
-      totals.filter(
-        (playerTotal) => playerTotal.player.name === playerTrick.player.name
-      ).length === 0
-        ? totals.push(playerTrick)
-        : addToTotalScore(totals, playerTrick);
-    });
+const calculateScore = (
+  trickPoints: PlayerScore[],
+  previousTrickScore: TrickScore
+): {
+  player: Player;
+  totalPoints: number;
+}[] => {
+  return trickPoints.map((playerScore) => {
+    return {
+      player: playerScore.player,
+      totalPoints:
+        pointsSoFar(previousTrickScore, playerScore.player) + playerScore.score,
+    };
   });
-
-  return totals;
 };
 
 export const saveTrickPoints = async (
   trickPoints: PlayerScore[],
+  handStatute: HandStatute,
   gameId: string
 ) => {
   const allTrickPoints = (await storageService.fetchTrickScores(gameId)) || [];
-  allTrickPoints.push(trickPoints);
+
+  const trickScore = {
+    isChoice: handStatute.handType.isChoice,
+    gameType: handStatute.handType.gameType.value,
+    scores: calculateScore(trickPoints, allTrickPoints.slice(-1)[0]),
+  };
+
+  allTrickPoints.push(trickScore);
 
   storageService.storeTrickScores(allTrickPoints, gameId);
 };
@@ -41,9 +57,8 @@ export const saveTrickPoints = async (
 export const getTotalScores = async (
   gameId: string
 ): Promise<GameScoreBoard> => {
-  const allTrickPoints = (await storageService.fetchTrickScores(gameId)) || [];
+  const trickScores = (await storageService.fetchTrickScores(gameId)) || [];
   return {
-    trickScores: allTrickPoints,
-    totalScore: calculateScore(allTrickPoints),
+    trickScores,
   };
 };
