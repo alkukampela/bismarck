@@ -1,4 +1,4 @@
-# Ohjeet kolmen pelaajan Bismarckiin
+# Ohjeet Bismarckin pelaamiseen
 
 ## Yleistä
 
@@ -6,14 +6,16 @@ Tikkipeli, jota pelataan yhdellä 52 kortin pakalla. Jokerit eivät ole mukana. 
 
 Pelaajien järjestys arvotaan, ja järjestys pysyy koko pelin ajan samana.
 
-Pelimuotoja on neljä: valtti, grandi, misääri ja valinta, joita kutakin pelataan kolme jakoa niin, että vuorollaan yksi pelaaja on ”etumies”. Yhteensä jakoja on siis 12.
+Pelimuotoja on neljä: valtti, grandi, misääri ja valinta, joita kutakin pelataan kolme jakoa niin, että vuorollaan yksi pelaaja on ”etumies”. Yhteensä jakoja on kolmen hengen pelissä 12 ja neljän hengen pelissä 16.
 
 ## Pelin kulku
 
-Kullekin pelaajalle jaetaan 16 korttia, joita muut eivät näe, ja lisäksi ”pöytään” jaetaan neljä korttia (”pöytäkortit”), jotka tulevat etumiehelle mutta jotka ovat jaon aluksi kaikkien nähtävillä.
-Etumies laittaa omista korteistaan (jaetut 16 korttia + pöydällä olevat neljä korttia) neljä haluamaansa korttia pois (”poispano”). Muut pelaajat eivät näe poispanoa.
+Kullekin pelaajalle jaetaan kolmen hengen pelissä 16 ja neljän hengen pelissä 12, korttia joita muut eivät näe. Lisäksi ”pöytään” jaetaan neljä korttia (”pöytäkortit”), jotka tulevat etumiehelle mutta jotka ovat jaon aluksi kaikkien nähtävillä.
 
-Etumies aloittaa poispanon suoritettuaan pelin lyömällä pöytään yhden kortin, minkä jälkeen muut pelaajat lyövät vuorollaan pöytään yhden kortin. Näistä kolmesta kortista korkeimman lyönyt saa tikin ja aloittaa seuraavan kierroksen. Näin pelataan jaon yhteensä 16 kierrosta. Sen jälkeen lasketaan pisteet (ks. alla) ja aloitetaan uusi jako, jossa etumieheksi valikoituu järjestyksessä seuraava pelaaja.
+Etumies laittaa omista korteistaan (jaetut 16/12 korttia + pöydällä olevat neljä korttia) neljä haluamaansa korttia pois (”poispano”). Muut pelaajat eivät näe poispanoa.
+
+Etumies aloittaa poispanon suoritettuaan pelin lyömällä pöytään yhden kortin, minkä jälkeen muut pelaajat lyövät vuorollaan pöytään yhden kortin. Näistä kolmesta kortista korkeimman lyönyt saa tikin ja aloittaa seuraavan kierroksen. Näin pelataan kunnes pelaajilla ei ole enää kortteja, eli pelaajien määrästä riippuen joko 16 tai 12 kierrosta. Sen jälkeen lasketaan pisteet (ks. alla) ja aloitetaan uusi jako, jossa etumieheksi valikoituu järjestyksessä seuraava pelaaja.
+
 Ensimmäinen pöytään lyöty kortti määrittää maan, ja muiden pelaajien on lyötävä samaa maata (”maapakko”). Mikäli pelaajalla ei ole kädessään yhtään korttia samasta maasta (”renomaa”), hänen tulee lyödä jotain toista maata.
 
 ### Valtti
@@ -28,7 +30,7 @@ Tarkoitus on ottaa mahdollisimman paljon tikkejä. Maapakko.
 
 ### Misääri
 
-Tarkoitus on ottaa mahdollisimman vähän tikkejä. Maapakko
+Tarkoitus on ottaa mahdollisimman vähän tikkejä. Maapakko.
 
 ### Valinta
 

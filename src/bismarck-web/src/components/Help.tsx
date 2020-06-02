@@ -9,5 +9,10 @@ export const Help = () => {
     return { __html: instructions };
   };
 
-  return <div dangerouslySetInnerHTML={printInstructions()} />;
+  return (
+    <div
+      dangerouslySetInnerHTML={printInstructions()}
+      className="instructions"
+    />
+  );
 };
