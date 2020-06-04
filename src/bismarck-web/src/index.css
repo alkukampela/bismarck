@@ -9,7 +9,7 @@
 }
 
 body {
-  background-image: linear-gradient(90deg, #75ba15 0%, #d184f0 100%);
+  background-image: linear-gradient(90deg, #0bdee6 0%, #d184f0 100%);
   font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
 }
 
@@ -158,4 +158,84 @@ tr.misere {
 
 .instructions p {
   text-align: justify;
+}
+
+#help-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  align-items: center;
+  border-radius: 32rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  width: fit-content;
+  height: 4rem;
+  width: 4rem;
+  right: 2rem;
+  bottom: 2rem;
+}
+
+#help-button:hover,
+#help-button:active {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+#help-button > .icon {
+  -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgdmlld0JveD0iMCAwIDExIDExIj48cGF0aCBkPSJNNS42IDAuOWMtMC42IDAtMS4xIDAuNS0xLjEgMS4xczAuNSAxLjEgMS4xIDEuMSAxLjEtMC41IDEuMS0xLjFTNi4yIDAuOSA1LjYgMC45ek0zIDRMMyA0LjdDMyA0LjcgNC41IDQuNiA0LjUgNnYxLjVjMCAxLjUtMS41IDEuNy0xLjUgMS43TDMgMTBoNS4yTDguMiA5LjJjMCAwLTEuMiAwLTEuMi0xLjVMNyA1YzAgMCAwLTEtMS0xSDN6IiBmaWxsPSIjMDEwMTAxIi8+PC9zdmc+);
+  -webkit-mask-position-x: center;
+  -webkit-mask-position-y: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 2rem;
+  background-color: white;
+  cursor: pointer;
+  height: 2rem;
+  width: 2rem;
+  margin-inline-start: 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.modal-content {
+  position: relative;
+  background-image: linear-gradient(90deg, #0bdee6 0%, #d184f0 100%);
+  margin: auto;
+  padding: 1rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.close-modal {
+  color: white;
+  float: right;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 1rem;
+}
+
+.modal-body {
+  padding: 2px 1rem;
 }

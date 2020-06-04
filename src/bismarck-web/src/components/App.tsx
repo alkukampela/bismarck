@@ -1,9 +1,9 @@
 import { Create } from './Create';
 import { Game } from './Game';
-import { Help } from './Help';
 import { Login } from './Login';
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Instructions } from './Instructions';
 
 export const App = () => {
   return (
@@ -13,13 +13,11 @@ export const App = () => {
           <Create />
         </Route>
         <Route exact path="/login/:identifier" component={Login} />
-        <Route path="/help">
-          <Help />
-        </Route>
         <Route path="/">
           <Game />
         </Route>
       </Switch>
+      <Instructions />
     </Router>
   );
 };
