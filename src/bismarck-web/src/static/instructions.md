@@ -14,7 +14,7 @@ Kullekin pelaajalle jaetaan kolmen hengen pelissä 16 ja neljän hengen pelissä
 
 Etumies laittaa omista korteistaan (jaetut 16/12 korttia + pöydällä olevat neljä korttia) neljä haluamaansa korttia pois (”poispano”). Muut pelaajat eivät näe poispanoa.
 
-Etumies aloittaa poispanon suoritettuaan pelin lyömällä pöytään yhden kortin, minkä jälkeen muut pelaajat lyövät vuorollaan pöytään yhden kortin. Näistä kolmesta kortista korkeimman lyönyt saa tikin ja aloittaa seuraavan kierroksen. Näin pelataan kunnes pelaajilla ei ole enää kortteja, eli pelaajien määrästä riippuen joko 16 tai 12 kierrosta. Sen jälkeen lasketaan pisteet (ks. alla) ja aloitetaan uusi jako, jossa etumieheksi valikoituu järjestyksessä seuraava pelaaja.
+Etumies aloittaa poispanon suoritettuaan pelin lyömällä pöytään yhden kortin, minkä jälkeen muut pelaajat lyövät vuorollaan pöytään yhden kortin. Näistä korteista korkeimman lyönyt saa tikin ja aloittaa seuraavan kierroksen. Näin pelataan kunnes pelaajilla ei ole enää kortteja, eli pelaajien määrästä riippuen joko 16 tai 12 kierrosta. Sen jälkeen lasketaan pisteet (ks. alla) ja aloitetaan uusi jako, jossa etumieheksi valikoituu järjestyksessä seuraava pelaaja.
 
 Ensimmäinen pöytään lyöty kortti määrittää maan, ja muiden pelaajien on lyötävä samaa maata (”maapakko”). Mikäli pelaajalla ei ole kädessään yhtään korttia samasta maasta (”renomaa”), hänen tulee lyödä jotain toista maata.
 
@@ -38,8 +38,12 @@ Etumies valitsee pelimuodon (valtti, grandi tai misääri) neljän pöytäkortin
 
 ## Pistelasku
 
-Kunkin jaon jälkeen lasketaan, kuinka monta tikkiä kukin pelaaja on ottanut, ja pisteet lasketaan sen mukaan seuraavalla tavalla:
+Kunkin jaon jälkeen lasketaan, kuinka monta tikkiä kukin pelaaja on ottanut, ja pisteet lasketaan sen mukaan seuraavalla tavalla (kolminpeli):
 
-_Valtissa ja grandissa_ etumies pääsee ”kotiin” (eli tulokseen 0) ottamalla 8 tikkiä ja kaksi muuta pelaajaa ottamalla 4 tikkiä. Mikäli pelaaja ottaa tätä enemmän tai vähemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 7 tikkiä, hänen pistemääränsä on -1.
+_Valtissa ja grandissa_ etumies pääsee ”kotiin” (eli tulokseen 0) ottamalla 8 tikkiä. ja kaksi muuta pelaajaa ottamalla 4 tikkiä. Mikäli pelaaja ottaa tätä enemmän tai vähemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 7 tikkiä, hänen pistemääränsä on -1.
+
+Neljän hengen pelissä kotiin pääsee tikkimäärillä 6 (etumies) ja 2 (muut)
 
 _Misäärissä_ etumies pääsee kotiin ottamalla 2 tikkiä ja kaksi muuta pelaajaa ottamalla 7 tikkiä. Mikäli pelaaja ottaa tätä vähemmän tai enemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 1 tikin, hänen pistemääränsä on +1.
+
+Neljän hengen pelissä kotiin pääsee tikkimäärillä 0 (etumies) ja 4 (muut)
