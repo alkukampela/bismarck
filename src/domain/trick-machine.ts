@@ -33,12 +33,14 @@ const initTrickCards = (
 export const initTrick = (
   firstCard: Card,
   trickLead: Player,
-  handStatute: HandStatute
+  handStatute: HandStatute,
+  trickNumber: number
 ): Trick => {
   return {
     trickCards: initTrickCards(trickLead, handStatute.playerOrder, firstCard),
     trumpSuit: handStatute.handType.gameType.trumpSuit || getSuit(firstCard),
     trickSuit: getSuit(firstCard),
+    trickNumber,
   };
 };
 

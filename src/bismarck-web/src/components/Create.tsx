@@ -1,7 +1,7 @@
-import { useInput } from '../hooks/useInput';
 import { RegisterPlayer } from '../../../types/register-player';
-import * as React from 'react';
+import { useInput } from '../hooks/useInput';
 import { createGame } from '../services/api-service';
+import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 
 export const Create = () => {

@@ -13,7 +13,7 @@ import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
 import { PlayersHand } from '../types/players-hand';
 import { Suit } from '../types/suit';
-import { TrickCards } from '../types/trick-cards';
+import { TrickResponse } from '../types/trick-response';
 import {
   initTrick,
   isTrickReady,
@@ -43,7 +43,8 @@ export class HandService {
 
     const handStatute = new HandStatuteMachine().getHandStatute(
       game,
-      await this._cardManager.getTrumpSuit(gameId)
+      await this._cardManager.getTrumpSuit(gameId),
+      this._cardManager.totalRounds(game.players.length)
     );
 
     setUpHandScore(handStatute.playerOrder, gameId);
@@ -158,12 +159,13 @@ export class HandService {
     return chosenStatute;
   }
 
-  public async getCurrentTrick(gameId: string): Promise<TrickCards> {
+  public async getCurrentTrick(gameId: string): Promise<TrickResponse> {
     return this.getTrick(gameId)
       .then((trick) => {
         return {
           cards: trick.trickCards,
           taker: isTrickReady(trick) && getTaker(trick),
+          trickNumber: trick.trickNumber,
         };
       })
       .catch(async () => {
@@ -176,7 +178,7 @@ export class HandService {
     player: Player,
     card: Card,
     gameId: string
-  ): Promise<TrickCards> {
+  ): Promise<TrickResponse> {
     const isOpen = await this.isTrickOpen(gameId);
     if (isOpen) {
       return Promise.reject(new Error(ErrorTypes.TRICK_ALREADY_STARTED));
@@ -213,13 +215,19 @@ export class HandService {
       return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
     }
 
-    const trick = initTrick(card, player, statute);
+    const trickNumber = await this._cardManager.roundNumber(
+      playerIndex,
+      statute.playersInGame,
+      gameId
+    );
+    const trick = initTrick(card, player, statute, trickNumber);
 
     this._cardManager.removeCard(card, gameId);
     this.saveTrick(gameId, trick);
 
     return Promise.resolve({
       cards: trick.trickCards,
+      trickNumber: trick.trickNumber,
     });
   }
 
@@ -227,7 +235,7 @@ export class HandService {
     player: Player,
     card: Card,
     gameId: string
-  ): Promise<TrickCards> {
+  ): Promise<TrickResponse> {
     const isOpen = await this.isTrickOpen(gameId);
     if (!isOpen) {
       return Promise.reject(new Error(ErrorTypes.TRICK_NOT_STARTED));
@@ -286,6 +294,7 @@ export class HandService {
     return {
       cards: updatedTrick.trickCards,
       taker: isTrickReady(updatedTrick) && getTaker(updatedTrick),
+      trickNumber: updatedTrick.trickNumber,
     };
   }
 
@@ -316,7 +325,7 @@ export class HandService {
       });
   }
 
-  private async defaultTrick(gameId: string): Promise<TrickCards> {
+  private async defaultTrick(gameId: string): Promise<TrickResponse> {
     return this._storageService
       .fetchHandStatute(gameId)
       .then((statute) => {

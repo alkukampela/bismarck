@@ -7,4 +7,6 @@ export interface Trick {
   trumpSuit: Suit;
 
   trickCards: TrickCard[];
+
+  trickNumber: number;
 }

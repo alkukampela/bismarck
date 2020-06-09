@@ -7,6 +7,7 @@ export interface HandStatute {
   playerOrder: Player[];
   eldestHand: Player;
   playersInGame: number;
+  tricks: number;
 }
 
 export interface HandType {

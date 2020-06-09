@@ -6,7 +6,11 @@ import { Game } from '../types/game';
 import { GameTypeChoice } from '../types/game-type-choice';
 
 export class HandStatuteMachine {
-  public getHandStatute(game: Game, trumpSuit: Suit): HandStatute {
+  public getHandStatute(
+    game: Game,
+    trumpSuit: Suit,
+    tricks: number
+  ): HandStatute {
     const handType = {
       isChoice: this.isChoiceTurn(game.handNumber, game.players.length),
       gameType: this.determineGameType(
@@ -23,6 +27,7 @@ export class HandStatuteMachine {
       handType,
       playerOrder,
       playersInGame: playerOrder.length,
+      tricks,
     };
   }
 

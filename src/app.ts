@@ -11,7 +11,7 @@ import { Card } from './types/card';
 import { GameTypeChoice } from './types/game-type-choice';
 import { Player } from './types/player';
 import { RegisterPlayer } from './types/register-player';
-import { TrickCards } from './types/trick-cards';
+import { TrickResponse } from './types/trick-response';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
@@ -49,7 +49,7 @@ type WebSocketWithGameId = WebSocket & {
   gameId: string;
 };
 
-const publishTrick = (trick: TrickCards, gameId: string) => {
+const publishTrick = (trick: TrickResponse, gameId: string) => {
   let cc = 0;
   wss.clients.forEach((client: WebSocketWithGameId) => {
     if (client.gameId === gameId) {
@@ -210,7 +210,7 @@ router.post(
   (req: express.Request, res: express.Response) => {
     initHand(req.params.id)
       .then((statute) => {
-        publishTrick({ cards: [] }, req.params.id);
+        publishTrick({ cards: [], trickNumber: 0 }, req.params.id);
         res.send(statute);
       })
       .catch((err) => {

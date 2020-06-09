@@ -122,6 +122,24 @@ export class CardManager {
     return !cards || cards.filter((card) => !card.isPlayed).length === 0;
   }
 
+  public async roundNumber(
+    player: number,
+    playersInGame: number,
+    gameId: string
+  ): Promise<number> {
+    const totalRounds = this.totalRounds(playersInGame);
+    const cards = await this._storageService.fetchCards(gameId);
+    const cardsLeft = cards
+      .filter((_val, index) => this.isPlayersCard(player, playersInGame, index))
+      .filter((container) => !container.isPlayed).length;
+
+    return totalRounds - cardsLeft;
+  }
+
+  public totalRounds(playersInGame: number): number {
+    return (this.DECK_SIZE - this.TABLE_CARDS) / playersInGame;
+  }
+
   private isPlayersCard(
     player: number,
     playersInGame: number,
@@ -139,15 +157,12 @@ export class CardManager {
   }
 
   private shuffledDeck(): number[] {
-    const deck = [...this.sequenceGenerator(0, this.DECK_SIZE)];
+    const deck = [...this.sequenceGenerator(this.DECK_SIZE)];
     return shuffle(deck);
   }
 
-  private *sequenceGenerator(
-    minVal: number,
-    maxVal: number
-  ): IterableIterator<number> {
-    let currVal = minVal;
+  private *sequenceGenerator(maxVal: number): IterableIterator<number> {
+    let currVal = 0;
     while (currVal < maxVal) {
       yield currVal++;
     }

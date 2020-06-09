@@ -1,4 +1,5 @@
 import { GameTypeChooser } from './GameTypeChooser';
+import { HandTitle } from './HandTitle';
 import { PlayersCards } from './PlayersCards';
 import { StatuteSummary } from './Statute';
 import { TableCards } from './TableCards';
@@ -10,7 +11,7 @@ import { GameScoreBoard } from '../../../types/game-score-board';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
-import { TrickCards } from '../../../types/trick-cards';
+import { TrickResponse } from '../../../types/trick-response';
 import { GameContext } from '../GameContext';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
@@ -24,7 +25,7 @@ import {
 import {
   emptyHand,
   emptyScores,
-  emptyTrick,
+  emptyTrickResponse,
   emptyStatue,
 } from '../domain/default-objects';
 
@@ -33,7 +34,9 @@ export const GameContainer = () => {
 
   const [tableCards, setTableCards] = React.useState<Card[]>([]);
   const [playersHand, setPlayersHand] = React.useState<PlayersHand>(emptyHand);
-  const [trickCards, setTrickCards] = React.useState<TrickCards>(emptyTrick);
+  const [trickResponse, setTrickResponse] = React.useState<TrickResponse>(
+    emptyTrickResponse
+  );
   const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
   const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
@@ -42,7 +45,7 @@ export const GameContainer = () => {
 
   const tableCardsAreVisible = (): boolean => {
     // TODO: check if hand has any previous tricks
-    return trickCards.cards.filter((tc) => !!tc.card).length === 0;
+    return trickResponse.cards.filter((tc) => !!tc.card).length === 0;
   };
 
   const updateTableCards = () => {
@@ -94,8 +97,8 @@ export const GameContainer = () => {
     updateStatute();
 
     socket.onmessage = (msg) => {
-      const trick = JSON.parse(msg.data) as TrickCards;
-      setTrickCards(trick);
+      const trick = JSON.parse(msg.data) as TrickResponse;
+      setTrickResponse(trick);
       if (!trick.cards.filter((tc) => !tc.card).length) {
         updateTrickTakers();
         // TODO: this is fetched too often
@@ -108,7 +111,11 @@ export const GameContainer = () => {
 
   return (
     <div>
-      <Trick trickCards={trickCards} />
+      <HandTitle
+        handStatute={statute}
+        trickNumber={trickResponse.trickNumber}
+      />
+      <Trick trickResponse={trickResponse} />
       {showGameChooseType(statute, game.player) && <GameTypeChooser />}
       <TableCards cards={tableCards} show={tableCardsAreVisible()} />
       <PlayersCards hand={playersHand} />
