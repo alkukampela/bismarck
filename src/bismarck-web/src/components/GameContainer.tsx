@@ -19,7 +19,7 @@ import {
   fetchTrickTakers,
   fetchScores,
   fetchTableCards,
-  fetchHand,
+  fetchPlayersHand,
   fetchStatute,
 } from '../services/api-service';
 import {
@@ -48,6 +48,14 @@ export const GameContainer = () => {
     return trickResponse.cards.filter((tc) => !!tc.card).length === 0;
   };
 
+  const isHandReady = (trick: TrickResponse, handStatute: HandStatute) =>
+    isTrickReady(trick) &&
+    trick.trickNumber &&
+    trick.trickNumber + 1 >= handStatute.tricks;
+
+  const isTrickReady = (trick: TrickResponse) =>
+    !trick.cards.filter((tc) => !tc.card).length;
+
   const updateTableCards = () => {
     fetchTableCards(game.gameId).then((cards) => {
       setTableCards(cards);
@@ -55,9 +63,11 @@ export const GameContainer = () => {
   };
 
   const updateHand = () => {
-    fetchHand(game.token, game.gameId, emptyHand).then((hand) => {
-      setPlayersHand(hand);
-    });
+    if (!!game.token) {
+      fetchPlayersHand(game.token, game.gameId, emptyHand).then((hand) => {
+        setPlayersHand(hand);
+      });
+    }
   };
 
   const updateTrickTakers = () => {
@@ -78,7 +88,7 @@ export const GameContainer = () => {
     });
   };
 
-  const showGameChooseType = (
+  const shouldShowGameChooseType = (
     handStatute: HandStatute,
     player: string
   ): boolean => {
@@ -99,9 +109,10 @@ export const GameContainer = () => {
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickResponse;
       setTrickResponse(trick);
-      if (!trick.cards.filter((tc) => !tc.card).length) {
+      if (isTrickReady(trick)) {
         updateTrickTakers();
-        // TODO: this is fetched too often
+      }
+      if (isHandReady(trick, statute)) {
         updateTotalScores();
       }
     };
@@ -116,7 +127,7 @@ export const GameContainer = () => {
         trickNumber={trickResponse.trickNumber}
       />
       <Trick trickResponse={trickResponse} />
-      {showGameChooseType(statute, game.player) && <GameTypeChooser />}
+      {shouldShowGameChooseType(statute, game.player) && <GameTypeChooser />}
       <TableCards cards={tableCards} show={tableCardsAreVisible()} />
       <PlayersCards hand={playersHand} />
       <div className="score-board">

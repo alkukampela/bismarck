@@ -83,7 +83,7 @@ const performDelete = async (
 export const fetchTableCards = async (gameId: string): Promise<Card[]> =>
   performGet<Card[]>(`games/${gameId}/hand/tablecards`, []);
 
-export const fetchHand = async (
+export const fetchPlayersHand = async (
   authToken: string,
   gameId: string,
   fallbackValue: PlayersHand
