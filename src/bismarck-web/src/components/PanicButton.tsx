@@ -19,6 +19,7 @@ export const PanicButton = () => {
     <button
       type="button"
       onClick={gottaGetSomeAction}
+      className="panic-button"
       style={{ display: showButton() ? 'block' : 'none' }}
     >
       Paniikki

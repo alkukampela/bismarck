@@ -77,16 +77,20 @@ export const TotalScore = ({ scores }: { scores: GameScoreBoard }) => {
         <thead>
           <tr>
             {cumulativeScores.map((score) => {
-              return <th>{score.name}</th>;
+              return <th key={`column-${score.name}`}>{score.name}</th>;
             })}
           </tr>
         </thead>
         <tbody>
           {scores.trickScores.map((trick, trickIndex) => {
             return (
-              <tr className={classNameFrom(trick)}>
-                {cumulativeScores.map((score) => {
-                  return <td>{score.points[trickIndex]}</td>;
+              <tr key={trickIndex} className={classNameFrom(trick)}>
+                {cumulativeScores.map((score, scoreIndex) => {
+                  return (
+                    <td key={`${scoreIndex}-${trickIndex}`}>
+                      {score.points[trickIndex]}
+                    </td>
+                  );
                 })}
               </tr>
             );
