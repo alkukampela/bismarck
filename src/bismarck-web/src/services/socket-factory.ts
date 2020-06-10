@@ -6,8 +6,8 @@ export class SocketFactory {
   private static _instance: ReconnectingWebSocket;
 
   private static initSocket(gameId: string) {
-    const buildWsUrl = (host: string, protocol?: string) => {
-      const wsProtocol = protocol === 'http:' ? 'ws:' : 'wss:';
+    const buildWsUrl = (host: string, protocol: string | null) => {
+      const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
       return `${wsProtocol}//${host}`;
     };
 

@@ -42,21 +42,22 @@
   ],
   "dependencies": {
     "@types/jest": "^24.0.11",
-    "@types/node": "^11.13.6",
-    "@types/react": "^16.8.14",
-    "@types/react-dom": "^16.8.4",
+    "@types/node": "^13.13.12",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
     "csstype": "^2.6.10",
     "marked": "^1.1.0",
     "parcel-bundler": "^1.12.3",
     "query-string": "^6.12.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "reconnecting-websocket": "^4.4.0",
     "typescript": "^3.4.4"
   },
   "devDependencies": {
+    "@testing-library/react": "^10.2.1",
     "@typescript-eslint/eslint-plugin": "^3.0.0",
     "@typescript-eslint/eslint-plugin-tslint": "^3.0.0",
     "@typescript-eslint/parser": "^3.0.0",
@@ -67,8 +68,7 @@
     "jest-dom": "^3.1.3",
     "jest-extended": "^0.11.1",
     "prettier": "^1.17.0",
-    "react-test-renderer": "^16.8.6",
-    "react-testing-library": "^6.1.2",
+    "react-test-renderer": "^16.13.1",
     "ts-jest": "^24.0.2",
     "tslint": "^6.1.2"
   }
