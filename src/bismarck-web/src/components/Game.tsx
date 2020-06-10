@@ -1,5 +1,5 @@
-import { PanicButton } from './PanicButton';
 import { GameContainer } from './GameContainer';
+import { PanicButton } from './PanicButton';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
 import * as React from 'react';

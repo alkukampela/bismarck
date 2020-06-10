@@ -6,7 +6,9 @@ import * as React from 'react';
 export const GameTypeChooser = () => {
   return (
     <div>
-      <h2>Valitse pelityyppi</h2>
+      <div className="info-container">
+        <h2>Valitse pelityyppi</h2>
+      </div>
       <div className="choice-buttons">
         <ChoiceButton
           text="Ruutuvaltti"

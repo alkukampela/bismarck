@@ -1,8 +1,8 @@
 import { ExtraCardDisplay } from './ExtraCardDisplay';
 import { PlayersCard } from './PlayersCard';
 import { Card as CardType } from '../../../types/card';
-import * as React from 'react';
 import { PlayersHand } from '../../../types/players-hand';
+import * as React from 'react';
 
 export const PlayersCards = ({ hand }: { hand: PlayersHand }) => {
   const [extraCards, setExtraCards] = React.useState<number>(0);

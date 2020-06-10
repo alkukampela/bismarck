@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { HandStatute } from '../../../types/hand-statute';
 import { GameType } from '../../../types/game-type';
+import { HandStatute } from '../../../types/hand-statute';
 import { Suit } from '../../../types/suit';
+import * as React from 'react';
 
 export const HandTitle = ({
   handStatute,
