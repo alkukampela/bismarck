@@ -1,31 +1,45 @@
 import { RegisterPlayer } from '../types/register-player';
-import { MailService, MailDataRequired } from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
+import { MailOptions } from 'nodemailer/lib/json-transport';
 
-const mailMessage = (
+const htmlMailMessage = (
+  registerPlayer: RegisterPlayer,
+  loginUrl: string
+): string => {
+  return `Hei <b>${registerPlayer.player.name}</b>,<br/>
+Klikkaa alla olevaa linkki&auml;, niin p&auml;&auml;set nauttimaan
+j&auml;nnitt&auml;vist&auml; hetkist&auml; hienon korttipelin parissa:<br/>
+
+<a href="${loginUrl}">T&auml;st&auml; pelaamaan</a><br/><br/>
+
+<b>Onnea peliin!</b>`;
+};
+
+const textMailMessage = (
   registerPlayer: RegisterPlayer,
   loginUrl: string
 ): string => {
   return `Hei ${registerPlayer.player.name},
 Klikkaa alla olevaa linkkiä, niin pääset nauttimaan jännittävistä hetkistä hienon korttipelin parissa:
 ${loginUrl}
-
 Onnea peliin!`;
 };
 
 const subject = `Kutsu Bismarck-kierrokselle`;
 
-const from = 'Bismarck <no-reply@bismarck.monster>';
+const from = 'info@bismarck.monster';
 
-const createMailMessage = (
+export const mailOptions = (
   loginId: string,
   registerPlayer: RegisterPlayer
-): MailDataRequired => {
+): MailOptions => {
   const loginUrl = `${process.env.LOGIN_URL}${loginId}`;
   return {
-    to: registerPlayer.email,
     from,
     subject,
-    text: mailMessage(registerPlayer, loginUrl),
+    to: registerPlayer.email,
+    text: textMailMessage(registerPlayer, loginUrl),
+    html: htmlMailMessage(registerPlayer, loginUrl),
   };
 };
 
@@ -33,25 +47,31 @@ export const sendGameLink = (
   registerPlayer: RegisterPlayer,
   loginId: string
 ) => {
-  const message: MailDataRequired = createMailMessage(loginId, registerPlayer);
-
-  console.log(message);
+  const options = mailOptions(loginId, registerPlayer);
+  console.log(options.text);
 
   if (process.env.DISABLE_EMAIL_SENDING) {
     return;
   }
 
-  const sgMail = new MailService();
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USERNAME,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  });
 
-  sgMail
-    .send(message)
-    .then(() => {
-      console.log(`Sent email to ${message.to}`);
+  transporter
+    .sendMail(options)
+    .then((data) => {
+      console.log(`Sent email to ${registerPlayer.email}`);
+      console.log(data.messageId);
     })
     .catch((err) => {
       // TODO throw error and inform about failed game creation
-      console.log(err);
-      console.log(err.response.body.errors);
+      console.error(err, err.stack);
     });
 };
