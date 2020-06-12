@@ -15,12 +15,12 @@ export const PlayersCard = ({
 }) => {
   const game = React.useContext(GameContext);
 
-  const [showCard, setState] = React.useState<boolean>(true);
+  const [cardIsVisible, setCardVisibility] = React.useState<boolean>(true);
 
   const tryToRemove = async () => {
     const cardRemoved = await removeCard(game.token, game.gameId, card);
     if (cardRemoved) {
-      setState(false);
+      setCardVisibility(false);
       onCardRemoval();
       return;
     }
@@ -29,13 +29,13 @@ export const PlayersCard = ({
   const tryToPlayCard = async () => {
     const trickStarted = await startTrick(game.token, game.gameId, card);
     if (trickStarted) {
-      setState(false);
+      setCardVisibility(false);
       return;
     }
 
     const trickAdded = await addToTrick(game.token, game.gameId, card);
     if (trickAdded) {
-      setState(false);
+      setCardVisibility(false);
       return;
     }
   };
@@ -43,7 +43,7 @@ export const PlayersCard = ({
   return (
     <div
       onClick={inRemovalStage ? tryToRemove : tryToPlayCard}
-      style={{ display: showCard ? 'block' : 'none' }}
+      style={{ display: cardIsVisible ? 'block' : 'none' }}
       className="players-card"
     >
       <Card card={card} />
