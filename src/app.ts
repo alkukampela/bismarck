@@ -1,7 +1,7 @@
 import { CardManager } from './domain/card-manager';
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
-import { createGame, initHand } from './domain/game-service';
+import { initHand } from './domain/game-service';
 import { HandService } from './domain/hand-service';
 import { StorageService } from './persistence/storage-service';
 import { playerExtractor } from './service/auth-middleware';
@@ -9,7 +9,6 @@ import { PlayerRequest } from './service/player-request';
 import { tokenFor } from './service/token-service';
 import { Card } from './types/card';
 import { GameTypeChoice } from './types/game-type-choice';
-import { Player } from './types/player';
 import { RegisterPlayer } from './types/register-player';
 import { TrickResponse } from './types/trick-response';
 import cors from 'cors';
@@ -185,16 +184,6 @@ router.get(
     getTotalScores(req.params.id).then((scores) => res.send(scores));
   }
 );
-
-router.post('/games/:id', (req: express.Request, res: express.Response) => {
-  const players = req.body.players as Player[];
-  const handNumber = parseInt(req.query.hand as string, 10);
-  createGame(req.params.id, players, handNumber)
-    .then((game) => res.send(game))
-    .catch(() => {
-      res.sendStatus(statuses.BAD_REQUEST);
-    });
-});
 
 router.post('/games', (req: express.Request, res: express.Response) => {
   const players = req.body.players as RegisterPlayer[];

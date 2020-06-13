@@ -4,37 +4,12 @@ import { HandService } from './hand-service';
 import { StorageService } from '../persistence/storage-service';
 import { Game } from '../types/game';
 import { HandStatute } from '../types/hand-statute';
-import { Player } from '../types/player';
-import shuffle from 'fisher-yates';
 
 const storageService = StorageService.getInstance();
 const handService = new HandService(
   storageService,
   CardManager.getInstance(storageService)
 );
-
-export const createGame = async (
-  gameId: string,
-  players: Player[],
-  handNumber?: number
-): Promise<Game> => {
-  if (players.length < 3 || players.length > 4) {
-    return Promise.reject('Must have 3 or 4 players');
-  }
-
-  const existingGame = await storageService.fetchGame(gameId);
-  if (!!existingGame) {
-    return Promise.reject('Game already exists');
-  }
-
-  const game = {
-    players: shuffle(players),
-    handNumber: handNumber || 0,
-  };
-
-  storageService.storeGame(game, gameId);
-  return game;
-};
 
 export const nextHand = (game: Game, gameId: string) => {
   const updatedGame = {
