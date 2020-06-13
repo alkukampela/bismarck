@@ -88,17 +88,6 @@ export const GameContainer = () => {
     });
   };
 
-  const shouldShowGameChooseType = (
-    handStatute: HandStatute,
-    player: string
-  ): boolean => {
-    return (
-      player === handStatute.eldestHand.name &&
-      handStatute.handType.isChoice &&
-      !handStatute.handType.gameType
-    );
-  };
-
   React.useEffect(() => {
     updateTableCards();
     updateHand();
@@ -127,7 +116,7 @@ export const GameContainer = () => {
         trickNumber={trickResponse.trickNumber}
       />
       <Trick trickResponse={trickResponse} />
-      {shouldShowGameChooseType(statute, game.player) && <GameTypeChooser />}
+      <GameTypeChooser handStatute={statute} player={game.player} />
       <TableCards cards={tableCards} show={tableCardsAreVisible()} />
       <PlayersCards hand={playersHand} />
       <div className="score-board">

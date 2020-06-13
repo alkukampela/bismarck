@@ -2,10 +2,29 @@ import { ChoiceButton } from './ChoiceButton';
 import { GameType } from '../../../types/game-type';
 import { Suit } from '../../../types/suit';
 import * as React from 'react';
+import { HandStatute } from '../../../types/hand-statute';
 
-export const GameTypeChooser = () => {
+export const GameTypeChooser = ({
+  handStatute,
+  player,
+}: {
+  handStatute: HandStatute;
+  player: string;
+}) => {
+  const shouldShowGameChooseType = (): boolean => {
+    return (
+      player === handStatute.eldestHand.name &&
+      handStatute.handType.isChoice &&
+      !handStatute.handType.gameType
+    );
+  };
+
   return (
-    <div>
+    <div
+      style={{
+        display: shouldShowGameChooseType() ? 'block' : 'none',
+      }}
+    >
       <div className="info-container">
         <h2>Valitse pelityyppi</h2>
       </div>
