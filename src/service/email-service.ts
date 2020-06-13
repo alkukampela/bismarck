@@ -27,7 +27,7 @@ Onnea peliin!`;
 
 const subject = `Kutsu Bismarck-kierrokselle`;
 
-const from = 'info@bismarck.monster';
+const from = '"Bismarck-korttipeli" <info@bismarck.monster>';
 
 export const mailOptions = (
   loginId: string,
