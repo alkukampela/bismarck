@@ -36,6 +36,15 @@ const calculateScore = (
   });
 };
 
+const isFinished = (trickScores: TrickScore[]): boolean => {
+  if (trickScores.length === 0) {
+    return false;
+  }
+  const players = trickScores[0].scores.length;
+  const rounds = 4;
+  return trickScores.length >= players * rounds;
+};
+
 export const saveTrickPoints = async (
   trickPoints: PlayerScore[],
   handStatute: HandStatute,
@@ -60,5 +69,6 @@ export const getTotalScores = async (
   const trickScores = (await storageService.fetchTrickScores(gameId)) || [];
   return {
     trickScores,
+    isFinished: isFinished(trickScores),
   };
 };

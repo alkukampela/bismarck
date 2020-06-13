@@ -257,3 +257,19 @@ tr.misere {
   margin-bottom: 0.8rem;
   border-radius: 5px;
 }
+
+.final-scores-container {
+  background-color: rgba(240, 200, 220, 0.8);
+  padding: 1rem;
+  z-index: 200;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -3.125rem;
+  margin-left: -3.125rem;
+}
+
+.final-scores-list > li {
+  list-style: none;
+  font-size: 1.4rem;
+}

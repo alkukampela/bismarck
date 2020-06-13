@@ -1,9 +1,9 @@
+import { Game } from '../types/game';
 import { GameType } from '../types/game-type';
+import { GameTypeChoice } from '../types/game-type-choice';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
-import { Game } from '../types/game';
-import { GameTypeChoice } from '../types/game-type-choice';
 
 export class HandStatuteMachine {
   public getHandStatute(

@@ -28,6 +28,7 @@ import {
   emptyTrickResponse,
   emptyStatue,
 } from '../domain/default-objects';
+import { FinalScores } from './FinalScores';
 
 export const GameContainer = () => {
   const game = React.useContext(GameContext);
@@ -124,6 +125,7 @@ export const GameContainer = () => {
         <TrickTakers trickTakers={trickTakers} />
         <TotalScore scores={scores} />
       </div>
+      <FinalScores scores={scores} />
     </div>
   );
 };

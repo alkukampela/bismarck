@@ -5,6 +5,7 @@ import { TrickResponse } from '../../../types/trick-response';
 
 export const emptyScores: GameScoreBoard = {
   trickScores: [],
+  isFinished: false,
 };
 
 export const emptyHand: PlayersHand = {
