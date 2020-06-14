@@ -10,7 +10,7 @@ export const HandTitle = ({
   handStatute: HandStatute;
   trickNumber?: number;
 }) => {
-  const gameMode = () => {
+  const gameMode = (): string => {
     switch (handStatute.handType.gameType?.value) {
       case GameType.MISERE:
         return 'Misääri';
@@ -28,12 +28,14 @@ export const HandTitle = ({
             return 'Patavaltti';
         }
     }
+    return '-';
   };
 
-  const trickCounter = () => {
+  const trickCounter = (): string => {
     if (typeof trickNumber === 'number') {
       return `${trickNumber + 1}/${handStatute.tricks}`;
     }
+    return '';
   };
 
   return (

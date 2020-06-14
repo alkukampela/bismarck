@@ -7,6 +7,15 @@ import { PlayerScore } from '../types/player-score';
 import Redis from 'ioredis';
 import { TrickScore } from '../types/trick-score';
 
+type StorageType =
+  | CardContainer[]
+  | PlayerScore[]
+  | HandStatute
+  | Trick
+  | Game
+  | TrickScore[]
+  | GamePlayer;
+
 export type CardContainer = {
   card: Card;
   isPlayed: boolean;
@@ -17,7 +26,7 @@ const ONE_DAY_EXPIRATION = 86400;
 export class StorageService {
   private static _instance: StorageService;
 
-  private _redis: Redis.Redis;
+  private readonly _redis: Redis.Redis;
 
   private constructor() {
     this._redis = new Redis(process.env.REDIS_URL);
@@ -94,17 +103,7 @@ export class StorageService {
     return JSON.parse(result);
   }
 
-  private store(
-    key: string,
-    subject:
-      | CardContainer[]
-      | PlayerScore[]
-      | HandStatute
-      | Trick
-      | Game
-      | TrickScore[]
-      | GamePlayer
-  ): void {
+  private store(key: string, subject: StorageType): void {
     this._redis.set(key, JSON.stringify(subject), 'EX', ONE_DAY_EXPIRATION);
   }
 
@@ -117,30 +116,30 @@ export class StorageService {
   }
 
   private getGamesKey(identifier: string): string {
-    return 'game:' + identifier;
+    return `game:${identifier}`;
   }
 
   private getScoresKey(identifier: string) {
-    return 'scores:' + identifier;
+    return `scores:${identifier}`;
   }
 
   private getCardsKey(identifier: string) {
-    return 'cards:' + identifier;
+    return `cards:${identifier}`;
   }
 
   private getHandStatuteKey(identifier: string): string {
-    return 'statute:' + identifier;
+    return `statute:${identifier}`;
   }
 
   private getTrickKey(identifier: string): string {
-    return 'trick:' + identifier;
+    return `trick:${identifier}`;
   }
 
   private getTrickScoresKey(identifier: string): string {
-    return 'trickscores:' + identifier;
+    return `trickscores:${identifier}`;
   }
 
   private getGamePlayerKey(identifier: string): string {
-    return 'gameplayer:' + identifier;
+    return `gameplayer:${identifier}`;
   }
 }
