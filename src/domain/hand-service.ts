@@ -30,8 +30,8 @@ import {
 import { GameTypeChoice } from '../types/game-type-choice';
 
 export class HandService {
-  private _storageService: StorageService;
-  private _cardManager: CardManager;
+  private readonly _storageService: StorageService;
+  private readonly _cardManager: CardManager;
 
   public constructor(storageService: StorageService, cardManager: CardManager) {
     this._storageService = storageService;
@@ -124,7 +124,7 @@ export class HandService {
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
-    return await this._cardManager.getTableCards(gameId);
+    return this._cardManager.getTableCards(gameId);
   }
 
   public async chooseGameType(
@@ -169,8 +169,7 @@ export class HandService {
         };
       })
       .catch(async () => {
-        const trick = await this.defaultTrick(gameId);
-        return trick;
+        return await this.defaultTrick(gameId);
       });
   }
 
@@ -307,8 +306,7 @@ export class HandService {
   }
 
   public async isHandFinished(gameId: string): Promise<boolean> {
-    const noCardsLeft = await this._cardManager.noCardsLeft(gameId);
-    return noCardsLeft;
+    return await this._cardManager.noCardsLeft(gameId);
   }
 
   private getPlayersIndex(player: Player, handStatute: HandStatute): number {

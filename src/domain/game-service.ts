@@ -20,7 +20,7 @@ export const nextHand = (game: Game, gameId: string) => {
 };
 
 export const fetchGame = async (gameId: string): Promise<Game> => {
-  return await storageService.fetchGame(gameId);
+  return storageService.fetchGame(gameId);
 };
 
 export const initHand = async (gameId: string): Promise<HandStatute> => {

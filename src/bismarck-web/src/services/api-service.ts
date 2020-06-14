@@ -49,7 +49,7 @@ const performPost = async <T>(
     headers.set(authHeader.key, authHeader.value);
   }
 
-  return await fetch(`${baseUrl}/${resourcePath}`, {
+  return fetch(`${baseUrl}/${resourcePath}`, {
     method: 'POST',
     mode: 'cors',
     body: JSON.stringify(payload),

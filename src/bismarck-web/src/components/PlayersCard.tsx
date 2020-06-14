@@ -22,7 +22,6 @@ export const PlayersCard = ({
     if (cardRemoved) {
       setCardVisibility(false);
       onCardRemoval();
-      return;
     }
   };
 
@@ -36,7 +35,6 @@ export const PlayersCard = ({
     const trickAdded = await addToTrick(game.token, game.gameId, card);
     if (trickAdded) {
       setCardVisibility(false);
-      return;
     }
   };
 

@@ -54,7 +54,7 @@ export const updateTrickTakerToHandScore = (
   storageService.fetchScores(gameId).then((scores) => {
     scores
       .filter((score) => player.name === score.player.name)
-      .forEach((x) => x.score++);
+      .forEach((x) => (x.score = x.score + 1));
     storageService.storeScores(scores, gameId);
   });
 };

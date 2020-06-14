@@ -19,7 +19,8 @@ export const playerExtractor = (
       process.env.JWT_SECRET,
       (err: VerifyErrors, gamePlayer: GamePlayer) => {
         if (!!err) {
-          return res.sendStatus(statuses.FORBIDDEN);
+          res.sendStatus(statuses.FORBIDDEN);
+          return;
         }
         req.player = gamePlayer.player;
         next();

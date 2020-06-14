@@ -49,14 +49,11 @@ type WebSocketWithGameId = WebSocket & {
 };
 
 const publishTrick = (trick: TrickResponse, gameId: string) => {
-  let cc = 0;
   wss.clients.forEach((client: WebSocketWithGameId) => {
     if (client.gameId === gameId) {
       client.send(JSON.stringify(trick));
     }
-    ++cc;
   });
-  console.log(`clients: ${cc}`);
 };
 
 router.get(
