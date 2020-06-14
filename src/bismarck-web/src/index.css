@@ -177,7 +177,6 @@ tr.misere {
   display: flex;
   justify-content: center;
   position: fixed;
-  width: fit-content;
   height: 4rem;
   width: 4rem;
   right: 2rem;
