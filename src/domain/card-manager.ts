@@ -10,7 +10,7 @@ export class CardManager {
 
   private static _instance: CardManager;
 
-  private _storageService: StorageService;
+  private readonly _storageService: StorageService;
 
   private constructor(storageService: StorageService) {
     this._storageService = storageService;
@@ -164,7 +164,8 @@ export class CardManager {
   private *sequenceGenerator(maxVal: number): IterableIterator<number> {
     let currVal = 0;
     while (currVal < maxVal) {
-      yield currVal++;
+      yield currVal;
+      currVal = currVal + 1;
     }
   }
 }

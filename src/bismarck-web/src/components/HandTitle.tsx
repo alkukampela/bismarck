@@ -28,7 +28,7 @@ export const HandTitle = ({
             return 'Patavaltti';
         }
     }
-    return '-';
+    return '';
   };
 
   const trickCounter = (): string => {

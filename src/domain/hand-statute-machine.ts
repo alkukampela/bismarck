@@ -5,6 +5,11 @@ import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { Suit } from '../types/suit';
 
+type GameTypeWithTrumpSuit = {
+  value: GameType;
+  trumpSuit?: Suit;
+};
+
 export class HandStatuteMachine {
   public getHandStatute(
     game: Game,
@@ -52,10 +57,7 @@ export class HandStatuteMachine {
     handNumber: number,
     playerCount: number,
     trumpSuit: Suit
-  ): {
-    value: GameType;
-    trumpSuit?: Suit;
-  } {
+  ): GameTypeWithTrumpSuit | undefined {
     if (this.isChoiceTurn(handNumber, playerCount)) {
       return;
     }
