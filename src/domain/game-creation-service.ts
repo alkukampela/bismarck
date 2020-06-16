@@ -1,13 +1,11 @@
-import { StorageService } from '../persistence/storage-service';
+import { storeGame, storeGamePlayer } from '../persistence/storage-service';
+import { sendGameLink } from '../service/email-service';
+import { CreateGameResponse } from '../types/create-game-response';
+import { Game } from '../types/game';
 import { RegisterPlayer } from '../types/register-player';
 import shuffle from 'fisher-yates';
 import { v4 as uuid } from 'uuid';
 import UuidEncoder from 'uuid-encoder';
-import { Game } from '../types/game';
-import { sendGameLink } from '../service/email-service';
-import { CreateGameResponse } from '../types/create-game-response';
-
-const storageService = StorageService.getInstance();
 
 const initGameObject = (players: RegisterPlayer[]): Game => {
   return {
@@ -53,13 +51,13 @@ export const createGameAndInvitatePlayers = async (
   });
 
   playerIds.forEach((value, key) => {
-    storageService.storeGamePlayer({ gameId, player: value.player }, key);
+    storeGamePlayer({ gameId, player: value.player }, key);
     sendGameLink(value, key);
   });
 
   const game = initGameObject(players);
 
-  storageService.storeGame(game, gameId);
+  storeGame(game, gameId);
 
   return {
     id: gameId,

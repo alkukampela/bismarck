@@ -1,26 +1,26 @@
 import { CardManager } from './card-manager';
 import { ErrorTypes } from './error-types';
 import { HandService } from './hand-service';
-import { StorageService } from '../persistence/storage-service';
+import {
+  fetchGame as fetchGameFromStore,
+  storeGame,
+  clearTrick,
+} from '../persistence/storage-service';
 import { Game } from '../types/game';
 import { HandStatute } from '../types/hand-statute';
 
-const storageService = StorageService.getInstance();
-const handService = new HandService(
-  storageService,
-  CardManager.getInstance(storageService)
-);
+const handService = new HandService(CardManager.getInstance());
 
 export const nextHand = (game: Game, gameId: string) => {
   const updatedGame = {
     ...game,
     handNumber: game.handNumber + 1,
   };
-  storageService.storeGame(updatedGame, gameId);
+  storeGame(updatedGame, gameId);
 };
 
 export const fetchGame = async (gameId: string): Promise<Game> => {
-  return storageService.fetchGame(gameId);
+  return fetchGameFromStore(gameId);
 };
 
 export const initHand = async (gameId: string): Promise<HandStatute> => {
@@ -41,12 +41,12 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
   }
 
   handService.setUp(gameId, game);
-  storageService.clearTrick(gameId);
+  clearTrick(gameId);
   const updatedGame = {
     ...game,
     handNumber: game.handNumber + 1,
   };
-  storageService.storeGame(updatedGame, gameId);
+  storeGame(updatedGame, gameId);
 
   return handService.getStatute(gameId);
 };

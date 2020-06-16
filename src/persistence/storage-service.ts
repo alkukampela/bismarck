@@ -23,123 +23,122 @@ export type CardContainer = {
 
 const ONE_DAY_EXPIRATION = 86400;
 
-export class StorageService {
-  private static _instance: StorageService;
+const _redis: Redis.Redis = new Redis(process.env.REDIS_URL);
 
-  private readonly _redis: Redis.Redis;
+const store = (key: string, subject: StorageType): void => {
+  _redis.set(key, JSON.stringify(subject), 'EX', ONE_DAY_EXPIRATION);
+};
 
-  private constructor() {
-    this._redis = new Redis(process.env.REDIS_URL);
-  }
+const fetch = async (key: string): Promise<string> => {
+  return _redis.get(key);
+};
 
-  public static getInstance() {
-    return this._instance || (this._instance = new this());
-  }
+const del = (key: string) => {
+  _redis.del(key);
+};
 
-  public storeGame(game: Game, identifier: string): void {
-    this.store(this.getGamesKey(identifier), game);
-  }
+const getGamesKey = (identifier: string): string => `game:${identifier}`;
 
-  public async fetchGame(identifier: string): Promise<Game> {
-    const result = await this.fetch(this.getGamesKey(identifier));
-    return JSON.parse(result);
-  }
+const getScoresKey = (identifier: string) => `scores:${identifier}`;
 
-  public storeCards(cards: CardContainer[], identifier: string): void {
-    this.store(this.getCardsKey(identifier), cards);
-  }
+const getCardsKey = (identifier: string) => `cards:${identifier}`;
 
-  public async fetchCards(identifier: string): Promise<CardContainer[]> {
-    const result = await this.fetch(this.getCardsKey(identifier));
-    return JSON.parse(result);
-  }
+const getHandStatuteKey = (identifier: string): string =>
+  `statute:${identifier}`;
 
-  public storeScores(scores: PlayerScore[], identifier: string): void {
-    this.store(this.getScoresKey(identifier), scores);
-  }
+const getTrickKey = (identifier: string): string => `trick:${identifier}`;
 
-  public async fetchScores(identifier: string): Promise<PlayerScore[]> {
-    const result = await this.fetch(this.getScoresKey(identifier));
-    return JSON.parse(result);
-  }
+const getTrickScoresKey = (identifier: string): string =>
+  `trickscores:${identifier}`;
 
-  public storeHandStatute(statute: HandStatute, identifier: string): void {
-    this.store(this.getHandStatuteKey(identifier), statute);
-  }
+const getGamePlayerKey = (identifier: string): string =>
+  `gameplayer:${identifier}`;
 
-  public async fetchHandStatute(identifier: string): Promise<HandStatute> {
-    const result = await this.fetch(this.getHandStatuteKey(identifier));
-    return JSON.parse(result);
-  }
+export const storeGame = (game: Game, identifier: string): void => {
+  store(getGamesKey(identifier), game);
+};
 
-  public storeTrick(identifier: string, trick: Trick): void {
-    this.store(this.getTrickKey(identifier), trick);
-  }
+export const fetchGame = async (identifier: string): Promise<Game> => {
+  const result = await fetch(getGamesKey(identifier));
+  return JSON.parse(result);
+};
 
-  public async fetchTrick(identifier: string): Promise<Trick> {
-    const result = await this.fetch(this.getTrickKey(identifier));
-    return JSON.parse(result);
-  }
+export const storeCards = (
+  cards: CardContainer[],
+  identifier: string
+): void => {
+  store(getCardsKey(identifier), cards);
+};
 
-  public clearTrick(identifier: string) {
-    this.del(this.getTrickKey(identifier));
-  }
+export const fetchCards = async (
+  identifier: string
+): Promise<CardContainer[]> => {
+  const result = await fetch(getCardsKey(identifier));
+  return JSON.parse(result);
+};
 
-  public storeTrickScores(trickScores: TrickScore[], identifier: string) {
-    this.store(this.getTrickScoresKey(identifier), trickScores);
-  }
+export const storeScores = (
+  scores: PlayerScore[],
+  identifier: string
+): void => {
+  store(getScoresKey(identifier), scores);
+};
 
-  public async fetchTrickScores(identifier: string): Promise<TrickScore[]> {
-    const result = await this.fetch(this.getTrickScoresKey(identifier));
-    return JSON.parse(result);
-  }
+export const fetchScores = async (
+  identifier: string
+): Promise<PlayerScore[]> => {
+  const result = await fetch(getScoresKey(identifier));
+  return JSON.parse(result);
+};
 
-  public storeGamePlayer(gamePlayer: GamePlayer, identifier: string) {
-    this.store(this.getGamePlayerKey(identifier), gamePlayer);
-  }
+export const storeHandStatute = (
+  statute: HandStatute,
+  identifier: string
+): void => {
+  store(getHandStatuteKey(identifier), statute);
+};
 
-  public async fetchGamePlayer(identifier: string): Promise<GamePlayer> {
-    const result = await this.fetch(this.getGamePlayerKey(identifier));
-    return JSON.parse(result);
-  }
+export const fetchHandStatute = async (
+  identifier: string
+): Promise<HandStatute> => {
+  const result = await fetch(getHandStatuteKey(identifier));
+  return JSON.parse(result);
+};
 
-  private store(key: string, subject: StorageType): void {
-    this._redis.set(key, JSON.stringify(subject), 'EX', ONE_DAY_EXPIRATION);
-  }
+export const storeTrick = (identifier: string, trick: Trick): void => {
+  store(getTrickKey(identifier), trick);
+};
 
-  private async fetch(key: string): Promise<string> {
-    return this._redis.get(key);
-  }
+export const fetchTrick = async (identifier: string): Promise<Trick> => {
+  const result = await fetch(getTrickKey(identifier));
+  return JSON.parse(result);
+};
 
-  private del(key: string) {
-    this._redis.del(key);
-  }
+export const clearTrick = (identifier: string) => {
+  del(getTrickKey(identifier));
+};
 
-  private getGamesKey(identifier: string): string {
-    return `game:${identifier}`;
-  }
+export const storeTrickScores = (
+  trickScores: TrickScore[],
+  identifier: string
+): void => {
+  store(getTrickScoresKey(identifier), trickScores);
+};
 
-  private getScoresKey(identifier: string) {
-    return `scores:${identifier}`;
-  }
+export const fetchTrickScores = async (
+  identifier: string
+): Promise<TrickScore[]> => {
+  const result = await fetch(getTrickScoresKey(identifier));
+  return JSON.parse(result);
+};
 
-  private getCardsKey(identifier: string) {
-    return `cards:${identifier}`;
-  }
+export const storeGamePlayer = (gamePlayer: GamePlayer, identifier: string) => {
+  store(getGamePlayerKey(identifier), gamePlayer);
+};
 
-  private getHandStatuteKey(identifier: string): string {
-    return `statute:${identifier}`;
-  }
-
-  private getTrickKey(identifier: string): string {
-    return `trick:${identifier}`;
-  }
-
-  private getTrickScoresKey(identifier: string): string {
-    return `trickscores:${identifier}`;
-  }
-
-  private getGamePlayerKey(identifier: string): string {
-    return `gameplayer:${identifier}`;
-  }
-}
+export const fetchGamePlayer = async (
+  identifier: string
+): Promise<GamePlayer> => {
+  const result = await fetch(getGamePlayerKey(identifier));
+  return JSON.parse(result);
+};

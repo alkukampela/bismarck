@@ -1,12 +1,10 @@
-import { TokenResponse } from '../types/token-response';
-import { StorageService } from '../persistence/storage-service';
 import { ErrorTypes } from '../domain/error-types';
+import { fetchGamePlayer } from '../persistence/storage-service';
+import { TokenResponse } from '../types/token-response';
 import { sign } from 'jsonwebtoken';
 
-const storageService = StorageService.getInstance();
-
 export const tokenFor = async (id: string): Promise<TokenResponse> => {
-  const gamePlayer = await storageService.fetchGamePlayer(id);
+  const gamePlayer = await fetchGamePlayer(id);
 
   if (!gamePlayer) {
     return Promise.reject(new Error(ErrorTypes.NOT_FOUND));

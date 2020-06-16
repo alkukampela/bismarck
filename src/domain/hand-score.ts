@@ -1,9 +1,7 @@
-import { StorageService } from '../persistence/storage-service';
+import { fetchScores, storeScores } from '../persistence/storage-service';
 import { GameType } from '../types/game-type';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
-
-const storageService: StorageService = StorageService.getInstance();
 
 const countScoreForEldestHand = (
   tricks: number,
@@ -39,7 +37,7 @@ const countHandScore = (
 };
 
 export const setUpHandScore = (players: Player[], gameId: string): void => {
-  storageService.storeScores(
+  storeScores(
     players.map((player) => {
       return { player, score: 0 } as PlayerScore;
     }),
@@ -51,18 +49,18 @@ export const updateTrickTakerToHandScore = (
   player: Player,
   gameId: string
 ): void => {
-  storageService.fetchScores(gameId).then((scores) => {
+  fetchScores(gameId).then((scores) => {
     scores
       .filter((score) => player.name === score.player.name)
       .forEach((x) => (x.score = x.score + 1));
-    storageService.storeScores(scores, gameId);
+    storeScores(scores, gameId);
   });
 };
 
 export const getHandScoresTricks = async (
   gameId: string
 ): Promise<PlayerScore[]> => {
-  return storageService.fetchScores(gameId);
+  return fetchScores(gameId);
 };
 
 export const getHandsPoints = (

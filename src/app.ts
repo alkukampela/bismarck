@@ -3,7 +3,6 @@ import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
 import { HandService } from './domain/hand-service';
-import { StorageService } from './persistence/storage-service';
 import { playerExtractor } from './service/auth-middleware';
 import { PlayerRequest } from './service/player-request';
 import { tokenFor } from './service/token-service';
@@ -38,11 +37,7 @@ const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
 const router = express.Router();
 
-const storageService = StorageService.getInstance();
-const hand = new HandService(
-  storageService,
-  CardManager.getInstance(storageService)
-);
+const hand = new HandService(CardManager.getInstance());
 
 type WebSocketWithGameId = WebSocket & {
   gameId: string;

@@ -4,16 +4,22 @@ import { ErrorTypes } from './error-types';
 import { saveTrickPoints } from './game-score-manager';
 import { HandStatuteMachine } from './hand-statute-machine';
 import { Trick } from '../persistence/trick';
-import { StorageService } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { Game } from '../types/game';
 import { GameType } from '../types/game-type';
+import { GameTypeChoice } from '../types/game-type-choice';
 import { HandStatute } from '../types/hand-statute';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
 import { PlayersHand } from '../types/players-hand';
 import { Suit } from '../types/suit';
 import { TrickResponse } from '../types/trick-response';
+import {
+  storeHandStatute,
+  fetchHandStatute,
+  fetchTrick,
+  storeTrick,
+} from '../persistence/storage-service';
 import {
   initTrick,
   isTrickReady,
@@ -27,14 +33,11 @@ import {
   setUpHandScore,
   getHandsPoints,
 } from './hand-score';
-import { GameTypeChoice } from '../types/game-type-choice';
 
 export class HandService {
-  private readonly _storageService: StorageService;
   private readonly _cardManager: CardManager;
 
-  public constructor(storageService: StorageService, cardManager: CardManager) {
-    this._storageService = storageService;
+  public constructor(cardManager: CardManager) {
     this._cardManager = cardManager;
   }
 
@@ -48,14 +51,14 @@ export class HandService {
     );
 
     setUpHandScore(handStatute.playerOrder, gameId);
-    this._storageService.storeHandStatute(handStatute, gameId);
+    storeHandStatute(handStatute, gameId);
   }
 
   public async getPlayersHand(
     player: Player,
     gameId: string
   ): Promise<PlayersHand> {
-    const statute = await this._storageService.fetchHandStatute(gameId);
+    const statute = await fetchHandStatute(gameId);
     if (
       !statute ||
       (statute.handType.isChoice && !statute.handType.gameType.value)
@@ -81,7 +84,7 @@ export class HandService {
     card: Card,
     gameId: string
   ): Promise<Card> {
-    const statute = await this._storageService.fetchHandStatute(gameId);
+    const statute = await fetchHandStatute(gameId);
 
     if (!this.isEldestHand(player, statute)) {
       return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
@@ -116,7 +119,7 @@ export class HandService {
   }
 
   public async getStatute(gameId: string): Promise<HandStatute> {
-    const statute = await this._storageService.fetchHandStatute(gameId);
+    const statute = await fetchHandStatute(gameId);
     if (!statute) {
       return Promise.reject(new Error(ErrorTypes.NOT_FOUND));
     }
@@ -132,7 +135,7 @@ export class HandService {
     gameTypeChoice: GameTypeChoice,
     gameId: string
   ): Promise<HandStatute> {
-    const statute = await this._storageService.fetchHandStatute(gameId);
+    const statute = await fetchHandStatute(gameId);
 
     if (!this.isEldestHand(player, statute)) {
       return Promise.reject(new Error(ErrorTypes.MUST_BE_ELDEST_HAND));
@@ -155,7 +158,7 @@ export class HandService {
       gameTypeChoice
     );
 
-    this._storageService.storeHandStatute(chosenStatute, gameId);
+    storeHandStatute(chosenStatute, gameId);
     return chosenStatute;
   }
 
@@ -183,7 +186,7 @@ export class HandService {
       return Promise.reject(new Error(ErrorTypes.TRICK_ALREADY_STARTED));
     }
 
-    const statute = await this._storageService.fetchHandStatute(gameId);
+    const statute = await fetchHandStatute(gameId);
     const playerIndex = this.getPlayersIndex(player, statute);
 
     if (!statute.handType.gameType.value) {
@@ -245,7 +248,7 @@ export class HandService {
       return Promise.reject(Error(ErrorTypes.OTHER_PLAYER_HAS_TURN));
     }
 
-    const statute = await this._storageService.fetchHandStatute(gameId);
+    const statute = await fetchHandStatute(gameId);
     const playerIndex = this.getPlayersIndex(player, statute);
 
     const hasPlayerCard = await this._cardManager.hasPlayerCard(
@@ -324,8 +327,8 @@ export class HandService {
   }
 
   private async defaultTrick(gameId: string): Promise<TrickResponse> {
-    return this._storageService
-      .fetchHandStatute(gameId)
+    return;
+    fetchHandStatute(gameId)
       .then((statute) => {
         return {
           cards: statute.playerOrder.map((player) => {
@@ -393,10 +396,10 @@ export class HandService {
   }
 
   private async getTrick(gameId: string): Promise<Trick> {
-    return this._storageService.fetchTrick(gameId);
+    return fetchTrick(gameId);
   }
 
   private saveTrick(gameId: string, trick: Trick) {
-    this._storageService.storeTrick(gameId, trick);
+    storeTrick(gameId, trick);
   }
 }

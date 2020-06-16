@@ -1,11 +1,12 @@
-import { StorageService } from '../persistence/storage-service';
+import {
+  fetchTrickScores,
+  storeTrickScores,
+} from '../persistence/storage-service';
 import { GameScoreBoard } from '../types/game-score-board';
-import { PlayerScore } from '../types/player-score';
 import { HandStatute } from '../types/hand-statute';
-import { TrickScore } from '../types/trick-score';
 import { Player } from '../types/player';
-
-const storageService = StorageService.getInstance();
+import { PlayerScore } from '../types/player-score';
+import { TrickScore } from '../types/trick-score';
 
 const pointsSoFar = (
   previousTrickScore: TrickScore,
@@ -50,7 +51,7 @@ export const saveTrickPoints = async (
   handStatute: HandStatute,
   gameId: string
 ) => {
-  const allTrickPoints = (await storageService.fetchTrickScores(gameId)) || [];
+  const allTrickPoints = (await fetchTrickScores(gameId)) || [];
 
   const trickScore = {
     isChoice: handStatute.handType.isChoice,
@@ -60,13 +61,13 @@ export const saveTrickPoints = async (
 
   allTrickPoints.push(trickScore);
 
-  storageService.storeTrickScores(allTrickPoints, gameId);
+  storeTrickScores(allTrickPoints, gameId);
 };
 
 export const getTotalScores = async (
   gameId: string
 ): Promise<GameScoreBoard> => {
-  const trickScores = (await storageService.fetchTrickScores(gameId)) || [];
+  const trickScores = (await fetchTrickScores(gameId)) || [];
   return {
     trickScores,
     isFinished: isFinished(trickScores),
