@@ -74,7 +74,10 @@ export class HandStatuteMachine {
     return handNumber >= playerCount * 3;
   }
 
-  private predefinedGameType(handNumber: number, playerCount: number) {
+  private predefinedGameType(
+    handNumber: number,
+    playerCount: number
+  ): GameType {
     switch (Math.trunc(handNumber / playerCount)) {
       case 0:
         return GameType.TRUMP;
@@ -83,6 +86,7 @@ export class HandStatuteMachine {
       case 2:
         return GameType.MISERE;
     }
+    throw Error('Unexpected error while determining game type');
   }
 
   private switchTurns(playerOrder: Player[], times: number): Player[] {

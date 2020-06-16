@@ -66,6 +66,8 @@ const playerWithTopRankedCardBySuit = (trick: Trick, suit: Suit): Player => {
   if (!!playersCard) {
     return playersCard.player;
   }
+
+  throw Error('Invalid trick, no cards played');
 };
 
 export const getTaker = (trick: Trick): Player => {

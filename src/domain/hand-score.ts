@@ -52,6 +52,7 @@ export const updateTrickTakerToHandScore = (
   fetchScores(gameId).then((scores) => {
     scores
       .filter((score) => player.name === score.player.name)
+      // TODO rewrite to more functional form
       .forEach((x) => (x.score = x.score + 1));
     storeScores(scores, gameId);
   });
