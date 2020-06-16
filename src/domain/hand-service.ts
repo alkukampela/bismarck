@@ -1,4 +1,3 @@
-import { CardManager } from './card-manager';
 import { getSuit } from './card-mapper';
 import { ErrorTypes } from './error-types';
 import { saveTrickPoints } from './game-score-manager';
@@ -14,6 +13,19 @@ import { PlayerScore } from '../types/player-score';
 import { PlayersHand } from '../types/players-hand';
 import { Suit } from '../types/suit';
 import { TrickResponse } from '../types/trick-response';
+import {
+  getTrumpSuit,
+  totalRounds,
+  initDeck,
+  extraCardsAmount,
+  hasTooManyCards,
+  getTableCards as getTableCardsFromStorage,
+  noCardsLeft,
+  roundNumber,
+  getPlayersCards,
+  removeCard,
+  hasPlayerCard,
+} from './card-manager';
 import {
   storeHandStatute,
   fetchHandStatute,
@@ -35,19 +47,13 @@ import {
 } from './hand-score';
 
 export class HandService {
-  private readonly _cardManager: CardManager;
-
-  public constructor(cardManager: CardManager) {
-    this._cardManager = cardManager;
-  }
-
   public async setUp(gameId: string, game: Game) {
-    this._cardManager.initDeck(gameId);
+    initDeck(gameId);
 
     const handStatute = new HandStatuteMachine().getHandStatute(
       game,
-      await this._cardManager.getTrumpSuit(gameId),
-      this._cardManager.totalRounds(game.players.length)
+      await getTrumpSuit(gameId),
+      totalRounds(game.players.length)
     );
 
     setUpHandScore(handStatute.playerOrder, gameId);
@@ -65,21 +71,18 @@ export class HandService {
     ) {
       return { cards: [], extraCards: 0 };
     }
-    const cards = await this._cardManager.getPlayersCards(
+    const cards = await getPlayersCards(
       this.getPlayersIndex(player, statute),
       statute.playersInGame,
       gameId
     );
     return {
       cards,
-      extraCards: this._cardManager.extraCardsAmount(
-        cards.length,
-        statute.playersInGame
-      ),
+      extraCards: extraCardsAmount(cards.length, statute.playersInGame),
     };
   }
 
-  public async removeCard(
+  public async removePlayersCard(
     player: Player,
     card: Card,
     gameId: string
@@ -95,26 +98,26 @@ export class HandService {
     }
     const playerIndex = this.getPlayersIndex(player, statute);
 
-    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+    const hasPlayerGivenCard = await hasPlayerCard(
       playerIndex,
       statute.playersInGame,
       card,
       gameId
     );
-    if (!hasPlayerCardCard) {
+    if (!hasPlayerGivenCard) {
       return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
-    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+    const tooManyCards = await hasTooManyCards(
       playerIndex,
       statute.playersInGame,
       gameId
     );
-    if (!hasTooManyCards) {
+    if (!tooManyCards) {
       return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
     }
 
-    this._cardManager.removeCard(card, gameId);
+    removeCard(card, gameId);
     return card;
   }
 
@@ -127,7 +130,7 @@ export class HandService {
   }
 
   public async getTableCards(gameId: string): Promise<Card[]> {
-    return this._cardManager.getTableCards(gameId);
+    return getTableCardsFromStorage(gameId);
   }
 
   public async chooseGameType(
@@ -172,7 +175,7 @@ export class HandService {
         };
       })
       .catch(async () => {
-        return await this.defaultTrick(gameId);
+        return this.defaultTrick(gameId);
       });
   }
 
@@ -198,33 +201,33 @@ export class HandService {
       return Promise.reject(new Error(ErrorTypes.NOT_TRICK_LEAD));
     }
 
-    const hasPlayerCardCard = await this._cardManager.hasPlayerCard(
+    const hasPlayerGivenCard = await hasPlayerCard(
       playerIndex,
       statute.playersInGame,
       card,
       gameId
     );
-    if (!hasPlayerCardCard) {
+    if (!hasPlayerGivenCard) {
       return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
-    const hasTooManyCards = await this._cardManager.hasTooManyCards(
+    const tooManyCards = await hasTooManyCards(
       playerIndex,
       statute.playersInGame,
       gameId
     );
-    if (hasTooManyCards) {
+    if (tooManyCards) {
       return Promise.reject(Error(ErrorTypes.CARDS_MUST_BE_REMOVED));
     }
 
-    const trickNumber = await this._cardManager.roundNumber(
+    const trickNumber = await roundNumber(
       playerIndex,
       statute.playersInGame,
       gameId
     );
     const trick = initTrick(card, player, statute, trickNumber);
 
-    this._cardManager.removeCard(card, gameId);
+    removeCard(card, gameId);
     this.saveTrick(gameId, trick);
 
     return Promise.resolve({
@@ -251,13 +254,13 @@ export class HandService {
     const statute = await fetchHandStatute(gameId);
     const playerIndex = this.getPlayersIndex(player, statute);
 
-    const hasPlayerCard = await this._cardManager.hasPlayerCard(
+    const hasPlayerGivenCard = await hasPlayerCard(
       playerIndex,
       statute.playersInGame,
       card,
       gameId
     );
-    if (!hasPlayerCard) {
+    if (!hasPlayerGivenCard) {
       return Promise.reject(Error(ErrorTypes.CARD_NOT_FOUND));
     }
 
@@ -272,17 +275,15 @@ export class HandService {
     }
 
     const updatedTrick = playCard(trick, player, card);
-    await this._cardManager.removeCard(card, gameId);
+    await removeCard(card, gameId);
 
     if (isTrickReady(updatedTrick)) {
       updateTrickTakerToHandScore(getTaker(updatedTrick), gameId);
-      console.log('trick ready');
     }
 
-    const handReady = await this._cardManager.noCardsLeft(gameId);
+    const handReady = await noCardsLeft(gameId);
 
     if (handReady) {
-      console.log('hand ready');
       const trickScores = await getHandScoresTricks(gameId);
       const handScore = getHandsPoints(
         trickScores,
@@ -309,7 +310,7 @@ export class HandService {
   }
 
   public async isHandFinished(gameId: string): Promise<boolean> {
-    return await this._cardManager.noCardsLeft(gameId);
+    return noCardsLeft(gameId);
   }
 
   private getPlayersIndex(player: Player, handStatute: HandStatute): number {
@@ -327,8 +328,7 @@ export class HandService {
   }
 
   private async defaultTrick(gameId: string): Promise<TrickResponse> {
-    return;
-    fetchHandStatute(gameId)
+    return fetchHandStatute(gameId)
       .then((statute) => {
         return {
           cards: statute.playerOrder.map((player) => {
@@ -354,7 +354,7 @@ export class HandService {
       });
   }
 
-  private isEldestHand(player: Player, handStatute: HandStatute) {
+  private isEldestHand(player: Player, handStatute: HandStatute): boolean {
     return player.name === handStatute.eldestHand.name;
   }
 
@@ -363,12 +363,12 @@ export class HandService {
     card: Card,
     trick: Trick,
     gameId: string
-  ) {
+  ): Promise<boolean> {
     if (getSuit(card) === trick.trickSuit) {
       return true;
     }
 
-    const playersCards = await this._cardManager.getPlayersCards(
+    const playersCards = await getPlayersCards(
       playerIndex,
       trick.trickCards.length,
       gameId
@@ -399,7 +399,7 @@ export class HandService {
     return fetchTrick(gameId);
   }
 
-  private saveTrick(gameId: string, trick: Trick) {
+  private saveTrick(gameId: string, trick: Trick): void {
     storeTrick(gameId, trick);
   }
 }

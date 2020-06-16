@@ -1,4 +1,3 @@
-import { CardManager } from './card-manager';
 import { ErrorTypes } from './error-types';
 import { HandService } from './hand-service';
 import {
@@ -9,7 +8,7 @@ import {
 import { Game } from '../types/game';
 import { HandStatute } from '../types/hand-statute';
 
-const handService = new HandService(CardManager.getInstance());
+const handService = new HandService();
 
 export const nextHand = (game: Game, gameId: string) => {
   const updatedGame = {

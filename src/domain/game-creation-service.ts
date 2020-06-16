@@ -24,10 +24,10 @@ const checkForDuplicatePlayers = (players: RegisterPlayer[]): boolean => {
   );
 };
 
-function generateGameIdentifier(): string {
+const generateGameIdentifier = (): string => {
   const encoder = new UuidEncoder();
   return encoder.encode(uuid()).substring(0, 11);
-}
+};
 
 export const createGameAndInvitatePlayers = async (
   players: RegisterPlayer[]

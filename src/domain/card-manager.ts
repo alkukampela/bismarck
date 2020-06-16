@@ -8,162 +8,129 @@ import {
   storeCards,
 } from '../persistence/storage-service';
 
-export class CardManager {
-  private readonly TABLE_CARDS = 4;
-  private readonly DECK_SIZE = 52;
+const TABLE_CARDS = 4;
+const DECK_SIZE = 52;
 
-  private static _instance: CardManager;
-
-  public static getInstance() {
-    return this._instance || (this._instance = new this());
-  }
-
-  public initDeck(gameId: string): void {
-    const cards: CardContainer[] = [];
-    this.shuffledDeck()
-      .map((value: number) => {
-        return fromNumber(value);
-      })
-      .forEach((card) => cards.push({ card, isPlayed: false }));
-    storeCards(cards, gameId);
-  }
-
-  public async hasPlayerCard(
-    player: number,
-    playersInGame: number,
-    card: Card,
-    gameId: string
-  ): Promise<boolean> {
-    const cards = await this.getPlayersCards(player, playersInGame, gameId);
-    return (
-      cards.filter((pc: Card) => pc.rank === card.rank && pc.suit === card.suit)
-        .length > 0
-    );
-  }
-
-  public async removeCard(cardToBeRemoved: Card, gameId: string) {
-    const cards = await fetchCards(gameId);
-
-    cards.find(
-      (container) =>
-        container.card.rank === cardToBeRemoved.rank &&
-        container.card.suit === cardToBeRemoved.suit
-    ).isPlayed = true;
-
-    storeCards(cards, gameId);
-  }
-
-  public async getTableCards(gameId: string): Promise<Card[]> {
-    const cards = await fetchCards(gameId);
-    if (!cards) {
-      return [];
-    }
-    return cards
-      .slice(-1 * this.TABLE_CARDS)
-      .map((container) => container.card);
-  }
-
-  public async getPlayersCards(
-    player: number,
-    playersInGame: number,
-    gameId: string
-  ): Promise<Card[]> {
-    const cards = await fetchCards(gameId);
-    return cards
-      .filter((_val, index) => this.isPlayersCard(player, playersInGame, index))
-      .filter((container) => !container.isPlayed)
-      .sort((a, b) => getRank(a.card) - getRank(b.card))
-      .sort((a, b) => getSuit(a.card) - getSuit(b.card))
-      .map((container) => container.card);
-  }
-
-  public async getTrumpSuit(gameId: string): Promise<Suit> {
-    const cards = await fetchCards(gameId);
-    return getSuit(
-      cards.slice(-1 * this.TABLE_CARDS).map((container) => container.card)[0]
-    );
-  }
-
-  public async hasTooManyCards(
-    player: number,
-    playersInGame: number,
-    gameId: string
-  ): Promise<boolean> {
-    return this.getPlayersCards(player, playersInGame, gameId).then((cards) => {
-      return cards.length > this.cardsInHand(playersInGame);
-    });
-  }
-
-  public extraCardsAmount(cards: number, playersInGame: number): number {
-    return Math.max(cards - this.cardsInHand(playersInGame), 0);
-  }
-
-  public async hasPlayerCardsOfSuit(
-    player: number,
-    playersInGame: number,
-    suit: Suit,
-    gameId: string
-  ): Promise<boolean> {
-    const cards = await fetchCards(gameId);
-    return (
-      cards
-        .filter((_val, index) =>
-          this.isPlayersCard(player, playersInGame, index)
-        )
-        .filter((container) => !container.isPlayed)
-        .filter((container) => getSuit(container.card) === suit).length > 0
-    );
-  }
-
-  public async noCardsLeft(gameId: string): Promise<boolean> {
-    const cards = await fetchCards(gameId);
-    return !cards || cards.filter((card) => !card.isPlayed).length === 0;
-  }
-
-  public async roundNumber(
-    player: number,
-    playersInGame: number,
-    gameId: string
-  ): Promise<number> {
-    const totalRounds = this.totalRounds(playersInGame);
-    const cards = await fetchCards(gameId);
-    const cardsLeft = cards
-      .filter((_val, index) => this.isPlayersCard(player, playersInGame, index))
-      .filter((container) => !container.isPlayed).length;
-
-    return totalRounds - cardsLeft;
-  }
-
-  public totalRounds(playersInGame: number): number {
-    return (this.DECK_SIZE - this.TABLE_CARDS) / playersInGame;
-  }
-
-  private isPlayersCard(
-    player: number,
-    playersInGame: number,
-    cardIndex: number
-  ): boolean {
-    return (
-      Math.trunc(
-        (cardIndex / this.cardsInHand(playersInGame)) % playersInGame
-      ) === player
-    );
-  }
-
-  private cardsInHand(playersInGame: number): number {
-    return (this.DECK_SIZE - this.TABLE_CARDS) / playersInGame;
-  }
-
-  private shuffledDeck(): number[] {
-    const deck = [...this.sequenceGenerator(this.DECK_SIZE)];
-    return shuffle(deck);
-  }
-
-  private *sequenceGenerator(maxVal: number): IterableIterator<number> {
-    let currVal = 0;
-    while (currVal < maxVal) {
-      yield currVal;
-      currVal = currVal + 1;
-    }
+function* sequenceGenerator(maxVal: number): IterableIterator<number> {
+  let currVal = 0;
+  while (currVal < maxVal) {
+    yield currVal;
+    currVal = currVal + 1;
   }
 }
+
+const shuffledDeck = (): number[] => {
+  const deck = [...sequenceGenerator(DECK_SIZE)];
+  return shuffle(deck);
+};
+
+const cardsInHand = (playersInGame: number): number =>
+  (DECK_SIZE - TABLE_CARDS) / playersInGame;
+
+const isPlayersCard = (
+  player: number,
+  playersInGame: number,
+  cardIndex: number
+): boolean =>
+  Math.trunc((cardIndex / cardsInHand(playersInGame)) % playersInGame) ===
+  player;
+
+export const totalRounds = (playersInGame: number): number =>
+  (DECK_SIZE - TABLE_CARDS) / playersInGame;
+
+export const getTrumpSuit = async (gameId: string): Promise<Suit> => {
+  const cards = await fetchCards(gameId);
+  return getSuit(
+    cards.slice(-1 * TABLE_CARDS).map((container) => container.card)[0]
+  );
+};
+
+export const initDeck = (gameId: string): void => {
+  const cards: CardContainer[] = [];
+  shuffledDeck()
+    .map((value: number) => {
+      return fromNumber(value);
+    })
+    .forEach((card) => cards.push({ card, isPlayed: false }));
+  storeCards(cards, gameId);
+};
+
+export const extraCardsAmount = (
+  cards: number,
+  playersInGame: number
+): number => Math.max(cards - cardsInHand(playersInGame), 0);
+
+export const getTableCards = async (gameId: string): Promise<Card[]> => {
+  const cards = await fetchCards(gameId);
+  if (!cards) {
+    return [];
+  }
+  return cards.slice(-1 * TABLE_CARDS).map((container) => container.card);
+};
+
+export const noCardsLeft = async (gameId: string): Promise<boolean> => {
+  const cards = await fetchCards(gameId);
+  return !cards || cards.filter((card) => !card.isPlayed).length === 0;
+};
+
+export const roundNumber = async (
+  player: number,
+  playersInGame: number,
+  gameId: string
+): Promise<number> => {
+  const cards = await fetchCards(gameId);
+  const cardsLeft = cards
+    .filter((_val, index) => isPlayersCard(player, playersInGame, index))
+    .filter((container) => !container.isPlayed).length;
+
+  return totalRounds(playersInGame) - cardsLeft;
+};
+
+export const getPlayersCards = async (
+  player: number,
+  playersInGame: number,
+  gameId: string
+): Promise<Card[]> => {
+  const cards = await fetchCards(gameId);
+  return cards
+    .filter((_val, index) => isPlayersCard(player, playersInGame, index))
+    .filter((container) => !container.isPlayed)
+    .sort((a, b) => getRank(a.card) - getRank(b.card))
+    .sort((a, b) => getSuit(a.card) - getSuit(b.card))
+    .map((container) => container.card);
+};
+
+export const hasTooManyCards = async (
+  player: number,
+  playersInGame: number,
+  gameId: string
+): Promise<boolean> => {
+  return getPlayersCards(player, playersInGame, gameId).then((cards) => {
+    return cards.length > cardsInHand(playersInGame);
+  });
+};
+
+export const removeCard = async (cardToBeRemoved: Card, gameId: string) => {
+  const cards = await fetchCards(gameId);
+
+  cards.find(
+    (container) =>
+      container.card.rank === cardToBeRemoved.rank &&
+      container.card.suit === cardToBeRemoved.suit
+  ).isPlayed = true;
+
+  storeCards(cards, gameId);
+};
+
+export const hasPlayerCard = async (
+  player: number,
+  playersInGame: number,
+  card: Card,
+  gameId: string
+): Promise<boolean> => {
+  const cards = await getPlayersCards(player, playersInGame, gameId);
+  return (
+    cards.filter((pc: Card) => pc.rank === card.rank && pc.suit === card.suit)
+      .length > 0
+  );
+};

@@ -1,4 +1,3 @@
-import { CardManager } from './domain/card-manager';
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
@@ -37,7 +36,7 @@ const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
 const router = express.Router();
 
-const hand = new HandService(CardManager.getInstance());
+const hand = new HandService();
 
 type WebSocketWithGameId = WebSocket & {
   gameId: string;
@@ -101,7 +100,7 @@ router.delete(
     };
 
     hand
-      .removeCard(req.player, card, req.params.id)
+      .removePlayersCard(req.player, card, req.params.id)
       .then(() => {
         res.sendStatus(statuses.NO_CONTENT);
       })
