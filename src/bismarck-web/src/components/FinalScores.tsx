@@ -38,7 +38,7 @@ export const FinalScores = ({ scores }: { scores: GameScoreBoard }) => {
       <ul className="final-scores-list">
         {results().map((playerScore, index) => (
           <li key={index}>
-            {playerScore.position}: {playerScore.player} {playerScore.points}
+            {playerScore.position} {playerScore.player} {playerScore.points}
             {playerScore.position === 'I' && ' 🏆'}
           </li>
         ))}
