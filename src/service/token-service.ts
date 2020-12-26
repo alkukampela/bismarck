@@ -11,7 +11,7 @@ export const tokenFor = async (id: string): Promise<TokenResponse> => {
   }
 
   const token = sign(gamePlayer, process.env.JWT_SECRET, {
-    expiresIn: '3h',
+    expiresIn: '24h',
   });
 
   return {
