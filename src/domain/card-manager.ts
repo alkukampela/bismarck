@@ -1,12 +1,9 @@
 import { fromNumber, getRank, getSuit } from './card-mapper';
+import { CardContainer } from '../persistence/card-container';
+import { fetchCards, storeCards } from '../persistence/storage-service';
 import { Card } from '../types/card';
 import { Suit } from '../types/suit';
 import shuffle from 'fisher-yates';
-import {
-  CardContainer,
-  fetchCards,
-  storeCards,
-} from '../persistence/storage-service';
 
 const TABLE_CARDS = 4;
 const DECK_SIZE = 52;

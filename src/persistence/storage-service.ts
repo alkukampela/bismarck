@@ -1,11 +1,11 @@
+import { CardContainer } from './card-container';
 import { GamePlayer } from './game-player';
 import { Trick } from './trick';
-import { Card } from '../types/card';
 import { Game } from '../types/game';
 import { HandStatute } from '../types/hand-statute';
 import { PlayerScore } from '../types/player-score';
-import Redis from 'ioredis';
 import { TrickScore } from '../types/trick-score';
+import Redis from 'ioredis';
 
 type StorageType =
   | CardContainer[]
@@ -15,11 +15,6 @@ type StorageType =
   | Game
   | TrickScore[]
   | GamePlayer;
-
-export type CardContainer = {
-  card: Card;
-  isPlayed: boolean;
-};
 
 const ONE_DAY_EXPIRATION = 86400;
 

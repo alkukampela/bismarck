@@ -3,6 +3,11 @@ import { GameType } from '../types/game-type';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
 
+jest.mock('../persistence/storage-service', () => ({
+  fetchScores: jest.fn().mockResolvedValue([]),
+  storeScores: jest.fn(),
+}));
+
 const PLAYER_1 = { name: 'ake' };
 const PLAYER_2 = { name: 'make' };
 const PLAYER_3 = { name: 'pera' };
