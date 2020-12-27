@@ -1,4 +1,7 @@
-import { storeGame, storeGamePlayer } from '../persistence/storage-service';
+import {
+  storeGame,
+  storeLoginIdForPlayer,
+} from '../persistence/storage-service';
 import { sendGameLink } from '../service/email-service';
 import { CreateGameResponse } from '../types/create-game-response';
 import { Game } from '../types/game';
@@ -50,9 +53,9 @@ export const createGameAndInvitatePlayers = async (
     playerIds.set(uuid(), item);
   });
 
-  playerIds.forEach((value, key) => {
-    storeGamePlayer({ gameId, player: value.player }, key);
-    sendGameLink(value, key);
+  playerIds.forEach((value, loginId) => {
+    storeLoginIdForPlayer({ gameId, player: value.player }, loginId);
+    sendGameLink(value, loginId);
   });
 
   const game = initGameObject(players);

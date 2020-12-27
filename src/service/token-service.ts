@@ -1,10 +1,12 @@
 import { ErrorTypes } from '../domain/error-types';
-import { fetchGamePlayer } from '../persistence/storage-service';
+import { fetchPlayerWithLoginId } from '../persistence/storage-service';
 import { TokenResponse } from '../types/token-response';
 import { sign } from 'jsonwebtoken';
 
-export const tokenFor = async (id: string): Promise<TokenResponse> => {
-  const gamePlayer = await fetchGamePlayer(id);
+export const tokenForLoginId = async (
+  loginId: string
+): Promise<TokenResponse> => {
+  const gamePlayer = await fetchPlayerWithLoginId(loginId);
 
   if (!gamePlayer) {
     return Promise.reject(new Error(ErrorTypes.NOT_FOUND));

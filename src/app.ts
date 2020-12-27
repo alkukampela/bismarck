@@ -4,7 +4,7 @@ import { initHand } from './domain/game-service';
 import { HandService } from './domain/hand-service';
 import { playerExtractor } from './service/auth-middleware';
 import { PlayerRequest } from './service/player-request';
-import { tokenFor } from './service/token-service';
+import { tokenForLoginId } from './service/token-service';
 import { Card } from './types/card';
 import { GameTypeChoice } from './types/game-type-choice';
 import { RegisterPlayer } from './types/register-player';
@@ -199,15 +199,18 @@ router.post(
   }
 );
 
-router.get('/tokens/:id', (req: express.Request, res: express.Response) => {
-  tokenFor(req.params.id)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      res.status(statuses.BAD_REQUEST).send({ error: err.message });
-    });
-});
+router.get(
+  '/tokens/:loginId',
+  (req: express.Request, res: express.Response) => {
+    tokenForLoginId(req.params.loginId)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+      });
+  }
+);
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');

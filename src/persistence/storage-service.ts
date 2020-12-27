@@ -28,15 +28,15 @@ const fetch = async (key: string): Promise<string> => {
   return _redis.get(key);
 };
 
-const del = (key: string) => {
+const del = (key: string): void => {
   _redis.del(key);
 };
 
 const getGamesKey = (identifier: string): string => `game:${identifier}`;
 
-const getScoresKey = (identifier: string) => `scores:${identifier}`;
+const getScoresKey = (identifier: string): string => `scores:${identifier}`;
 
-const getCardsKey = (identifier: string) => `cards:${identifier}`;
+const getCardsKey = (identifier: string): string => `cards:${identifier}`;
 
 const getHandStatuteKey = (identifier: string): string =>
   `statute:${identifier}`;
@@ -46,7 +46,7 @@ const getTrickKey = (identifier: string): string => `trick:${identifier}`;
 const getTrickScoresKey = (identifier: string): string =>
   `trickscores:${identifier}`;
 
-const getGamePlayerKey = (identifier: string): string =>
+const getPlayerLoginIdKey = (identifier: string): string =>
   `gameplayer:${identifier}`;
 
 export const storeGame = (game: Game, identifier: string): void => {
@@ -109,7 +109,7 @@ export const fetchTrick = async (identifier: string): Promise<Trick> => {
   return JSON.parse(result);
 };
 
-export const clearTrick = (identifier: string) => {
+export const clearTrick = (identifier: string): void => {
   del(getTrickKey(identifier));
 };
 
@@ -127,13 +127,16 @@ export const fetchTrickScores = async (
   return JSON.parse(result);
 };
 
-export const storeGamePlayer = (gamePlayer: GamePlayer, identifier: string) => {
-  store(getGamePlayerKey(identifier), gamePlayer);
+export const storeLoginIdForPlayer = (
+  gamePlayer: GamePlayer,
+  loginId: string
+): void => {
+  store(getPlayerLoginIdKey(loginId), gamePlayer);
 };
 
-export const fetchGamePlayer = async (
-  identifier: string
+export const fetchPlayerWithLoginId = async (
+  loginId: string
 ): Promise<GamePlayer> => {
-  const result = await fetch(getGamePlayerKey(identifier));
+  const result = await fetch(getPlayerLoginIdKey(loginId));
   return JSON.parse(result);
 };
