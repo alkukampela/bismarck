@@ -49,13 +49,23 @@ export const GameContainer = () => {
     return trickResponse.cards.filter((tc) => !!tc.card).length === 0;
   };
 
-  const isHandReady = (trick: TrickResponse, handStatute: HandStatute) =>
+  const isHandReady = (
+    trick: TrickResponse,
+    handStatute: HandStatute
+  ): boolean =>
     isTrickReady(trick) &&
-    trick.trickNumber &&
+    !!trick.trickNumber &&
     trick.trickNumber + 1 >= handStatute.tricks;
 
-  const isTrickReady = (trick: TrickResponse) =>
+  const isTrickReady = (trick: TrickResponse): boolean =>
     !trick.cards.filter((tc) => !tc.card).length;
+
+  const isFirstCardAfterChoice = (trick: TrickResponse): boolean => {
+    return (
+      trick.trickNumber === 0 &&
+      trick.cards.filter((tc) => !!tc.card).length === 1
+    );
+  };
 
   const updateTableCards = () => {
     fetchTableCards(game.gameId).then((cards) => {
@@ -99,9 +109,15 @@ export const GameContainer = () => {
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickResponse;
       setTrickResponse(trick);
+
+      if (isFirstCardAfterChoice(trick)) {
+        updateStatute();
+      }
+
       if (isTrickReady(trick)) {
         updateTrickTakers();
       }
+
       if (isHandReady(trick, statute)) {
         updateTotalScores();
       }
