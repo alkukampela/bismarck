@@ -42,8 +42,8 @@ Kunkin jaon jälkeen lasketaan, kuinka monta tikkiä kukin pelaaja on ottanut, j
 
 _Valtissa ja grandissa_ etumies pääsee ”kotiin” (eli tulokseen 0) ottamalla 8 tikkiä. ja kaksi muuta pelaajaa ottamalla 4 tikkiä. Mikäli pelaaja ottaa tätä enemmän tai vähemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 7 tikkiä, hänen pistemääränsä on -1.
 
-Neljän hengen pelissä kotiin pääsee tikkimäärillä 6 (etumies) ja 2 (muut)
+Neljän hengen pelissä kotiin pääsee tikkimäärillä 6 (etumies) ja 2 (muut).
 
 _Misäärissä_ etumies pääsee kotiin ottamalla 2 tikkiä ja kaksi muuta pelaajaa ottamalla 7 tikkiä. Mikäli pelaaja ottaa tätä vähemmän tai enemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 1 tikin, hänen pistemääränsä on +1.
 
-Neljän hengen pelissä kotiin pääsee tikkimäärillä 0 (etumies) ja 4 (muut)
+Neljän hengen pelissä kotiin pääsee tikkimäärillä 0 (etumies) ja 4 (muut).

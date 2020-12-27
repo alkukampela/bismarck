@@ -9,7 +9,7 @@
 }
 
 body {
-  background-image: linear-gradient(90deg, #fffabe 0%, #1393f5 100%);
+  background-image: linear-gradient(90deg, #fcd684 0%, #43723f 100%);
   font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
 }
 
@@ -217,9 +217,10 @@ tr.misere {
 
 .modal-content {
   position: relative;
-  background-image: linear-gradient(90deg, #0bdee6 0%, #d184f0 100%);
+  background-image: linear-gradient(0deg, #196b20 0%, #22f8a6 100%);
   margin: auto;
   padding: 1rem;
+  padding-bottom: 2rem;
   margin-left: 3rem;
   margin-right: 3rem;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
