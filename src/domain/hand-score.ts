@@ -46,15 +46,16 @@ export const setUpHandScore = (players: Player[], gameId: string): void => {
 };
 
 export const updateTrickTakerToHandScore = (
-  player: Player,
+  tricTaker: Player,
   gameId: string
 ): void => {
-  fetchScores(gameId).then((scores) => {
-    scores
-      .filter((score) => player.name === score.player.name)
-      // TODO rewrite to more functional form
-      .forEach((x) => (x.score = x.score + 1));
-    storeScores(scores, gameId);
+  fetchScores(gameId).then((playerScores) => {
+    const updatedScores = playerScores.map((playerScore) => {
+      return playerScore.player.name === tricTaker.name
+        ? { ...playerScore, score: playerScore.score + 1 }
+        : playerScore;
+    });
+    storeScores(updatedScores, gameId);
   });
 };
 

@@ -166,7 +166,7 @@ export class HandService {
   }
 
   public async getCurrentTrick(gameId: string): Promise<TrickResponse> {
-    return this.getTrick(gameId)
+    return fetchTrick(gameId)
       .then((trick) => {
         return {
           cards: trick.trickCards,
@@ -228,7 +228,7 @@ export class HandService {
     const trick = initTrick(card, player, statute, trickNumber);
 
     removeCard(card, gameId);
-    this.saveTrick(gameId, trick);
+    storeTrick(gameId, trick);
 
     return Promise.resolve({
       cards: trick.trickCards,
@@ -246,7 +246,7 @@ export class HandService {
       return Promise.reject(new Error(ErrorTypes.TRICK_NOT_STARTED));
     }
 
-    const trick = await this.getTrick(gameId);
+    const trick = await fetchTrick(gameId);
     if (!hasPlayerTurn(trick, player)) {
       return Promise.reject(Error(ErrorTypes.OTHER_PLAYER_HAS_TURN));
     }
@@ -292,7 +292,7 @@ export class HandService {
       saveTrickPoints(handScore, statute, gameId);
     }
 
-    this.saveTrick(gameId, updatedTrick);
+    storeTrick(gameId, updatedTrick);
 
     return {
       cards: updatedTrick.trickCards,
@@ -318,7 +318,7 @@ export class HandService {
   }
 
   private async isTrickOpen(gameId: string): Promise<boolean> {
-    return this.getTrick(gameId)
+    return fetchTrick(gameId)
       .then((trick) => {
         return !isTrickReady(trick);
       })
@@ -345,7 +345,7 @@ export class HandService {
     gameId: string,
     handStatute: HandStatute
   ): Promise<Player> {
-    return this.getTrick(gameId)
+    return fetchTrick(gameId)
       .then((trick) => {
         return getTaker(trick);
       })
@@ -390,16 +390,6 @@ export class HandService {
   }
 
   private playerHasCardsOfSuit(trickSuit: Suit, playersCards: Card[]): boolean {
-    return (
-      playersCards.filter((card) => getSuit(card) === trickSuit).length > 0
-    );
-  }
-
-  private async getTrick(gameId: string): Promise<Trick> {
-    return fetchTrick(gameId);
-  }
-
-  private saveTrick(gameId: string, trick: Trick): void {
-    storeTrick(gameId, trick);
+    return playersCards.some((card) => getSuit(card) === trickSuit);
   }
 }

@@ -67,7 +67,7 @@ export const getTableCards = async (gameId: string): Promise<Card[]> => {
 
 export const noCardsLeft = async (gameId: string): Promise<boolean> => {
   const cards = await fetchCards(gameId);
-  return !cards || cards.filter((card) => !card.isPlayed).length === 0;
+  return !cards || !cards.some((card) => !card.isPlayed);
 };
 
 export const roundNumber = async (
@@ -126,8 +126,7 @@ export const hasPlayerCard = async (
   gameId: string
 ): Promise<boolean> => {
   const cards = await getPlayersCards(player, playersInGame, gameId);
-  return (
-    cards.filter((pc: Card) => pc.rank === card.rank && pc.suit === card.suit)
-      .length > 0
+  return cards.some(
+    (pc: Card) => pc.rank === card.rank && pc.suit === card.suit
   );
 };
