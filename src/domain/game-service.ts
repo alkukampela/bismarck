@@ -1,14 +1,12 @@
 import { ErrorTypes } from './error-types';
-import { HandService } from './hand-service';
+import { getStatute, isCurrentHandFinished, setUpHand } from './hand-service';
+import { Game } from '../types/game';
+import { HandStatute } from '../types/hand-statute';
 import {
   fetchGame as fetchGameFromStore,
   storeGame,
   clearTrick,
 } from '../persistence/storage-service';
-import { Game } from '../types/game';
-import { HandStatute } from '../types/hand-statute';
-
-const handService = new HandService();
 
 export const nextHand = (game: Game, gameId: string) => {
   const updatedGame = {
@@ -23,7 +21,7 @@ export const fetchGame = async (gameId: string): Promise<Game> => {
 };
 
 export const initHand = async (gameId: string): Promise<HandStatute> => {
-  const isHandFinished = await handService.isHandFinished(gameId);
+  const isHandFinished = await isCurrentHandFinished(gameId);
 
   if (!isHandFinished) {
     return Promise.reject(new Error(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
@@ -39,7 +37,7 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
     return Promise.reject(new Error(ErrorTypes.GAME_ENDED));
   }
 
-  handService.setUp(gameId, game);
+  setUpHand(gameId, game);
   clearTrick(gameId);
   const updatedGame = {
     ...game,
@@ -47,5 +45,5 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
   };
   storeGame(updatedGame, gameId);
 
-  return handService.getStatute(gameId);
+  return getStatute(gameId);
 };

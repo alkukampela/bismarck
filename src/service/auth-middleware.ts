@@ -1,7 +1,7 @@
 import { PlayerRequest } from './player-request';
 import { GamePlayer } from '../persistence/game-player';
 import * as express from 'express';
-import * as statuses from 'http-status-codes';
+import StatusCodes from 'http-status-codes';
 import { verify, VerifyErrors } from 'jsonwebtoken';
 
 export const playerExtractor = (
@@ -19,7 +19,7 @@ export const playerExtractor = (
       process.env.JWT_SECRET,
       (err: VerifyErrors, gamePlayer: GamePlayer) => {
         if (!!err) {
-          res.sendStatus(statuses.FORBIDDEN);
+          res.sendStatus(StatusCodes.FORBIDDEN);
           return;
         }
         req.player = gamePlayer.player;
@@ -27,6 +27,6 @@ export const playerExtractor = (
       }
     );
   } else {
-    res.sendStatus(statuses.UNAUTHORIZED);
+    res.sendStatus(StatusCodes.UNAUTHORIZED);
   }
 };

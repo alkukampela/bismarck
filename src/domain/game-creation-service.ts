@@ -71,10 +71,11 @@ export const createGameAndInvitatePlayers = async (
   storeGame(game, gameId);
 
   storeSmsRecoveries(
-    players.map((gamePlayer) => {
+    [...playerIds.entries()].map((x) => {
       return {
-        player: gamePlayer.player,
+        player: x[1].player,
         canSendRecovery: true,
+        loginId: x[0],
       };
     }),
     gameId

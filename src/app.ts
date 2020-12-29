@@ -1,23 +1,35 @@
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
-import { HandService } from './domain/hand-service';
 import { playerExtractor } from './service/auth-middleware';
 import { PlayerRequest } from './service/player-request';
+import { sendRecoverySms } from './service/sms-recovery-service';
 import { tokenForLoginId } from './service/token-service';
 import { Card } from './types/card';
 import { GameTypeChoice } from './types/game-type-choice';
 import { RegisterPlayer } from './types/register-player';
+import { SmsRecovery } from './types/sms-recovery';
 import { TrickResponse } from './types/trick-response';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
 import * as http from 'http';
-import * as statuses from 'http-status-codes';
+import StatusCodes from 'http-status-codes';
 import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
+import {
+  addCardToTrick,
+  chooseGameType,
+  getCurrentTrick,
+  getHandsTrickCounts,
+  getPlayersHand,
+  getStatute,
+  getTableCards,
+  removePlayersCard,
+  startTrick,
+} from './domain/hand-service';
 
 const app = express();
 
@@ -36,8 +48,6 @@ const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
 const router = express.Router();
 
-const hand = new HandService();
-
 type WebSocketWithGameId = WebSocket & {
   gameId: string;
 };
@@ -53,13 +63,12 @@ const publishTrick = (trick: TrickResponse, gameId: string) => {
 router.get(
   '/games/:id/hand/statute',
   (req: express.Request, res: express.Response) => {
-    hand
-      .getStatute(req.params.id)
+    getStatute(req.params.id)
       .then((statute) => {
         res.send(statute);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
@@ -70,13 +79,12 @@ router.post(
   (req: PlayerRequest, res: express.Response) => {
     const gameTypeChoice = req.body as GameTypeChoice;
 
-    hand
-      .chooseGameType(req.player, gameTypeChoice, req.params.id)
+    chooseGameType(req.player, gameTypeChoice, req.params.id)
       .then((statute) => {
         res.send(statute);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
@@ -85,7 +93,7 @@ router.get(
   '/games/:id/hand/cards',
   playerExtractor,
   async (req: PlayerRequest, res: express.Response) => {
-    const cards = await hand.getPlayersHand(req.player, req.params.id);
+    const cards = await getPlayersHand(req.player, req.params.id);
     res.send(cards);
   }
 );
@@ -98,14 +106,12 @@ router.delete(
       rank: req.query.rank as string,
       suit: req.query.suit as string,
     };
-
-    hand
-      .removePlayersCard(req.player, card, req.params.id)
+    removePlayersCard(req.player, card, req.params.id)
       .then(() => {
-        res.sendStatus(statuses.NO_CONTENT);
+        res.sendStatus(StatusCodes.NO_CONTENT);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
@@ -113,7 +119,7 @@ router.delete(
 router.get(
   '/games/:id/hand/trick',
   (req: express.Request, res: express.Response) => {
-    hand.getCurrentTrick(req.params.id).then((trick) => res.send(trick));
+    getCurrentTrick(req.params.id).then((trick) => res.send(trick));
   }
 );
 
@@ -123,14 +129,13 @@ router.post(
   async (req: PlayerRequest, res: express.Response) => {
     const card = req.body as Card;
 
-    hand
-      .startTrick(req.player, card, req.params.id)
+    startTrick(req.player, card, req.params.id)
       .then((trick) => {
         publishTrick(trick, req.params.id);
         res.send(trick);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
@@ -141,14 +146,13 @@ router.post(
   (req: PlayerRequest, res: express.Response) => {
     const card = req.body as Card;
 
-    hand
-      .addCardToTrick(req.player, card, req.params.id)
+    addCardToTrick(req.player, card, req.params.id)
       .then((trick) => {
         publishTrick(trick, req.params.id);
         res.send(trick);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
@@ -156,7 +160,7 @@ router.post(
 router.get(
   '/games/:id/hand/trick-count',
   async (req: express.Request, res: express.Response) => {
-    hand.getHandsTrickCounts(req.params.id).then((scores) => {
+    getHandsTrickCounts(req.params.id).then((scores) => {
       res.send(scores);
     });
   }
@@ -165,7 +169,7 @@ router.get(
 router.get(
   '/games/:id/hand/tablecards',
   (req: express.Request, res: express.Response) => {
-    hand.getTableCards(req.params.id).then((cards) => res.send(cards));
+    getTableCards(req.params.id).then((cards) => res.send(cards));
   }
 );
 
@@ -181,7 +185,7 @@ router.post('/games', (req: express.Request, res: express.Response) => {
   createGameAndInvitatePlayers(players)
     .then((game) => res.send(game))
     .catch((err) => {
-      res.status(statuses.BAD_REQUEST).send({ error: err.message });
+      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
     });
 });
 
@@ -194,7 +198,7 @@ router.post(
         res.send(statute);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
@@ -207,10 +211,21 @@ router.get(
         res.send(result);
       })
       .catch((err) => {
-        res.status(statuses.BAD_REQUEST).send({ error: err.message });
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
 );
+
+router.post('/sms-recovery', (req: express.Request, res: express.Response) => {
+  const smsRecovery = req.body as SmsRecovery;
+  sendRecoverySms(smsRecovery)
+    .then(() => {
+      res.sendStatus(StatusCodes.NO_CONTENT);
+    })
+    .catch((err) => {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
+    });
+});
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');
@@ -219,7 +234,7 @@ wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
 
   ws.gameId = parameters.query.gameId as string;
 
-  hand.getCurrentTrick(ws.gameId).then((trick) => {
+  getCurrentTrick(ws.gameId).then((trick) => {
     ws.send(JSON.stringify(trick));
   });
 
