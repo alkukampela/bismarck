@@ -10,93 +10,88 @@ type GameTypeWithTrumpSuit = {
   trumpSuit?: Suit;
 };
 
-export class HandStatuteMachine {
-  public getHandStatute(
-    game: Game,
-    trumpSuit: Suit,
-    tricks: number
-  ): HandStatute {
-    const handType = {
-      isChoice: this.isChoiceTurn(game.handNumber, game.players.length),
-      gameType: this.determineGameType(
-        game.handNumber,
-        game.players.length,
-        trumpSuit
-      ),
-    };
-
-    const playerOrder = this.switchTurns(game.players, game.handNumber);
-
-    return {
-      eldestHand: playerOrder[0],
-      handType,
-      playerOrder,
-      playersInGame: playerOrder.length,
-      tricks,
-    };
+const determineGameType = (
+  handNumber: number,
+  playerCount: number,
+  trumpSuit: Suit
+): GameTypeWithTrumpSuit | undefined => {
+  if (isChoiceTurn(handNumber, playerCount)) {
+    return;
   }
 
-  public chooseGameType(
-    handStatute: HandStatute,
-    gameTypeChoice: GameTypeChoice
-  ): HandStatute {
-    const handType = {
-      isChoice: true,
-      gameType: {
-        value: gameTypeChoice.gameType,
-        ...(gameTypeChoice.gameType === GameType.TRUMP && {
-          trumpSuit: gameTypeChoice.trumpSuit,
-        }),
-      },
-    };
+  const gameType = predefinedGameType(handNumber, playerCount);
 
-    return { ...handStatute, handType };
+  return {
+    value: gameType,
+    ...(gameType === GameType.TRUMP && { trumpSuit }),
+  };
+};
+
+const isChoiceTurn = (handNumber: number, playerCount: number): boolean => {
+  return handNumber >= playerCount * 3;
+};
+
+const predefinedGameType = (
+  handNumber: number,
+  playerCount: number
+): GameType => {
+  switch (Math.trunc(handNumber / playerCount)) {
+    case 0:
+      return GameType.TRUMP;
+    case 1:
+      return GameType.NO_TRUMP;
+    case 2:
+      return GameType.MISERE;
+  }
+  throw Error('Unexpected error while determining game type');
+};
+
+const switchTurns = (playerOrder: Player[], times: number): Player[] => {
+  if (times > 0) {
+    return switchTurns([...playerOrder.slice(1), playerOrder[0]], times - 1);
   }
 
-  private determineGameType(
-    handNumber: number,
-    playerCount: number,
-    trumpSuit: Suit
-  ): GameTypeWithTrumpSuit | undefined {
-    if (this.isChoiceTurn(handNumber, playerCount)) {
-      return;
-    }
+  return playerOrder;
+};
 
-    const gameType = this.predefinedGameType(handNumber, playerCount);
+export const getHandStatute = (
+  game: Game,
+  trumpSuit: Suit,
+  tricks: number
+): HandStatute => {
+  const handType = {
+    isChoice: isChoiceTurn(game.handNumber, game.players.length),
+    gameType: determineGameType(
+      game.handNumber,
+      game.players.length,
+      trumpSuit
+    ),
+  };
 
-    return {
-      value: gameType,
-      ...(gameType === GameType.TRUMP && { trumpSuit }),
-    };
-  }
+  const playerOrder = switchTurns(game.players, game.handNumber);
 
-  private isChoiceTurn(handNumber: number, playerCount: number): boolean {
-    return handNumber >= playerCount * 3;
-  }
+  return {
+    eldestHand: playerOrder[0],
+    handType,
+    playerOrder,
+    playersInGame: playerOrder.length,
+    tricks,
+  };
+};
 
-  private predefinedGameType(
-    handNumber: number,
-    playerCount: number
-  ): GameType {
-    switch (Math.trunc(handNumber / playerCount)) {
-      case 0:
-        return GameType.TRUMP;
-      case 1:
-        return GameType.NO_TRUMP;
-      case 2:
-        return GameType.MISERE;
-    }
-    throw Error('Unexpected error while determining game type');
-  }
+export const getStatuteAfterChoice = (
+  handStatute: HandStatute,
+  gameTypeChoice: GameTypeChoice
+): HandStatute => {
+  const handType = {
+    isChoice: true,
+    gameType: {
+      value: gameTypeChoice.gameType,
+      ...(gameTypeChoice.gameType === GameType.TRUMP && {
+        trumpSuit: gameTypeChoice.trumpSuit,
+      }),
+    },
+  };
 
-  private switchTurns(playerOrder: Player[], times: number): Player[] {
-    if (times > 0) {
-      return this.switchTurns(
-        [...playerOrder.slice(1), playerOrder[0]],
-        times - 1
-      );
-    }
-
-    return playerOrder;
-  }
-}
+  return { ...handStatute, handType };
+};

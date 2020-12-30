@@ -19,6 +19,7 @@
     "build:server": "rm tsconfig.tsbuildinfo; tsc",
     "build:ui": "rm -rf dist/public && cd src/bismarck-web && rm -rf dist && npm install && npm run build --prod && cp -r dist ../../dist/public",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "npm run lint:js ",
     "lint:eslint": "eslint --ignore-path .gitignore --ext .ts",
     "lint:js": "npm run lint:eslint src/",
@@ -78,7 +79,6 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.4.17",
     "uuid": "^8.3.2",
-    "uuid-encoder": "^1.2.0",
     "ws": "^7.4.1"
   }
 }

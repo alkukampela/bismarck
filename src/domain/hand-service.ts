@@ -1,7 +1,7 @@
 import { getSuit } from './card-mapper';
 import { ErrorTypes } from './error-types';
 import { saveTrickPoints } from './game-score-manager';
-import { HandStatuteMachine } from './hand-statute-machine';
+import { getHandStatute, getStatuteAfterChoice } from './hand-statute-machine';
 import { Trick } from '../persistence/trick';
 import { Card } from '../types/card';
 import { Game } from '../types/game';
@@ -132,7 +132,7 @@ const playerHasCardsOfSuit = (
 export const setUpHand = async (gameId: string, game: Game) => {
   initDeck(gameId);
 
-  const handStatute = new HandStatuteMachine().getHandStatute(
+  const handStatute = getHandStatute(
     game,
     await getTrumpSuit(gameId),
     totalRounds(game.players.length)
@@ -237,10 +237,7 @@ export const chooseGameType = async (
     return Promise.reject(new Error(ErrorTypes.ILLEGAL_CHOICE));
   }
 
-  const chosenStatute = new HandStatuteMachine().chooseGameType(
-    statute,
-    gameTypeChoice
-  );
+  const chosenStatute = getStatuteAfterChoice(statute, gameTypeChoice);
 
   storeHandStatute(chosenStatute, gameId);
   return chosenStatute;

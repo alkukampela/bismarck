@@ -89,6 +89,9 @@ export const getPlayersCards = async (
   gameId: string
 ): Promise<Card[]> => {
   const cards = await fetchCards(gameId);
+  if (!cards) {
+    return [];
+  }
   return cards
     .filter((_val, index) => isPlayersCard(player, playersInGame, index))
     .filter((container) => !container.isPlayed)

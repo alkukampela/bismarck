@@ -1,12 +1,14 @@
+import { totalRounds } from './card-manager';
+import { getHandStatute } from './hand-statute-machine';
 import { sendGameLink } from '../service/email-service';
 import { CreateGameResponse } from '../types/create-game-response';
 import { Game } from '../types/game';
 import { RegisterPlayer } from '../types/register-player';
 import shuffle from 'fisher-yates';
 import { v4 as uuid } from 'uuid';
-import UuidEncoder from 'uuid-encoder';
 import {
   storeGame,
+  storeHandStatute,
   storeLoginIdForPlayer,
   storeSmsRecoveries,
 } from '../persistence/storage-service';
@@ -28,9 +30,8 @@ const checkForDuplicatePlayers = (players: RegisterPlayer[]): boolean => {
   );
 };
 
-const generateGameIdentifier = (): string => {
-  const encoder = new UuidEncoder();
-  return encoder.encode(uuid()).substring(0, 11);
+const generateIdentifier = (): string => {
+  return uuid().replace('-', '').substring(0, 11);
 };
 
 const createMapWithPlayerIds = (
@@ -39,7 +40,7 @@ const createMapWithPlayerIds = (
   const playerIds = new Map<string, RegisterPlayer>();
 
   players.forEach((item) => {
-    playerIds.set(uuid(), item);
+    playerIds.set(generateIdentifier(), item);
   });
 
   return playerIds;
@@ -58,7 +59,7 @@ export const createGameAndInvitatePlayers = async (
 
   // TODO validate emails
 
-  const gameId = generateGameIdentifier();
+  const gameId = generateIdentifier();
   const playerIds = createMapWithPlayerIds(players);
 
   playerIds.forEach((value, loginId) => {
@@ -69,6 +70,14 @@ export const createGameAndInvitatePlayers = async (
   const game = initGameObject(players);
 
   storeGame(game, gameId);
+
+  const handStatute = getHandStatute(
+    game,
+    null,
+    totalRounds(game.players.length)
+  );
+
+  storeHandStatute(handStatute, gameId);
 
   storeSmsRecoveries(
     [...playerIds.entries()].map((x) => {
