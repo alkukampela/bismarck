@@ -1,4 +1,5 @@
 import { GameContainer } from './GameContainer';
+import { MainTitle } from './MainTitle';
 import { PanicButton } from './PanicButton';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
@@ -17,7 +18,8 @@ export const Game = () => {
   return (
     <Provider value={game}>
       <PanicButton />
-      <GameContainer />
+      {!!gameId && <GameContainer />}
+      {!gameId && <MainTitle />}
     </Provider>
   );
 };

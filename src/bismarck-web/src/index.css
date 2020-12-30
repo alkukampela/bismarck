@@ -273,3 +273,14 @@ tr.misere {
   list-style: none;
   font-size: 1.4rem;
 }
+
+.main-title-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.main-title-card {
+  padding-bottom: 0.5rem;
+  margin-right: 0.5rem;
+}

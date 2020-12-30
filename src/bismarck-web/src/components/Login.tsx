@@ -11,7 +11,7 @@ interface Identifier {
   };
 }
 
-export const Login: React.SFC<Identifier> = (props) => {
+export const Login: React.FunctionComponent<Identifier> = (props) => {
   const [gameId, setGameId] = React.useState<string>('');
 
   const getTokenResponse = async (identifier: string): Promise<TokenResponse> =>
