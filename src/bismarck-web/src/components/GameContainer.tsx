@@ -45,8 +45,7 @@ export const GameContainer = () => {
   const socket = SocketFactory.getSocket(game.gameId);
 
   const tableCardsAreVisible = (): boolean => {
-    // TODO: check if hand has any previous tricks
-    return trickResponse.cards.filter((tc) => !!tc.card).length === 0;
+    return !trickResponse.cards.some((tc) => !!tc.card);
   };
 
   const isHandReady = (
@@ -55,7 +54,7 @@ export const GameContainer = () => {
   ): boolean =>
     isTrickReady(trick) &&
     !!trick.trickNumber &&
-    trick.trickNumber + 1 >= handStatute.tricks;
+    trick.trickNumber + 1 >= handStatute.tricksInHand;
 
   const isTrickReady = (trick: TrickResponse): boolean =>
     !trick.cards.filter((tc) => !tc.card).length;

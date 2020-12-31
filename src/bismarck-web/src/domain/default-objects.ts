@@ -24,5 +24,5 @@ export const emptyStatue: HandStatute = {
   },
   playerOrder: [],
   playersInGame: 0,
-  tricks: 0,
+  tricksInHand: 0,
 };

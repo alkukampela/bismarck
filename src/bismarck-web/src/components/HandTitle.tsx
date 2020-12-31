@@ -26,6 +26,8 @@ export const HandTitle = ({
             return 'Herttavaltti';
           case Suit.SPADE:
             return 'Patavaltti';
+          default:
+            return 'Valtti';
         }
     }
     return '';
@@ -33,7 +35,7 @@ export const HandTitle = ({
 
   const trickCounter = (): string => {
     if (typeof trickNumber === 'number') {
-      return `${trickNumber + 1}/${handStatute.tricks}`;
+      return `${trickNumber + 1}/${handStatute.tricksInHand}`;
     }
     return '';
   };

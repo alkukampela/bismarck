@@ -32,7 +32,7 @@ const isPlayersCard = (
   Math.trunc((cardIndex / cardsInHand(playersInGame)) % playersInGame) ===
   player;
 
-export const totalRounds = (playersInGame: number): number =>
+export const tricksInHand = (playersInGame: number): number =>
   (DECK_SIZE - TABLE_CARDS) / playersInGame;
 
 export const getTrumpSuit = async (gameId: string): Promise<Suit> => {
@@ -80,7 +80,7 @@ export const roundNumber = async (
     .filter((_val, index) => isPlayersCard(player, playersInGame, index))
     .filter((container) => !container.isPlayed).length;
 
-  return totalRounds(playersInGame) - cardsLeft;
+  return tricksInHand(playersInGame) - cardsLeft;
 };
 
 export const getPlayersCards = async (

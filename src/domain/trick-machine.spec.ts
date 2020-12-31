@@ -29,7 +29,7 @@ test('Ensure misere trick is initalized correctly', () => {
         },
       },
       eldestHand: PLAYER_1,
-      tricks: 0,
+      tricksInHand: 0,
     },
     0
   );
@@ -57,7 +57,7 @@ test('Ensure no trump trick is initialized correctly', () => {
         },
       },
       eldestHand: PLAYER_1,
-      tricks: 0,
+      tricksInHand: 0,
     },
     0
   );
@@ -86,7 +86,7 @@ test('Ensure trump trick is initialized correctly', () => {
         },
       },
       eldestHand: PLAYER_1,
-      tricks: 0,
+      tricksInHand: 0,
     },
     0
   );
@@ -115,7 +115,7 @@ test('Ensure trump trick is initialized correctly with diamond suit', () => {
         },
       },
       eldestHand: PLAYER_1,
-      tricks: 0,
+      tricksInHand: 0,
     },
     0
   );

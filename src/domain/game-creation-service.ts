@@ -1,4 +1,3 @@
-import { totalRounds } from './card-manager';
 import { getHandStatute } from './hand-statute-machine';
 import { sendGameLink } from '../service/email-service';
 import { CreateGameResponse } from '../types/create-game-response';
@@ -71,11 +70,7 @@ export const createGameAndInvitatePlayers = async (
 
   storeGame(game, gameId);
 
-  const handStatute = getHandStatute(
-    game,
-    null,
-    totalRounds(game.players.length)
-  );
+  const handStatute = getHandStatute(game, null);
 
   storeHandStatute(handStatute, gameId);
 

@@ -1,3 +1,4 @@
+import { tricksInHand } from './card-manager';
 import { Game } from '../types/game';
 import { GameType } from '../types/game-type';
 import { GameTypeChoice } from '../types/game-type-choice';
@@ -54,18 +55,11 @@ const switchTurns = (playerOrder: Player[], times: number): Player[] => {
   return playerOrder;
 };
 
-export const getHandStatute = (
-  game: Game,
-  trumpSuit: Suit,
-  tricks: number
-): HandStatute => {
+export const getHandStatute = (game: Game, trumpSuit: Suit): HandStatute => {
+  const playersInGame = game.players.length;
   const handType = {
-    isChoice: isChoiceTurn(game.handNumber, game.players.length),
-    gameType: determineGameType(
-      game.handNumber,
-      game.players.length,
-      trumpSuit
-    ),
+    isChoice: isChoiceTurn(game.handNumber, playersInGame),
+    gameType: determineGameType(game.handNumber, playersInGame, trumpSuit),
   };
 
   const playerOrder = switchTurns(game.players, game.handNumber);
@@ -74,8 +68,8 @@ export const getHandStatute = (
     eldestHand: playerOrder[0],
     handType,
     playerOrder,
-    playersInGame: playerOrder.length,
-    tricks,
+    playersInGame,
+    tricksInHand: tricksInHand(playersInGame),
   };
 };
 

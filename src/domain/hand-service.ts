@@ -15,7 +15,6 @@ import { Suit } from '../types/suit';
 import { TrickResponse } from '../types/trick-response';
 import {
   getTrumpSuit,
-  totalRounds,
   initDeck,
   extraCardsAmount,
   hasTooManyCards,
@@ -132,11 +131,7 @@ const playerHasCardsOfSuit = (
 export const setUpHand = async (gameId: string, game: Game) => {
   initDeck(gameId);
 
-  const handStatute = getHandStatute(
-    game,
-    await getTrumpSuit(gameId),
-    totalRounds(game.players.length)
-  );
+  const handStatute = getHandStatute(game, await getTrumpSuit(gameId));
 
   setUpHandScore(handStatute.playerOrder, gameId);
   storeHandStatute(handStatute, gameId);
