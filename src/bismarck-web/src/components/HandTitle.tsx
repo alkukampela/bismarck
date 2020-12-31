@@ -10,25 +10,29 @@ export const HandTitle = ({
   handStatute: HandStatute;
   trickNumber?: number;
 }) => {
-  const gameMode = (): string => {
+  const trumpGameTypeName = (trumpSuit: Suit | undefined) => {
+    switch (trumpSuit) {
+      case Suit.DIAMOND:
+        return 'Ruutuvaltti';
+      case Suit.CLUB:
+        return 'Ristivaltti';
+      case Suit.HEART:
+        return 'Herttavaltti';
+      case Suit.SPADE:
+        return 'Patavaltti';
+      default:
+        return 'Valtti';
+    }
+  };
+
+  const gameModeName = (): string => {
     switch (handStatute.handType.gameType?.value) {
       case GameType.MISERE:
         return 'Misääri';
       case GameType.NO_TRUMP:
         return 'Grandi';
       case GameType.TRUMP:
-        switch (handStatute.handType.gameType.trumpSuit) {
-          case Suit.DIAMOND:
-            return 'Ruutuvaltti';
-          case Suit.CLUB:
-            return 'Ristivaltti';
-          case Suit.HEART:
-            return 'Herttavaltti';
-          case Suit.SPADE:
-            return 'Patavaltti';
-          default:
-            return 'Valtti';
-        }
+        return trumpGameTypeName(handStatute.handType.gameType?.trumpSuit);
     }
     return '';
   };
@@ -43,7 +47,7 @@ export const HandTitle = ({
   return (
     <div>
       <h1>
-        {gameMode()} {trickCounter()}
+        {gameModeName()} {trickCounter()}
       </h1>
     </div>
   );
