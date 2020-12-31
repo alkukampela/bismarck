@@ -41,6 +41,8 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   dotenv.config();
   reactPath = path.join(__dirname, 'bismarck-web/dist');
+  app.use(cors());
+  app.use(morgan('dev'));
 }
 app.use(express.static(reactPath));
 
@@ -241,8 +243,6 @@ wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   ws.on('close', () => console.log('Client disconnected'));
 });
 
-app.use(cors());
-app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api', router);
 app.get('*', (_req, res) => {
