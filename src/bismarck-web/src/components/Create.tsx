@@ -31,45 +31,41 @@ export const Create = () => {
   return (
     <div>
       <h1>Alusta peli</h1>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <fieldset>
-            <label>
-              Email:
-              <input type="email" {...bindEmail1} required />
-            </label>
-            <label>
-              Player Name:
-              <input type="text" {...bindPlayerName1} required />
-            </label>
-          </fieldset>
-        </div>
-        <div>
-          <fieldset>
-            <label>
-              Email:
-              <input type="email" {...bindEmail2} required />
-            </label>
-            <label>
-              Player Name:
-              <input type="text" {...bindPlayerName2} required />
-            </label>
-          </fieldset>
-        </div>
-        <div>
-          <fieldset>
-            <label>
-              Email:
-              <input type="email" {...bindEmail3} required />
-            </label>
-            <label>
-              Player Name:
-              <input type="text" {...bindPlayerName3} required />
-            </label>
-          </fieldset>
-        </div>
-        <input type="submit" value="Submit" />
+      <form onSubmit={handleSubmit} className="create-form">
+        <fieldset>
+          <legend>1. pelaaja</legend>
+          <label>
+            Nimi:
+            <input type="text" {...bindPlayerName1} required />
+          </label>
+          <label>
+            Sähköpostiosoite:
+            <input type="email" {...bindEmail1} required />
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>2. pelaaja</legend>
+          <label>
+            Nimi:
+            <input type="text" {...bindPlayerName2} required />
+          </label>
+          <label>
+            Sähköpostiosoite:
+            <input type="email" {...bindEmail2} required />
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>3. pelaaja</legend>
+          <label>
+            Nimi:
+            <input type="text" {...bindPlayerName3} required />
+          </label>
+          <label>
+            Sähköpostiosoite:
+            <input type="email" {...bindEmail3} required />
+          </label>
+        </fieldset>
+        <input type="submit" value="Lähetä" />
       </form>
       {!!gameId && (
         <Redirect

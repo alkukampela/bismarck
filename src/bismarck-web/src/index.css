@@ -28,7 +28,8 @@ h2 {
   margin-bottom: 0.2em;
 }
 
-button {
+button,
+input[type='submit'] {
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 0 2rem;
   color: rgb(255, 255, 255);
@@ -43,6 +44,14 @@ button {
   font-size: 1.6em;
   margin-bottom: 1rem;
   cursor: pointer;
+}
+
+fieldset {
+  border: 0;
+}
+
+label {
+  display: block;
 }
 
 .panic-button {
@@ -283,4 +292,15 @@ tr.misere {
 .main-title-card {
   padding-bottom: 0.5rem;
   margin-right: 0.5rem;
+}
+
+.create-form > * label {
+  margin-bottom: 0.5rem;
+  margin-left: 1rem;
+  width: 20rem;
+}
+
+.create-form > * input[type='text'],
+.create-form > * input[type='email'] {
+  float: right;
 }
