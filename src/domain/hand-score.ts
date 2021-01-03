@@ -1,4 +1,3 @@
-import { fetchScores, storeScores } from '../persistence/storage-service';
 import { GameType } from '../types/game-type';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
@@ -36,33 +35,15 @@ const countHandScore = (
     : countScoreForNonEldestHand(playerScore.score, gameType, players);
 };
 
-export const setUpHandScore = (players: Player[], gameId: string): void => {
-  storeScores(
-    players.map((player) => {
-      return { player, score: 0 } as PlayerScore;
-    }),
-    gameId
-  );
-};
-
-export const updateTrickTakerToHandScore = (
-  tricTaker: Player,
-  gameId: string
-): void => {
-  fetchScores(gameId).then((playerScores) => {
-    const updatedScores = playerScores.map((playerScore) => {
-      return playerScore.player.name === tricTaker.name
-        ? { ...playerScore, score: playerScore.score + 1 }
-        : playerScore;
-    });
-    storeScores(updatedScores, gameId);
+export const updatedTrickScore = (
+  trickTaker: Player,
+  playerScores: PlayerScore[]
+): PlayerScore[] => {
+  return playerScores.map((playerScore) => {
+    return playerScore.player.name === trickTaker.name
+      ? { ...playerScore, score: playerScore.score + 1 }
+      : playerScore;
   });
-};
-
-export const getHandScoresTricks = async (
-  gameId: string
-): Promise<PlayerScore[]> => {
-  return fetchScores(gameId);
 };
 
 export const getHandsPoints = (

@@ -30,6 +30,8 @@ import {
   fetchHandStatute,
   fetchTrick,
   storeTrick,
+  fetchScores,
+  storeScores,
 } from '../persistence/storage-service';
 import {
   initTrick,
@@ -38,12 +40,7 @@ import {
   hasPlayerTurn,
   playCard,
 } from './trick-machine';
-import {
-  getHandScoresTricks,
-  updateTrickTakerToHandScore,
-  setUpHandScore,
-  getHandsPoints,
-} from './hand-score';
+import { getHandsPoints, updatedTrickScore } from './hand-score';
 
 const getPlayersIndex = (player: Player, handStatute: HandStatute): number => {
   return handStatute.playerOrder.findIndex((x) => player.name === x.name);
@@ -133,7 +130,12 @@ export const setUpHand = async (gameId: string, game: Game) => {
 
   const handStatute = getHandStatute(game, await getTrumpSuit(gameId));
 
-  setUpHandScore(handStatute.playerOrder, gameId);
+  storeScores(
+    handStatute.playerOrder.map((player) => {
+      return { player, score: 0 } as PlayerScore;
+    }),
+    gameId
+  );
   storeHandStatute(handStatute, gameId);
 };
 
@@ -353,15 +355,20 @@ export const addCardToTrick = async (
   await removeCard(card, gameId);
 
   if (isTrickReady(updatedTrick)) {
-    updateTrickTakerToHandScore(getTaker(updatedTrick), gameId);
+    const playerScoresBefore = await fetchScores(gameId);
+    const playerScoresAfter = updatedTrickScore(
+      getTaker(updatedTrick),
+      playerScoresBefore
+    );
+    storeScores(playerScoresAfter, gameId);
   }
 
   const handReady = await noCardsLeft(gameId);
 
   if (handReady) {
-    const trickScores = await getHandScoresTricks(gameId);
+    const handTricks = await fetchScores(gameId);
     const handScore = getHandsPoints(
-      trickScores,
+      handTricks,
       statute.handType.gameType.value
     );
     saveTrickPoints(handScore, statute, gameId);
@@ -379,11 +386,11 @@ export const addCardToTrick = async (
 export const getHandsTrickCounts = async (
   gameId: string
 ): Promise<PlayerScore[]> => {
-  const scores = await getHandScoresTricks(gameId);
-  if (!scores) {
+  const tricks = await fetchScores(gameId);
+  if (!tricks) {
     return [];
   }
-  return scores;
+  return tricks;
 };
 
 export const isCurrentHandFinished = async (

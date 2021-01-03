@@ -1,12 +1,7 @@
-import { getHandsPoints } from './hand-score';
+import { getHandsPoints, updatedTrickScore } from './hand-score';
 import { GameType } from '../types/game-type';
 import { Player } from '../types/player';
 import { PlayerScore } from '../types/player-score';
-
-jest.mock('../persistence/storage-service', () => ({
-  fetchScores: jest.fn().mockResolvedValue([]),
-  storeScores: jest.fn(),
-}));
 
 const PLAYER_1 = { name: 'ake' };
 const PLAYER_2 = { name: 'make' };
@@ -105,4 +100,18 @@ test('Ensure hand scores are correct in three player misere game', () => {
   expect(getScoreForPlayer(actual, PLAYER_1)).toBe(-1);
   expect(getScoreForPlayer(actual, PLAYER_2)).toBe(1);
   expect(getScoreForPlayer(actual, PLAYER_3)).toBe(0);
+});
+
+test('Ensure trick taker is updated correctly', () => {
+  const scores = [
+    { player: PLAYER_1, score: 7 },
+    { player: PLAYER_2, score: 4 },
+  ];
+
+  const actual = updatedTrickScore(PLAYER_1, scores);
+
+  expect(actual).toStrictEqual([
+    { player: PLAYER_1, score: 8 },
+    { player: PLAYER_2, score: 4 },
+  ]);
 });
