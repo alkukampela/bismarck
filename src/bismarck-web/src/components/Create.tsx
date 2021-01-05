@@ -1,27 +1,54 @@
 import { RegisterPlayer } from '../../../types/register-player';
-import { useInput } from '../hooks/useInput';
 import { createGame } from '../services/api-service';
 import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 
 export const Create = () => {
+  const MIN_PLAYERS = 3;
+  const MAX_PLAYERS = 4;
+
+  const emptyPlayer = { player: { name: '' }, email: '' };
+
   const [gameId, setGameId] = React.useState<string>('');
 
-  const { value: email1, bind: bindEmail1 } = useInput('');
-  const { value: email2, bind: bindEmail2 } = useInput('');
-  const { value: email3, bind: bindEmail3 } = useInput('');
-  const { value: playerName1, bind: bindPlayerName1 } = useInput('');
-  const { value: playerName2, bind: bindPlayerName2 } = useInput('');
-  const { value: playerName3, bind: bindPlayerName3 } = useInput('');
+  const [players, setPlayers] = React.useState<RegisterPlayer[]>(
+    Array(MIN_PLAYERS).fill({ ...emptyPlayer })
+  );
+
+  const addPlayer = () => {
+    if (players.length < MAX_PLAYERS) {
+      setPlayers([...players, { ...emptyPlayer }]);
+    }
+  };
+
+  const removePlayer = () => {
+    if (players.length > MIN_PLAYERS) {
+      setPlayers(players.slice(0, -1));
+    }
+  };
+
+  const handleEmailChange = (e: any) => {
+    const updatedPlayers = [...players];
+    updatedPlayers[e.target.dataset.idx] = {
+      ...updatedPlayers[e.target.dataset.idx],
+      email: e.target.value,
+    };
+    setPlayers(updatedPlayers);
+  };
+
+  const handleNameChange = (e: any) => {
+    const updatedPlayers = [...players];
+    updatedPlayers[e.target.dataset.idx] = {
+      ...updatedPlayers[e.target.dataset.idx],
+      player: { name: e.target.value },
+    };
+    setPlayers(updatedPlayers);
+  };
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    const registerPlayers: RegisterPlayer[] = [
-      { email: email1, player: { name: playerName1 } },
-      { email: email2, player: { name: playerName2 } },
-      { email: email3, player: { name: playerName3 } },
-    ];
+    const registerPlayers: RegisterPlayer[] = players;
 
     createGame({ players: registerPlayers }).then((response) => {
       setGameId(response.id);
@@ -31,40 +58,58 @@ export const Create = () => {
   return (
     <div>
       <h1>Alusta peli</h1>
+      <p>{`Syötä pelaajien (${MIN_PLAYERS}-${MAX_PLAYERS} kpl) tiedot`}</p>
+
       <form onSubmit={handleSubmit} className="create-form">
-        <fieldset>
-          <legend>1. pelaaja</legend>
-          <label>
-            Nimi:
-            <input type="text" {...bindPlayerName1} required />
-          </label>
-          <label>
-            Sähköpostiosoite:
-            <input type="email" {...bindEmail1} required />
-          </label>
-        </fieldset>
-        <fieldset>
-          <legend>2. pelaaja</legend>
-          <label>
-            Nimi:
-            <input type="text" {...bindPlayerName2} required />
-          </label>
-          <label>
-            Sähköpostiosoite:
-            <input type="email" {...bindEmail2} required />
-          </label>
-        </fieldset>
-        <fieldset>
-          <legend>3. pelaaja</legend>
-          <label>
-            Nimi:
-            <input type="text" {...bindPlayerName3} required />
-          </label>
-          <label>
-            Sähköpostiosoite:
-            <input type="email" {...bindEmail3} required />
-          </label>
-        </fieldset>
+        <div className="plus_minus_buttons">
+          <input
+            type="button"
+            value="Lisää"
+            onClick={addPlayer}
+            disabled={players.length >= MAX_PLAYERS}
+          />
+          <input
+            type="button"
+            value="Poista"
+            onClick={removePlayer}
+            disabled={players.length <= MIN_PLAYERS}
+          />
+        </div>
+        {players.map((_val, idx) => {
+          const nameId = `name-${idx}`;
+          const emailId = `email-${idx}`;
+          return (
+            <fieldset key={`player-${idx}`}>
+              <legend>{`${idx + 1}. pelaaja`}</legend>
+              <label>
+                Nimi:
+                <input
+                  type="text"
+                  name={nameId}
+                  data-idx={idx}
+                  id={nameId}
+                  className="name"
+                  value={players[idx].player.name}
+                  onChange={handleNameChange}
+                  required
+                />
+              </label>
+              <label>
+                Sähköpostiosoite:
+                <input
+                  type="email"
+                  name={emailId}
+                  data-idx={idx}
+                  id={emailId}
+                  className="email"
+                  value={players[idx].email}
+                  onChange={handleEmailChange}
+                  required
+                />
+              </label>
+            </fieldset>
+          );
+        })}
         <input type="submit" value="Lähetä" />
       </form>
       {!!gameId && (
