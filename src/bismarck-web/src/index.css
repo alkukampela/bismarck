@@ -329,7 +329,7 @@ tr.misere {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   overflow: hidden;
-  padding: 1rem 2rem;
+  padding: 1rem;
   border-top-left-radius: 0px;
 }
 
@@ -345,6 +345,14 @@ tr.misere {
 #four-players:checked ~ .tabs #four-players-tab {
   background: white;
   color: black;
+}
+
+.create-form > fieldset {
+  padding-left: 0;
+}
+
+.create-form > * legend {
+  font-weight: 800;
 }
 
 .create-form > * label {
