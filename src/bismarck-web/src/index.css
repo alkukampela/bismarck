@@ -295,19 +295,65 @@ tr.misere {
   margin-right: 0.5rem;
 }
 
+.tabbed-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabbed-area > input[type='radio'] {
+  display: none;
+}
+
+.tabs {
+  position: relative;
+  left: -2px;
+}
+
+.tab {
+  cursor: pointer;
+  padding: 10px 20px;
+  margin: 0px 2px;
+  background: black;
+  display: inline-block;
+  color: white;
+  border-radius: 5px 5px 0px 0px;
+  box-shadow: 1px 0px 0px rgba(0, 0, 0, 0.3);
+}
+
+.tab:hover {
+  background: gray;
+}
+
+.panel {
+  background: #fffffff6;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 1rem 2rem;
+  border-top-left-radius: 0px;
+}
+
+.panel h2 {
+  margin-bottom: 1rem;
+}
+
+.panel input[type='submit'] {
+  float: right;
+}
+
+#three-players:checked ~ .tabs #three-players-tab,
+#four-players:checked ~ .tabs #four-players-tab {
+  background: white;
+  color: black;
+}
+
 .create-form > * label {
   margin-bottom: 0.5rem;
   margin-left: 1rem;
-  width: 20rem;
+  width: 16rem;
 }
 
 .create-form > * input[type='text'],
 .create-form > * input[type='email'] {
   float: right;
-}
-
-.plus_minus_buttons > input {
-  margin-right: 0.5rem;
-  font-size: 1em;
-  padding: 0.75rem 1.25rem;
 }

@@ -16,7 +16,7 @@
     "start:watch": "nodemon",
     "start:heroku": "NODE_ENV=production heroku local",
     "build": "npm run build:server && npm run build:ui",
-    "build:server": "rm tsconfig.tsbuildinfo; tsc",
+    "build:server": "rm -f tsconfig.tsbuildinfo; tsc",
     "build:ui": "rm -rf dist/public && cd src/bismarck-web && rm -rf dist && npm install && npm run build --prod && cp -r dist ../../dist/public",
     "test": "jest",
     "test:coverage": "jest --coverage",

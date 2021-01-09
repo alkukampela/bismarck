@@ -27,20 +27,22 @@ export const Create = () => {
     }
   };
 
-  const handleEmailChange = (e: any) => {
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const playerIndex = Number(event.target.dataset.idx);
     const updatedPlayers = [...players];
-    updatedPlayers[e.target.dataset.idx] = {
-      ...updatedPlayers[e.target.dataset.idx],
-      email: e.target.value,
+    updatedPlayers[playerIndex] = {
+      ...updatedPlayers[playerIndex],
+      email: event.target.value,
     };
     setPlayers(updatedPlayers);
   };
 
-  const handleNameChange = (e: any) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const playerIndex = Number(event.target.dataset.idx);
     const updatedPlayers = [...players];
-    updatedPlayers[e.target.dataset.idx] = {
-      ...updatedPlayers[e.target.dataset.idx],
-      player: { name: e.target.value },
+    updatedPlayers[playerIndex] = {
+      ...updatedPlayers[playerIndex],
+      player: { name: event.target.value },
     };
     setPlayers(updatedPlayers);
   };
@@ -58,60 +60,84 @@ export const Create = () => {
   return (
     <div>
       <h1>Alusta peli</h1>
-      <p>{`Syötä pelaajien (${MIN_PLAYERS}-${MAX_PLAYERS} kpl) tiedot`}</p>
 
-      <form onSubmit={handleSubmit} className="create-form">
-        <div className="plus_minus_buttons">
-          <input
-            type="button"
-            value="Lisää"
-            onClick={addPlayer}
-            disabled={players.length >= MAX_PLAYERS}
-          />
-          <input
-            type="button"
-            value="Poista"
+      <div className="tabbed-area">
+        <input
+          id="three-players"
+          name="tab-group"
+          type="radio"
+          onClick={removePlayer}
+          checked
+        />
+        <input
+          id="four-players"
+          name="tab-group"
+          type="radio"
+          onClick={addPlayer}
+        />
+
+        <div className="tabs">
+          <label
+            className="tab"
+            id="three-players-tab"
+            htmlFor="three-players"
             onClick={removePlayer}
-            disabled={players.length <= MIN_PLAYERS}
-          />
+          >
+            3 pelaajaa
+          </label>
+          <label
+            className="tab"
+            id="four-players-tab"
+            htmlFor="four-players"
+            onClick={addPlayer}
+          >
+            4 pelaajaa
+          </label>
         </div>
-        {players.map((_val, idx) => {
-          const nameId = `name-${idx}`;
-          const emailId = `email-${idx}`;
-          return (
-            <fieldset key={`player-${idx}`}>
-              <legend>{`${idx + 1}. pelaaja`}</legend>
-              <label>
-                Nimi:
-                <input
-                  type="text"
-                  name={nameId}
-                  data-idx={idx}
-                  id={nameId}
-                  className="name"
-                  value={players[idx].player.name}
-                  onChange={handleNameChange}
-                  required
-                />
-              </label>
-              <label>
-                Sähköpostiosoite:
-                <input
-                  type="email"
-                  name={emailId}
-                  data-idx={idx}
-                  id={emailId}
-                  className="email"
-                  value={players[idx].email}
-                  onChange={handleEmailChange}
-                  required
-                />
-              </label>
-            </fieldset>
-          );
-        })}
-        <input type="submit" value="Lähetä" />
-      </form>
+        <div className="panel">
+          <h2>Syötä pelaajien tiedot</h2>
+
+          <form onSubmit={handleSubmit} className="create-form">
+            {players.map((_val, idx) => {
+              const nameId = `name-${idx}`;
+              const emailId = `email-${idx}`;
+              return (
+                <fieldset key={`player-${idx}`}>
+                  <legend>{`${idx + 1}. pelaaja`}</legend>
+                  <label>
+                    Nimi:
+                    <input
+                      type="text"
+                      name={nameId}
+                      data-idx={idx}
+                      id={nameId}
+                      className="name"
+                      value={players[idx].player.name}
+                      onChange={handleNameChange}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Sähköposti:
+                    <input
+                      type="email"
+                      name={emailId}
+                      data-idx={idx}
+                      id={emailId}
+                      className="email"
+                      value={players[idx].email}
+                      onChange={handleEmailChange}
+                      required
+                    />
+                  </label>
+                </fieldset>
+              );
+            })}
+            <input type="submit" value="Lähetä" />
+          </form>
+        </div>
+      </div>
+
       {!!gameId && (
         <Redirect
           push
