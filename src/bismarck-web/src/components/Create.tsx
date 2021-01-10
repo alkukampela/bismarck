@@ -50,7 +50,12 @@ export const Create = () => {
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    const registerPlayers: RegisterPlayer[] = players;
+    const registerPlayers: RegisterPlayer[] = players.map((input) => {
+      return {
+        email: input.email.trim(),
+        player: { name: input.player.name.trim() },
+      };
+    });
 
     createGame({ players: registerPlayers }).then((response) => {
       setGameId(response.id);
@@ -104,7 +109,7 @@ export const Create = () => {
               return (
                 <fieldset key={`player-${idx}`}>
                   <legend>{`${idx + 1}. pelaaja`}</legend>
-                  <label>
+                  <label htmlFor={nameId}>
                     Nimi:
                     <input
                       type="text"
@@ -117,7 +122,7 @@ export const Create = () => {
                       required
                     />
                   </label>
-                  <label>
+                  <label htmlFor={emailId}>
                     Sähköposti:
                     <input
                       type="email"
