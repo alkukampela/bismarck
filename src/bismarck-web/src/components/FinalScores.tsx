@@ -1,3 +1,4 @@
+import { ScoreSheet } from './ScoreSheet';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import * as React from 'react';
 
@@ -43,6 +44,8 @@ export const FinalScores = ({ scores }: { scores: GameScoreBoard }) => {
           </li>
         ))}
       </ul>
+
+      <ScoreSheet scores={scores} />
     </div>
   );
 };

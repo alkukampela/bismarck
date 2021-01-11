@@ -170,8 +170,7 @@ table.score-sheet td {
   text-align: right;
 }
 
-tr.trump,
-tr.misere {
+tr.odd-gametype {
   background: rgba(124, 126, 124, 0.25);
 }
 
@@ -270,13 +269,19 @@ tr.misere {
 
 .final-scores-container {
   background-color: rgba(240, 200, 220, 0.8);
-  padding: 1rem;
+  padding: 0rem 2rem 1rem 2rem;
   z-index: 200;
   position: absolute;
-  top: 50%;
+  top: 6rem;
   left: 50%;
   margin-top: -3.125rem;
   margin-left: -3.125rem;
+}
+
+.final-scores-container > table {
+  left: 50%;
+  transform: translateX(-50%);
+  position: relative;
 }
 
 .final-scores-list > li {
