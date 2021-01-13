@@ -1,7 +1,7 @@
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { PlayerCumulativeScore } from '../domain/player-cumulative-score';
+import { trickScoresToCumulativeScores } from '../domain/score-calculators';
 import * as React from 'react';
-import { trickScoresToCumulativeScores } from '../domain/points-converter';
 
 export const ScoreSheet = ({ scores }: { scores: GameScoreBoard }) => {
   const [cumulativeScores, setCumulativeScores] = React.useState<
