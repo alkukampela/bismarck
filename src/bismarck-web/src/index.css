@@ -1,3 +1,8 @@
+:root {
+  --main-font-family: 'Roboto Slab', 'Arial', 'Helvetica', sans-serif;
+  --whitelike: #f9f9f9;
+}
+
 *,
 *:before,
 *:after {
@@ -10,7 +15,7 @@
 
 body {
   background-image: linear-gradient(90deg, #fcd684 0%, #43723f 100%);
-  font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
+  font-family: var(--main-font-family);
 }
 
 h1,
@@ -19,13 +24,12 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Nunito Sans', 'Arial', 'Helvetica', sans-serif;
   font-weight: 400;
 }
 
 h2 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
 }
 
 button,
@@ -33,14 +37,15 @@ input[type='submit'],
 input[type='button'] {
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 0 2rem;
-  color: #ffffff;
+  color: var(--whitelike);
   border: 0;
   outline: none;
   padding: 1rem 2rem;
   background-image: linear-gradient(19deg, #000000 0%, #b721ff 100%);
-  font-size: 1.2em;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
   cursor: pointer;
+  font-family: var(--main-font-family);
 }
 
 input[type='button']:disabled {
@@ -105,10 +110,13 @@ label {
 
 .card {
   font-family: 'Girassol', 'Times New Roman', Times, serif;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   width: 4rem;
   height: 5.6rem;
-  background-color: #f9f9f9;
+  background-color: var(--whitelike);
   -webkit-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid transparent;
@@ -122,16 +130,15 @@ label {
 
 .card > .suit {
   position: relative;
-  top: -0.2rem;
-  font-size: 2.8em;
-  text-align: center;
+  top: -0.5rem;
+  font-size: 2.6rem;
+  line-height: 2.6rem;
 }
 
 .card > .rank {
   position: relative;
-  top: -0.4rem;
-  font-size: 1.8em;
-  text-align: center;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
 }
 
 .empty-card {
@@ -151,6 +158,7 @@ label {
 
 .taker {
   text-decoration: underline;
+  font-weight: 800;
 }
 
 .my-score {
@@ -204,7 +212,7 @@ tr.odd-gametype {
   -webkit-mask-position-y: center;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: 2rem;
-  background-color: white;
+  background-color: var(--whitelike);
   cursor: pointer;
   height: 2rem;
   width: 2rem;
@@ -233,11 +241,11 @@ tr.odd-gametype {
   padding-bottom: 2rem;
   margin-left: 3rem;
   margin-right: 3rem;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .close-modal {
-  color: white;
+  color: var(--whitelike);
   float: right;
   font-size: 2rem;
   font-weight: bold;
@@ -321,7 +329,7 @@ tr.odd-gametype {
   margin: 0px 2px;
   background: black;
   display: inline-block;
-  color: white;
+  color: var(--whitelike);
   border-radius: 5px 5px 0px 0px;
   box-shadow: 1px 0px 0px rgba(0, 0, 0, 0.3);
 }
@@ -349,7 +357,7 @@ tr.odd-gametype {
 
 #three-players:checked ~ .tabs #three-players-tab,
 #four-players:checked ~ .tabs #four-players-tab {
-  background: white;
+  background: var(--whitelike);
   color: black;
 }
 
