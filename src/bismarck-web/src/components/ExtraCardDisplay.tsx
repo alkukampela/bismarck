@@ -3,7 +3,7 @@ import * as React from 'react';
 export const ExtraCardDisplay = ({ amount }: { amount: number }) => {
   return (
     <div
-      className="info-container"
+      className="extra-card-info"
       style={{ display: amount > 0 ? 'block' : 'none' }}
     >
       <h2>

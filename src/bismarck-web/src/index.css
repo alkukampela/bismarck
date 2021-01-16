@@ -1,6 +1,14 @@
 :root {
   --main-font-family: 'Roboto Slab', 'Arial', 'Helvetica', sans-serif;
   --whitelike: #f9f9f9;
+  --superdark: #000020;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+  --background-from: #ecbf22;
+  --background-to: #cc9b0c;
+  --button-from: #373e2d;
+  --button-to: #7d5c31;
+  --info-area: rgba(0, 0, 0, 0.2);
+  --final-results-area: rgba(240, 200, 220, 0.8);
 }
 
 *,
@@ -14,7 +22,11 @@
 }
 
 body {
-  background-image: linear-gradient(90deg, #fcd684 0%, #43723f 100%);
+  background-image: linear-gradient(
+    90deg,
+    var(--background-from) 0%,
+    var(--background-to) 100%
+  );
   font-family: var(--main-font-family);
 }
 
@@ -36,12 +48,18 @@ button,
 input[type='submit'],
 input[type='button'] {
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 0 2rem;
+  box-shadow: var(--shadow-color) 0 0 2rem;
   color: var(--whitelike);
   border: 0;
   outline: none;
   padding: 1rem 2rem;
-  background-image: linear-gradient(19deg, #000000 0%, #b721ff 100%);
+  background-image: linear-gradient(
+    19deg,
+    var(--button-from) 0%,
+    var(--button-to) 100%
+  );
+  -webkit-box-shadow: 0 1px 1px var(--shadow-color);
+  box-shadow: 0 1px 1px var(--shadow-color);
   font-size: 1.2rem;
   margin-bottom: 1rem;
   cursor: pointer;
@@ -105,7 +123,7 @@ label {
 }
 
 .black-card {
-  color: black;
+  color: var(--superdark);
 }
 
 .card {
@@ -120,8 +138,8 @@ label {
   -webkit-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid transparent;
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 1px var(--shadow-color);
+  box-shadow: 0 1px 1px var(--shadow-color);
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -142,7 +160,7 @@ label {
 }
 
 .empty-card {
-  border: 1px solid darkslategray;
+  border: 1px solid var(--shadow-color);
   -webkit-box-shadow: none;
   box-shadow: none;
   background-color: inherit;
@@ -212,7 +230,7 @@ tr.odd-gametype {
   -webkit-mask-position-y: center;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: 2rem;
-  background-color: var(--whitelike);
+  background-color: var(--superdark);
   cursor: pointer;
   height: 2rem;
   width: 2rem;
@@ -230,31 +248,35 @@ tr.odd-gametype {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--shadow-color);
 }
 
 .modal-content {
   position: relative;
-  background-image: linear-gradient(180deg, #5faf58 0%, #51944b 100%);
+  background-image: linear-gradient(
+    180deg,
+    var(--background-from) 0%,
+    var(--background-to) 100%
+  );
   margin: auto;
   padding: 1rem;
   padding-bottom: 2rem;
   margin-left: 3rem;
   margin-right: 3rem;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 0 var(--shadow-color);
 }
 
 .close-modal {
   color: var(--whitelike);
   float: right;
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: 800;
   cursor: pointer;
 }
 
 .close-modal:hover,
 .close-modal:focus {
-  color: #000;
+  color: var(--superdark);
   text-decoration: none;
   cursor: pointer;
 }
@@ -267,17 +289,17 @@ tr.odd-gametype {
   padding: 2px 1rem;
 }
 
-.info-container {
-  background: rgba(253, 0, 0, 0.2);
+.extra-card-info {
+  background: var(--info-area);
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  padding-left: 0.4rem;
+  padding-left: 0.8rem;
   margin-bottom: 0.8rem;
   border-radius: 5px;
 }
 
 .final-scores-container {
-  background-color: rgba(240, 200, 220, 0.8);
+  background-color: var(--final-results-area);
   padding: 0rem 2rem 1rem 2rem;
   z-index: 200;
   position: absolute;
@@ -327,20 +349,20 @@ tr.odd-gametype {
   cursor: pointer;
   padding: 10px 20px;
   margin: 0px 2px;
-  background: black;
+  background: var(--superdark);
   display: inline-block;
   color: var(--whitelike);
   border-radius: 5px 5px 0px 0px;
-  box-shadow: 1px 0px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 0px 0px var(--shadow-color);
 }
 
 .tab:hover {
-  background: gray;
+  background: seagreen;
 }
 
 .panel {
-  background: #fffffff6;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  background: var(--whitelike);
+  box-shadow: 0 1px 1px var(--shadow-color);
   border-radius: 5px;
   overflow: hidden;
   padding: 1rem;
@@ -358,7 +380,7 @@ tr.odd-gametype {
 #three-players:checked ~ .tabs #three-players-tab,
 #four-players:checked ~ .tabs #four-players-tab {
   background: var(--whitelike);
-  color: black;
+  color: var(--superdark);
 }
 
 .create-form > fieldset {
