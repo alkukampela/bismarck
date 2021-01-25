@@ -3,12 +3,10 @@ import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
 import { playerExtractor } from './service/auth-middleware';
 import { PlayerRequest } from './service/player-request';
-import { sendRecoverySms } from './service/sms-recovery-service';
 import { tokenForLoginId } from './service/token-service';
 import { Card } from './types/card';
 import { GameTypeChoice } from './types/game-type-choice';
 import { RegisterPlayer } from './types/register-player';
-import { SmsRecovery } from './types/sms-recovery';
 import { TrickResponse } from './types/trick-response';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
@@ -217,17 +215,6 @@ router.get(
       });
   }
 );
-
-router.post('/sms-recovery', (req: express.Request, res: express.Response) => {
-  const smsRecovery = req.body as SmsRecovery;
-  sendRecoverySms(smsRecovery)
-    .then(() => {
-      res.sendStatus(StatusCodes.NO_CONTENT);
-    })
-    .catch((err) => {
-      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-    });
-});
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');

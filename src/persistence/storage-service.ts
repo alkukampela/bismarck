@@ -1,6 +1,5 @@
 import { CardContainer } from './card-container';
 import { GamePlayer } from './game-player';
-import { PlayerSmsRecovery } from './player-sms-recovery';
 import { Trick } from './trick';
 import { Game } from '../types/game';
 import { HandStatute } from '../types/hand-statute';
@@ -15,8 +14,7 @@ type StorageType =
   | Trick
   | Game
   | TrickScore[]
-  | GamePlayer
-  | PlayerSmsRecovery[];
+  | GamePlayer;
 
 const ONE_DAY_EXPIRATION = 86400;
 
@@ -50,9 +48,6 @@ const getTrickScoresKey = (identifier: string): string =>
 
 const getPlayerLoginIdKey = (identifier: string): string =>
   `gameplayer:${identifier}`;
-
-const getSmsRecoveryKey = (identifier: string): string =>
-  `smsrecovery:${identifier}`;
 
 export const storeGame = (game: Game, identifier: string): void => {
   store(getGamesKey(identifier), game);
@@ -143,19 +138,5 @@ export const fetchPlayerWithLoginId = async (
   loginId: string
 ): Promise<GamePlayer> => {
   const result = await fetch(getPlayerLoginIdKey(loginId));
-  return JSON.parse(result);
-};
-
-export const storeSmsRecoveries = (
-  smsRecoveries: PlayerSmsRecovery[],
-  identifier: string
-): void => {
-  store(getSmsRecoveryKey(identifier), smsRecoveries);
-};
-
-export const fetchSmsRecoveries = async (
-  identifier: string
-): Promise<PlayerSmsRecovery[]> => {
-  const result = await fetch(getSmsRecoveryKey(identifier));
   return JSON.parse(result);
 };

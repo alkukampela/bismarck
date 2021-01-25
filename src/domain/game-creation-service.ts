@@ -9,7 +9,6 @@ import {
   storeGame,
   storeHandStatute,
   storeLoginIdForPlayer,
-  storeSmsRecoveries,
 } from '../persistence/storage-service';
 
 const initGameObject = (players: RegisterPlayer[]): Game => {
@@ -73,17 +72,6 @@ export const createGameAndInvitatePlayers = async (
   const handStatute = getHandStatute(game, null);
 
   storeHandStatute(handStatute, gameId);
-
-  storeSmsRecoveries(
-    [...playerIds.entries()].map((x) => {
-      return {
-        player: x[1].player,
-        canSendRecovery: true,
-        loginId: x[0],
-      };
-    }),
-    gameId
-  );
 
   return {
     id: gameId,

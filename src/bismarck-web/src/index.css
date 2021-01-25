@@ -48,7 +48,6 @@ button,
 input[type='submit'],
 input[type='button'] {
   border-radius: 5px;
-  box-shadow: var(--shadow-color) 0 0 2rem;
   color: var(--whitelike);
   border: 0;
   outline: none;

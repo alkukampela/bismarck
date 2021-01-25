@@ -72,7 +72,7 @@ export const Create = () => {
           name="tab-group"
           type="radio"
           onClick={removePlayer}
-          checked
+          defaultChecked
         />
         <input
           id="four-players"

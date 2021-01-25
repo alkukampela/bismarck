@@ -125,7 +125,7 @@ const playerHasCardsOfSuit = (
   return playersCards.some((card) => getSuit(card) === trickSuit);
 };
 
-export const setUpHand = async (gameId: string, game: Game) => {
+export const setUpHand = async (gameId: string, game: Game): Promise<void> => {
   initDeck(gameId);
 
   const handStatute = getHandStatute(game, await getTrumpSuit(gameId));
