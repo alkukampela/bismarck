@@ -2,11 +2,12 @@
   --main-font-family: 'Roboto Slab', 'Arial', 'Helvetica', sans-serif;
   --whitelike: #f9f9f9;
   --superdark: #000020;
+  --tab-hover: rgba(0, 0, 20, 0.5);
   --shadow-color: rgba(0, 0, 0, 0.25);
-  --background-from: #ecbf22;
-  --background-to: #cc9b0c;
-  --button-from: #373e2d;
-  --button-to: #7d5c31;
+  --background-from: #ffb0f8;
+  --background-to: #bf46d7;
+  --button-from: #91b2ee;
+  --button-to: #65adba;
   --info-area: rgba(0, 0, 0, 0.2);
   --final-results-area: rgba(240, 200, 220, 0.8);
 }
@@ -356,7 +357,7 @@ tr.odd-gametype {
 }
 
 .tab:hover {
-  background: seagreen;
+  background: var(--tab-hover);
 }
 
 .panel {
