@@ -28,6 +28,7 @@ import {
   removePlayersCard,
   startTrick,
 } from './domain/hand-service';
+import { getGameDump } from './service/dev-service';
 
 const app = express();
 
@@ -215,6 +216,16 @@ router.get(
       });
   }
 );
+
+router.get('/dev/:id', (req: express.Request, res: express.Response) => {
+  getGameDump(req.params.id)
+    .then((gameDump) => {
+      res.send(gameDump);
+    })
+    .catch((err) => {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
+    });
+});
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');

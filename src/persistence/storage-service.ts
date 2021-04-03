@@ -46,8 +46,10 @@ const getTrickKey = (identifier: string): string => `trick:${identifier}`;
 const getTrickScoresKey = (identifier: string): string =>
   `trickscores:${identifier}`;
 
+const playerLoginPrefix = 'gameplayer';
+
 const getPlayerLoginIdKey = (identifier: string): string =>
-  `gameplayer:${identifier}`;
+  `${playerLoginPrefix}:${identifier}`;
 
 export const storeGame = (game: Game, identifier: string): void => {
   store(getGamesKey(identifier), game);
@@ -139,4 +141,22 @@ export const fetchPlayerWithLoginId = async (
 ): Promise<GamePlayer> => {
   const result = await fetch(getPlayerLoginIdKey(loginId));
   return JSON.parse(result);
+};
+
+export const fetchGamesLogins = async (
+  gameId: string
+): Promise<Map<string, GamePlayer>> => {
+  const results = new Map<string, GamePlayer>();
+  const keys = await _redis.keys(`${playerLoginPrefix}:*`);
+
+  for (const key of keys) {
+    const loginId = key.replace(`${playerLoginPrefix}:`, '');
+    const gamePlayer = await fetchPlayerWithLoginId(loginId);
+
+    if (gamePlayer.gameId === gameId) {
+      results.set(loginId, gamePlayer);
+    }
+  }
+
+  return results;
 };

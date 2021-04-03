@@ -2,6 +2,7 @@ export enum ErrorTypes {
   CARDS_MUST_BE_REMOVED = 'Eldest hand must remove cards before opening trick',
   CARD_NOT_FOUND = 'Card not found',
   CURRENT_HAND_NOT_FINISHED = "Can't start new hand when current is ongoing",
+  FORBIDDEN = 'Forbidden operation',
   GAME_ENDED = 'Game has ended',
   GAME_NOT_FOUND = 'Game not found',
   GAME_TYPE_CHOSEN = 'Game type is already chosen',
