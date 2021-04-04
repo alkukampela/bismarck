@@ -2,9 +2,11 @@ import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
 import { playerExtractor } from './service/auth-middleware';
+import { getGameDump, importGameDump } from './service/dev-service';
 import { PlayerRequest } from './service/player-request';
 import { tokenForLoginId } from './service/token-service';
 import { Card } from './types/card';
+import { GameDump } from './types/game-dump';
 import { GameTypeChoice } from './types/game-type-choice';
 import { RegisterPlayer } from './types/register-player';
 import { TrickResponse } from './types/trick-response';
@@ -28,7 +30,6 @@ import {
   removePlayersCard,
   startTrick,
 } from './domain/hand-service';
-import { getGameDump } from './service/dev-service';
 
 const app = express();
 
@@ -221,6 +222,17 @@ router.get('/dev/:id', (req: express.Request, res: express.Response) => {
   getGameDump(req.params.id)
     .then((gameDump) => {
       res.send(gameDump);
+    })
+    .catch((err) => {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
+    });
+});
+
+router.post('/dev/:id', (req: express.Request, res: express.Response) => {
+  const gameDump = req.body as GameDump;
+  importGameDump(req.params.id, gameDump)
+    .then(() => {
+      res.sendStatus(StatusCodes.NO_CONTENT);
     })
     .catch((err) => {
       res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });

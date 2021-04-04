@@ -305,7 +305,7 @@ export const startTrick = async (
   const trick = initTrick(card, player, statute, trickNumber);
 
   removeCard(card, gameId);
-  storeTrick(gameId, trick);
+  storeTrick(trick, gameId);
 
   return Promise.resolve({
     cards: trick.trickCards,
@@ -374,7 +374,7 @@ export const addCardToTrick = async (
     saveTrickPoints(handScore, statute, gameId);
   }
 
-  storeTrick(gameId, updatedTrick);
+  storeTrick(updatedTrick, gameId);
 
   return {
     cards: updatedTrick.trickCards,

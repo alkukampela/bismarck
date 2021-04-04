@@ -7,6 +7,13 @@ import {
   fetchScores,
   fetchTrick,
   fetchTrickScores,
+  storeCards,
+  storeGame,
+  storeHandStatute,
+  storeLoginIdForPlayer,
+  storeScores,
+  storeTrick,
+  storeTrickScores,
 } from '../persistence/storage-service';
 import { GameDump } from '../types/game-dump';
 
@@ -35,4 +42,41 @@ export const getGameDump = async (gameId: string): Promise<GameDump> => {
       gamePlayer,
     })),
   };
+};
+
+export const importGameDump = async (
+  gameId: string,
+  gameDump: GameDump
+): Promise<void> => {
+  if (process.env.NODE_ENV === 'production') {
+    return Promise.reject(Error(ErrorTypes.FORBIDDEN));
+  }
+
+  if (!!gameDump.game) {
+    storeGame(gameDump.game, gameId);
+  }
+
+  if (!!gameDump.cards) {
+    storeCards(gameDump.cards, gameId);
+  }
+
+  if (!!gameDump.playerScores) {
+    storeScores(gameDump.playerScores, gameId);
+  }
+
+  if (!!gameDump.handStatute) {
+    storeHandStatute(gameDump.handStatute, gameId);
+  }
+
+  if (!!gameDump.trick) {
+    storeTrick(gameDump.trick, gameId);
+  }
+
+  if (!!gameDump.trickScores) {
+    storeTrickScores(gameDump.trickScores, gameId);
+  }
+
+  for (const gameLogin of gameDump.gameLogins) {
+    storeLoginIdForPlayer(gameLogin.gamePlayer, gameLogin.loginId);
+  }
 };

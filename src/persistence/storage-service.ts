@@ -102,7 +102,7 @@ export const fetchHandStatute = async (
   return JSON.parse(result);
 };
 
-export const storeTrick = (identifier: string, trick: Trick): void => {
+export const storeTrick = (trick: Trick, identifier: string): void => {
   store(getTrickKey(identifier), trick);
 };
 
