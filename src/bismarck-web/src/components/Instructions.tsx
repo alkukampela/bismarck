@@ -19,7 +19,7 @@ export const Instructions = () => {
   return (
     <div>
       <div
-        id="myModal"
+        id="instructions-modal"
         className="modal"
         style={{ display: showModal ? 'block' : 'none' }}
       >
