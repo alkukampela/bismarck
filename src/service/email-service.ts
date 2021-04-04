@@ -46,7 +46,7 @@ export const mailOptions = (
 export const sendGameLink = (
   registerPlayer: RegisterPlayer,
   loginId: string
-) => {
+): void => {
   const options = mailOptions(loginId, registerPlayer);
   console.log(options.text);
 

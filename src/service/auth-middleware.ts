@@ -8,7 +8,7 @@ export const playerExtractor = (
   req: PlayerRequest,
   res: express.Response,
   next: () => void
-) => {
+): void => {
   const authHeader = req.headers.authorization;
 
   if (!!authHeader && authHeader !== 'Bearer') {
