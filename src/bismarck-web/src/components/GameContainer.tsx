@@ -118,15 +118,19 @@ export const GameContainer = () => {
         updateStatute();
       }
 
-      console.log(trick);
       if (isTrickReady(trick)) {
-        console.log('heipparallaa');
         updateTrickTakers();
       }
 
       if (isHandReady(trick, statute)) {
         updateTotalScores();
       }
+
+      // TODO: check if trick is first for round and
+      // 1. fetch table cards
+      // 2. update  updateHand
+      // 3. update trick takers
+      // 4. update statute
     };
   }, []);
 
