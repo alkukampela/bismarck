@@ -29,6 +29,7 @@ import {
   emptyStatue,
 } from '../domain/default-objects';
 import { FinalScores } from './FinalScores';
+import { HandScores } from './HandScores';
 
 export const GameContainer = () => {
   const game = React.useContext(GameContext);
@@ -56,8 +57,12 @@ export const GameContainer = () => {
     !!trick.trickNumber &&
     trick.trickNumber + 1 >= handStatute.tricksInHand;
 
-  const isTrickReady = (trick: TrickResponse): boolean =>
-    !trick.cards.filter((tc) => !tc.card).length;
+  const isTrickReady = (trick: TrickResponse): boolean => {
+    return (
+      trick.cards.some((card) => !!card.card) &&
+      !trick.cards.filter((tc) => !tc.card).length
+    );
+  };
 
   const isFirstCardAfterChoice = (trick: TrickResponse): boolean => {
     return (
@@ -113,7 +118,9 @@ export const GameContainer = () => {
         updateStatute();
       }
 
+      console.log(trick);
       if (isTrickReady(trick)) {
+        console.log('heipparallaa');
         updateTrickTakers();
       }
 
@@ -140,6 +147,10 @@ export const GameContainer = () => {
         <TrickTakers trickTakers={trickTakers} />
         <TotalScore scores={scores} />
       </div>
+      <HandScores
+        scores={scores}
+        isHandReady={isHandReady(trickResponse, statute)}
+      />
       <FinalScores scores={scores} />
     </div>
   );

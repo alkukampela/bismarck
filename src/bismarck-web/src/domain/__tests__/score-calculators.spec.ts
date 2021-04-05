@@ -1,7 +1,10 @@
 import { GameType } from '../../../../types/game-type';
 import { Player } from '../../../../types/player';
 import { TrickScore } from '../../../../types/trick-score';
-import { calculateFinalResults } from '../score-calculators';
+import {
+  calculateFinalResults,
+  calculatePointsForFinishedHand,
+} from '../score-calculators';
 
 const PLAYER_1: Player = { name: 'A' };
 const PLAYER_2: Player = { name: 'B' };
@@ -183,4 +186,125 @@ test('Ensure no positions without scores', () => {
   const actual = calculateFinalResults(input);
 
   expect(actual).toBeEmpty;
+});
+
+test('Ensure correct hand points for first hand', () => {
+  const input = createInput([
+    {
+      player: PLAYER_1,
+      totalPoints: 2,
+    },
+    {
+      player: PLAYER_2,
+      totalPoints: 1,
+    },
+    {
+      player: PLAYER_3,
+      totalPoints: -3,
+    },
+  ]);
+
+  const actual = calculatePointsForFinishedHand(input);
+
+  expect(actual.find((x) => x.player === PLAYER_1)?.score).toBe(2);
+  expect(actual.find((x) => x.player === PLAYER_2)?.score).toBe(1);
+  expect(actual.find((x) => x.player === PLAYER_3)?.score).toBe(-3);
+});
+
+test('Ensure correct hand points for successive hand', () => {
+  const input = [
+    ...createInput([
+      {
+        player: PLAYER_1,
+        totalPoints: 2,
+      },
+      {
+        player: PLAYER_2,
+        totalPoints: 1,
+      },
+      {
+        player: PLAYER_3,
+        totalPoints: -3,
+      },
+    ]),
+    ...createInput([
+      {
+        player: PLAYER_2,
+        totalPoints: 3,
+      },
+      {
+        player: PLAYER_3,
+        totalPoints: -3,
+      },
+      {
+        player: PLAYER_1,
+        totalPoints: 0,
+      },
+    ]),
+  ];
+
+  const actual = calculatePointsForFinishedHand(input);
+
+  expect(actual.find((x) => x.player === PLAYER_1)?.score).toBe(-2);
+  expect(actual.find((x) => x.player === PLAYER_2)?.score).toBe(2);
+  expect(actual.find((x) => x.player === PLAYER_3)?.score).toBe(0);
+});
+
+test('Ess successive hand', () => {
+  const input = [
+    {
+      isChoice: false,
+      gameType: GameType.TRUMP,
+      scores: [
+        {
+          player: {
+            name: 'Markku',
+          },
+          totalPoints: -1,
+        },
+        {
+          player: {
+            name: 'Vihtori',
+          },
+          totalPoints: 4,
+        },
+        {
+          player: {
+            name: 'Severi',
+          },
+          totalPoints: -3,
+        },
+      ],
+    },
+    {
+      isChoice: false,
+      gameType: GameType.TRUMP,
+      scores: [
+        {
+          player: {
+            name: 'Markku',
+          },
+          totalPoints: 4,
+        },
+        {
+          player: {
+            name: 'Vihtori',
+          },
+          totalPoints: 3,
+        },
+        {
+          player: {
+            name: 'Severi',
+          },
+          totalPoints: -7,
+        },
+      ],
+    },
+  ];
+
+  const actual = calculatePointsForFinishedHand(input);
+
+  expect(actual.find((x) => x.player.name === 'Markku')?.score).toBe(5);
+  expect(actual.find((x) => x.player.name === 'Vihtori')?.score).toBe(-1);
+  expect(actual.find((x) => x.player.name === 'Severi')?.score).toBe(-4);
 });

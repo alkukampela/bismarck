@@ -1,5 +1,7 @@
 import { PlayerCumulativeScore } from './player-cumulative-score';
 import { TrickScore } from '../../../types/trick-score';
+import { PlayerScore } from '../../../types/player-score';
+import { Player } from '../../../types/player';
 
 export const trickScoresToCumulativeScores = (
   trickScores: TrickScore[]
@@ -82,4 +84,28 @@ export const calculateFinalResults = (
         position: convertToRoman(playersPosition(score.totalPoints, lastTrick)),
       };
     });
+};
+
+const previousHandsScoreForPlayer = (
+  trickScores: TrickScore[],
+  player: Player
+): number => {
+  return (
+    trickScores[trickScores.length - 2]?.scores.find(
+      (trickScore) => trickScore.player.name === player.name
+    )?.totalPoints || 0
+  );
+};
+
+export const calculatePointsForFinishedHand = (
+  trickScores: TrickScore[]
+): PlayerScore[] => {
+  return trickScores[trickScores.length - 1].scores.map((trickScore) => {
+    return {
+      player: trickScore.player,
+      score:
+        trickScore.totalPoints -
+        previousHandsScoreForPlayer(trickScores, trickScore.player),
+    };
+  });
 };
