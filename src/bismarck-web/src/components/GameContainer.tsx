@@ -128,7 +128,7 @@ export const GameContainer = () => {
 
       // TODO: check if trick is first for round and
       // 1. fetch table cards
-      // 2. update  updateHand
+      // 2. update  hand
       // 3. update trick takers
       // 4. update statute
     };

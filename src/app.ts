@@ -30,6 +30,7 @@ import {
   removePlayersCard,
   startTrick,
 } from './domain/hand-service';
+import { trickResponseDuringCardRemoval } from './domain/trick-machine';
 
 const app = express();
 
@@ -196,7 +197,7 @@ router.post(
   (req: express.Request, res: express.Response) => {
     initHand(req.params.id)
       .then((statute) => {
-        publishTrick({ cards: [], trickNumber: 0 }, req.params.id);
+        publishTrick(trickResponseDuringCardRemoval(), req.params.id);
         res.send(statute);
       })
       .catch((err) => {

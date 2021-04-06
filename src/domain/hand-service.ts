@@ -1,6 +1,7 @@
 import { getSuit } from './card-mapper';
 import { ErrorTypes } from './error-types';
 import { saveTrickPoints } from './game-score-manager';
+import { getHandsPoints, updatedTrickScore } from './hand-score';
 import { getHandStatute, getStatuteAfterChoice } from './hand-statute-machine';
 import { Trick } from '../persistence/trick';
 import { Card } from '../types/card';
@@ -39,8 +40,9 @@ import {
   getTaker,
   hasPlayerTurn,
   playCard,
+  emptyTrickResponse,
+  convertToTrickResponse,
 } from './trick-machine';
-import { getHandsPoints, updatedTrickScore } from './hand-score';
 
 const getPlayersIndex = (player: Player, handStatute: HandStatute): number => {
   return handStatute.playerOrder.findIndex((x) => player.name === x.name);
@@ -59,14 +61,10 @@ const isTrickOpen = async (gameId: string): Promise<boolean> => {
 const defaultTrick = async (gameId: string): Promise<TrickResponse> => {
   return fetchHandStatute(gameId)
     .then((statute) => {
-      return {
-        cards: statute.playerOrder.map((player) => {
-          return { player };
-        }),
-      };
+      return emptyTrickResponse(statute.playerOrder);
     })
     .catch(() => {
-      return { cards: [] };
+      return emptyTrickResponse([]);
     });
 };
 
@@ -245,11 +243,7 @@ export const getCurrentTrick = async (
 ): Promise<TrickResponse> => {
   return fetchTrick(gameId)
     .then((trick) => {
-      return {
-        cards: trick.trickCards,
-        taker: isTrickReady(trick) && getTaker(trick),
-        trickNumber: trick.trickNumber,
-      };
+      return convertToTrickResponse(trick);
     })
     .catch(async () => {
       return defaultTrick(gameId);
@@ -307,10 +301,7 @@ export const startTrick = async (
   removeCard(card, gameId);
   storeTrick(trick, gameId);
 
-  return Promise.resolve({
-    cards: trick.trickCards,
-    trickNumber: trick.trickNumber,
-  });
+  return Promise.resolve(convertToTrickResponse(trick));
 };
 
 export const addCardToTrick = async (
@@ -376,11 +367,7 @@ export const addCardToTrick = async (
 
   storeTrick(updatedTrick, gameId);
 
-  return {
-    cards: updatedTrick.trickCards,
-    taker: isTrickReady(updatedTrick) && getTaker(updatedTrick),
-    trickNumber: updatedTrick.trickNumber,
-  };
+  return convertToTrickResponse(updatedTrick);
 };
 
 export const getHandsTrickCounts = async (
