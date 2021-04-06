@@ -9,7 +9,7 @@ export interface TrickResponse {
 }
 
 export enum TrickStatus {
-  HAND_NOT_STARTED = 0,
-  UNFINISHED = 3,
-  FINISHED = 2,
+  HAND_NOT_STARTED = 1,
+  UNFINISHED = 2,
+  FINISHED = 3,
 }

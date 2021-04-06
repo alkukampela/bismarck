@@ -11,7 +11,7 @@ import { GameScoreBoard } from '../../../types/game-score-board';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
-import { TrickResponse } from '../../../types/trick-response';
+import { TrickResponse, TrickStatus } from '../../../types/trick-response';
 import { GameContext } from '../GameContext';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
@@ -126,11 +126,12 @@ export const GameContainer = () => {
         updateTotalScores();
       }
 
-      // TODO: check if trick is first for round and
-      // 1. fetch table cards
-      // 2. update  hand
-      // 3. update trick takers
-      // 4. update statute
+      if (trick.trickStatus === TrickStatus.HAND_NOT_STARTED) {
+        updateTableCards();
+        updateHand();
+        updateStatute();
+        updateTrickTakers();
+      }
     };
   }, []);
 
