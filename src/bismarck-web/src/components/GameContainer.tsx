@@ -57,12 +57,8 @@ export const GameContainer = () => {
     !!trick.trickNumber &&
     trick.trickNumber + 1 >= handStatute.tricksInHand;
 
-  const isTrickReady = (trick: TrickResponse): boolean => {
-    return (
-      trick.cards.some((card) => !!card.card) &&
-      !trick.cards.filter((tc) => !tc.card).length
-    );
-  };
+  const isTrickReady = (trick: TrickResponse): boolean =>
+    trick.trickStatus === TrickStatus.FINISHED;
 
   const isFirstCardAfterChoice = (trick: TrickResponse): boolean => {
     return (
@@ -146,7 +142,10 @@ export const GameContainer = () => {
       <Trick trickResponse={trickResponse} />
       <GameTypeChooser handStatute={statute} player={game.player} />
       <TableCards cards={tableCards} show={tableCardsAreVisible()} />
-      <PlayersCards hand={playersHand} />
+      <PlayersCards
+        hand={playersHand}
+        trickStatus={trickResponse.trickStatus}
+      />
       <div className="score-board">
         <StatuteSummary statute={statute} />
         <TrickTakers trickTakers={trickTakers} />

@@ -2,9 +2,16 @@ import { ExtraCardDisplay } from './ExtraCardDisplay';
 import { PlayersCard } from './PlayersCard';
 import { Card as CardType } from '../../../types/card';
 import { PlayersHand } from '../../../types/players-hand';
+import { TrickStatus } from '../../../types/trick-response';
 import * as React from 'react';
 
-export const PlayersCards = ({ hand }: { hand: PlayersHand }) => {
+export const PlayersCards = ({
+  hand,
+  trickStatus,
+}: {
+  hand: PlayersHand;
+  trickStatus: TrickStatus;
+}) => {
   const [extraCards, setExtraCards] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -23,6 +30,7 @@ export const PlayersCards = ({ hand }: { hand: PlayersHand }) => {
           <PlayersCard
             card={card}
             key={index}
+            trickStatus={trickStatus}
             inRemovalStage={extraCards > 0}
             onCardRemoval={handleExtraCardRemoval}
           />

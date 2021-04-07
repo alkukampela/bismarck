@@ -3,13 +3,16 @@ import { Card as CardType } from '../../../types/card';
 import { GameContext } from '../GameContext';
 import { addToTrick, removeCard, startTrick } from '../services/api-service';
 import * as React from 'react';
+import { TrickStatus } from '../../../types/trick-response';
 
 export const PlayersCard = ({
   card,
+  trickStatus,
   inRemovalStage,
   onCardRemoval,
 }: {
   card: CardType;
+  trickStatus: TrickStatus;
   inRemovalStage: boolean;
   onCardRemoval: () => void;
 }) => {
@@ -26,15 +29,19 @@ export const PlayersCard = ({
   };
 
   const tryToPlayCard = async () => {
-    const trickStarted = await startTrick(game.token, game.gameId, card);
-    if (trickStarted) {
-      setCardVisibility(false);
-      return;
+    if (trickStatus !== TrickStatus.UNFINISHED) {
+      const trickStarted = await startTrick(game.token, game.gameId, card);
+      if (trickStarted) {
+        setCardVisibility(false);
+        return;
+      }
     }
 
-    const trickAdded = await addToTrick(game.token, game.gameId, card);
-    if (trickAdded) {
-      setCardVisibility(false);
+    if (trickStatus === TrickStatus.UNFINISHED) {
+      const trickAdded = await addToTrick(game.token, game.gameId, card);
+      if (trickAdded) {
+        setCardVisibility(false);
+      }
     }
   };
 
