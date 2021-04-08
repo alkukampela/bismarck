@@ -12,26 +12,26 @@ export const PlayersCards = ({
   hand: PlayersHand;
   trickStatus: TrickStatus;
 }) => {
-  const [extraCards, setExtraCards] = React.useState<number>(0);
+  const [extraCardsAmount, setExtraCardsAmount] = React.useState<number>(0);
 
   React.useEffect(() => {
-    setExtraCards(hand.extraCards);
+    setExtraCardsAmount(hand.extraCards);
   }, [hand]);
 
   function handleExtraCardRemoval() {
-    setExtraCards(extraCards - 1);
+    setExtraCardsAmount(extraCardsAmount - 1);
   }
 
   return (
     <div>
-      <ExtraCardDisplay amount={extraCards} />
+      <ExtraCardDisplay amount={extraCardsAmount} />
       <div className="players-cards">
         {hand.cards.map((card: CardType, index: number) => (
           <PlayersCard
             card={card}
             key={index}
             trickStatus={trickStatus}
-            inRemovalStage={extraCards > 0}
+            inRemovalStage={extraCardsAmount > 0}
             onCardRemoval={handleExtraCardRemoval}
           />
         ))}

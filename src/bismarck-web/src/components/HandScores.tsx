@@ -16,7 +16,7 @@ export const HandScores = ({
   const game = React.useContext(GameContext);
 
   const moveToNextHand = () => {
-    initHand(game.token, game.gameId);
+    initHand(game.token, game.gameId).finally(() => location.reload());
   };
 
   const handScores = (trickScores: TrickScore[]): PlayerScore[] => {

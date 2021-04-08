@@ -6,9 +6,7 @@ export const PanicButton = () => {
   const game = React.useContext(GameContext);
 
   const gottaGetSomeAction = () => {
-    initHand(game.token, game.gameId).finally(
-      () => location.reload() // <== Sad
-    );
+    initHand(game.token, game.gameId).finally(() => location.reload());
   };
 
   const showButton = (): boolean => {

@@ -29,17 +29,14 @@ export const PlayersCard = ({
   };
 
   const tryToPlayCard = async () => {
-    if (trickStatus !== TrickStatus.UNFINISHED) {
-      const trickStarted = await startTrick(game.token, game.gameId, card);
-      if (trickStarted) {
-        setCardVisibility(false);
-        return;
-      }
-    }
-
     if (trickStatus === TrickStatus.UNFINISHED) {
       const trickAdded = await addToTrick(game.token, game.gameId, card);
       if (trickAdded) {
+        setCardVisibility(false);
+      }
+    } else {
+      const trickStarted = await startTrick(game.token, game.gameId, card);
+      if (trickStarted) {
         setCardVisibility(false);
       }
     }
