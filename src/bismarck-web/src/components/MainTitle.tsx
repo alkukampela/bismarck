@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Card as CardType } from '../../../types/card';
 import { Card } from './Card';
+import { Card as CardType } from '../../../types/card';
+import * as React from 'react';
 
 export const MainTitle = () => {
   const wordToCards = (word: string): CardType[] => {

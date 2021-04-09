@@ -13,26 +13,32 @@ export const PlayersCards = ({
   trickStatus: TrickStatus;
 }) => {
   const [extraCardsAmount, setExtraCardsAmount] = React.useState<number>(0);
+  const [cards, setCards] = React.useState<CardType[]>([]);
 
   React.useEffect(() => {
     setExtraCardsAmount(hand.extraCards);
+    setCards(hand.cards);
   }, [hand]);
 
-  function handleExtraCardRemoval() {
-    setExtraCardsAmount(extraCardsAmount - 1);
+  function playCard(cardToBeRemoved: CardType) {
+    if (extraCardsAmount > 0) {
+      setExtraCardsAmount(extraCardsAmount - 1);
+    }
+
+    setCards(cards.filter((cardInHand) => cardInHand !== cardToBeRemoved));
   }
 
   return (
     <div>
       <ExtraCardDisplay amount={extraCardsAmount} />
       <div className="players-cards">
-        {hand.cards.map((card: CardType, index: number) => (
+        {cards.map((card: CardType, index: number) => (
           <PlayersCard
             card={card}
             key={index}
             trickStatus={trickStatus}
             inRemovalStage={extraCardsAmount > 0}
-            onCardRemoval={handleExtraCardRemoval}
+            onPlay={playCard}
           />
         ))}
       </div>

@@ -1,43 +1,37 @@
 import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
+import { TrickStatus } from '../../../types/trick-response';
 import { GameContext } from '../GameContext';
 import { addToTrick, removeCard, startTrick } from '../services/api-service';
 import * as React from 'react';
-import { TrickStatus } from '../../../types/trick-response';
 
 export const PlayersCard = ({
   card,
   trickStatus,
   inRemovalStage,
-  onCardRemoval,
+  onPlay: onPlay,
 }: {
   card: CardType;
   trickStatus: TrickStatus;
   inRemovalStage: boolean;
-  onCardRemoval: () => void;
+  onPlay: (card: CardType) => void;
 }) => {
   const game = React.useContext(GameContext);
 
-  const [cardIsVisible, setCardVisibility] = React.useState<boolean>(true);
-
   const tryToRemove = async () => {
-    const cardRemoved = await removeCard(game.token, game.gameId, card);
-    if (cardRemoved) {
-      setCardVisibility(false);
-      onCardRemoval();
+    if (await removeCard(game.token, game.gameId, card)) {
+      onPlay(card);
     }
   };
 
   const tryToPlayCard = async () => {
     if (trickStatus === TrickStatus.UNFINISHED) {
-      const trickAdded = await addToTrick(game.token, game.gameId, card);
-      if (trickAdded) {
-        setCardVisibility(false);
+      if (await addToTrick(game.token, game.gameId, card)) {
+        onPlay(card);
       }
     } else {
-      const trickStarted = await startTrick(game.token, game.gameId, card);
-      if (trickStarted) {
-        setCardVisibility(false);
+      if (await startTrick(game.token, game.gameId, card)) {
+        onPlay(card);
       }
     }
   };
@@ -45,7 +39,6 @@ export const PlayersCard = ({
   return (
     <div
       onClick={inRemovalStage ? tryToRemove : tryToPlayCard}
-      style={{ display: cardIsVisible ? 'block' : 'none' }}
       className="players-card"
     >
       <Card card={card} />
