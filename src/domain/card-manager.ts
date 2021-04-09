@@ -110,7 +110,10 @@ export const hasTooManyCards = async (
   });
 };
 
-export const removeCard = async (cardToBeRemoved: Card, gameId: string) => {
+export const removeCard = async (
+  cardToBeRemoved: Card,
+  gameId: string
+): Promise<void> => {
   const cards = await fetchCards(gameId);
 
   cards.find(

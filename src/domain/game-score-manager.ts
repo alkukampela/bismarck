@@ -50,7 +50,7 @@ export const saveTrickPoints = async (
   trickPoints: PlayerScore[],
   handStatute: HandStatute,
   gameId: string
-) => {
+): Promise<void> => {
   const allTrickPoints = (await fetchTrickScores(gameId)) || [];
 
   const trickScore = {

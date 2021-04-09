@@ -1,8 +1,6 @@
-import { parse } from 'url';
 import { default as ReconnectingWebSocket } from 'reconnecting-websocket';
 
 export class SocketFactory {
-  // TODO use map with gameId as key
   private static _instance: ReconnectingWebSocket;
 
   private static initSocket(gameId: string) {
@@ -12,8 +10,8 @@ export class SocketFactory {
     };
 
     const wsUrlFromHttpUrl = (url: string): string => {
-      const parsed = parse(url);
-      return buildWsUrl(parsed.host || '', parsed.protocol);
+      const urlObj = new URL(url);
+      return buildWsUrl(urlObj.host || '', urlObj.protocol);
     };
 
     const wsUrlFromLocation = (url: Location): string => {

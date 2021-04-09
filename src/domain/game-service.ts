@@ -8,7 +8,7 @@ import {
   clearTrick,
 } from '../persistence/storage-service';
 
-export const nextHand = (game: Game, gameId: string) => {
+export const nextHand = (game: Game, gameId: string): void => {
   const updatedGame = {
     ...game,
     handNumber: game.handNumber + 1,
