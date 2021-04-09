@@ -2,26 +2,44 @@
 
 ## Yleistä
 
-Tikkipeli, jota pelataan yhdellä 52 kortin pakalla. Jokerit eivät ole mukana. Ässän arvo on 14, muiden korttien arvot tavanomaiset 2–13.
+Tikkipeli, jota pelataan yhdellä 52 kortin pakalla. Jokerit eivät ole mukana.
+Ässän arvo on 14, muiden korttien arvot tavanomaiset 2–13.
 
 Pelaajien järjestys arvotaan, ja järjestys pysyy koko pelin ajan samana.
 
-Pelimuotoja on neljä: valtti, grandi, misääri ja valinta, joita kutakin pelataan kolme jakoa niin, että vuorollaan yksi pelaaja on ”etumies”. Yhteensä jakoja on kolmen hengen pelissä 12 ja neljän hengen pelissä 16.
+Pelimuotoja on neljä: _valtti_, _grandi_, _misääri_ ja _valinta_, joita kutakin pelataan
+niin monta jakoa, että vuorollaan yksi pelaaja on ”etumies”. Yhteensä jakoja on
+kolmen hengen pelissä 12 ja neljän hengen pelissä 16.
 
 ## Pelin kulku
 
-Kullekin pelaajalle jaetaan kolmen hengen pelissä 16 ja neljän hengen pelissä 12, korttia joita muut eivät näe. Lisäksi ”pöytään” jaetaan neljä korttia (”pöytäkortit”), jotka tulevat etumiehelle mutta jotka ovat jaon aluksi kaikkien nähtävillä.
+Kullekin pelaajalle jaetaan kolmen hengen pelissä 16 ja neljän hengen pelissä 12,
+korttia joita muut eivät näe. Lisäksi pöytään jaetaan neljä korttia (”pöytäkortit”),
+jotka tulevat etumiehelle mutta jotka ovat jaon aluksi kaikkien nähtävillä.
 
-Etumies laittaa omista korteistaan (jaetut 16/12 korttia + pöydällä olevat neljä korttia) neljä haluamaansa korttia pois (”poispano”). Muut pelaajat eivät näe poispanoa.
+Etumies laittaa omista korteistaan (jaetut 16/12 korttia + pöytäkortit)
+neljä haluamaansa korttia pois (”poispano”). Muut pelaajat eivät näe poistettuja kortteja.
 
-Etumies aloittaa poispanon suoritettuaan pelin lyömällä pöytään yhden kortin, minkä jälkeen muut pelaajat lyövät vuorollaan pöytään yhden kortin. Näistä korteista korkeimman lyönyt saa tikin ja aloittaa seuraavan kierroksen. Näin pelataan kunnes pelaajilla ei ole enää kortteja, eli pelaajien määrästä riippuen joko 16 tai 12 kierrosta. Sen jälkeen lasketaan pisteet (ks. alla) ja aloitetaan uusi jako, jossa etumieheksi valikoituu järjestyksessä seuraava pelaaja.
+Etumies aloittaa poispanon suoritettuaan pelin lyömällä pöytään yhden kortin, minkä
+jälkeen muut pelaajat lyövät vuorollaan pöytään yhden kortin. Näistä korteista korkeimman
+lyönyt saa tikin ja aloittaa seuraavan kierroksen. Näin pelataan kunnes pelaajilla ei ole
+enää kortteja, eli pelaajien määrästä riippuen joko 16 tai 12 kierrosta. Sen jälkeen
+lasketaan pisteet (ks. alla) ja aloitetaan uusi jako, jossa etumieheksi valikoituu
+järjestyksessä seuraava pelaaja.
 
-Ensimmäinen pöytään lyöty kortti määrittää maan, ja muiden pelaajien on lyötävä samaa maata (”maapakko”). Mikäli pelaajalla ei ole kädessään yhtään korttia samasta maasta (”renomaa”), hänen tulee lyödä jotain toista maata.
+Ensimmäinen pöytään lyöty kortti määrittää maan, ja muiden pelaajien on lyötävä samaa maata
+(”maapakko”). Mikäli pelaajalla ei ole kädessään yhtään korttia samasta maasta (”renomaa”),
+hänen tulee lyödä jotain toista maata.
 
 ### Valtti
 
 Tarkoitus on ottaa mahdollisimman paljon tikkejä.
-Yksi neljästä maasta on valtti. Valtti on kaikkia muita maita arvokkaampi, eli korkein pöytään lyöty valtti saa tikin riippumatta siitä, mikä kierroksen maa on. Pelaajien on kuitenkin noudatettava maapakkoa. Lisäksi valttipelissä on ”valttipakko”, eli mikäli pelaaja on ”reno”, hänen on ensin lyötävä kädestään valttia.
+
+Yksi neljästä maasta on valtti. Valtti on kaikkia muita maita arvokkaampi, eli korkein pöytään
+lyöty valtti saa tikin riippumatta siitä, mikä kierroksen maa on. Pelaajien on kuitenkin
+noudatettava maapakkoa. Lisäksi valttipelissä on ”valttipakko”, eli mikäli pelaaja on ”reno”,
+hänen on ensin lyötävä kädestään valttia.
+
 Valttimaan määrää (vasemmalta katsottuna) ensimmäinen etumiehelle jaettavista pöytäkorteista.
 
 ### Grandi
@@ -34,16 +52,40 @@ Tarkoitus on ottaa mahdollisimman vähän tikkejä. Maapakko.
 
 ### Valinta
 
-Etumies valitsee pelimuodon (valtti, grandi tai misääri) neljän pöytäkortin perusteella ennen kuin on nähnyt muut hänelle jaetut kortit. Valtin yhteydessä etumies valitsee myös valttimaan.
+Etumies valitsee pelimuodon (valtti, grandi tai misääri) neljän pöytäkortin
+perusteella ennen kuin on nähnyt muut hänelle jaetut kortit. Valintakierroksella valtin
+yhteydessä etumies valitsee myös valttimaan.
 
 ## Pistelasku
 
-Kunkin jaon jälkeen lasketaan, kuinka monta tikkiä kukin pelaaja on ottanut, ja pisteet lasketaan sen mukaan seuraavalla tavalla (kolminpeli):
+Kunkin jaon jälkeen lasketaan, kuinka monta tikkiä kukin pelaaja on ottanut, ja pisteet
+lasketaan sen mukaan seuraavalla tavalla. Pelin voittaa se pelaaja, jolla on pelin päättyessä
+eniten pisteitä.
 
-_Valtissa ja grandissa_ etumies pääsee ”kotiin” (eli tulokseen 0) ottamalla 8 tikkiä. ja kaksi muuta pelaajaa ottamalla 4 tikkiä. Mikäli pelaaja ottaa tätä enemmän tai vähemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 7 tikkiä, hänen pistemääränsä on -1.
+### Valtti ja grandi
 
-Neljän hengen pelissä kotiin pääsee tikkimäärillä 6 (etumies) ja 2 (muut).
+Pelaaja pääsee ”kotiin” (eli tulokseen 0) ottamalla oheissa taulukossa määritetyn lukumäärän
+tikkejä. Mikäli pelaaja ottaa tätä enemmän tai vähemmän tikkejä, hän saa pisteikseen vastaavan
+tikkimäärän verran ”plussaa” tai ”miinusta”.
 
-_Misäärissä_ etumies pääsee kotiin ottamalla 2 tikkiä ja kaksi muuta pelaajaa ottamalla 7 tikkiä. Mikäli pelaaja ottaa tätä vähemmän tai enemmän tikkejä, hän saa pisteikseen vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”. Esimerkiksi jos etumies ottaa yhteensä 1 tikin, hänen pistemääränsä on +1.
+Esimerkiksi jos kolmen hengen pelissä etumies ottaa yhteensä 9 tikkiä, hänen pistemääränsä
+on +1.
 
-Neljän hengen pelissä kotiin pääsee tikkimäärillä 0 (etumies) ja 4 (muut).
+|            | Etumies | Muut |
+| ---------- | ------- | ---- |
+| Kolminpeli | 8       | 4    |
+| Nelinpeli  | 6       | 2    |
+
+### Misääri
+
+Pelaaja pääsee ”kotiin” (eli tulokseen 0) ottamalla oheissa taulukossa määritetyn lukumäärän
+tikkejä. Mikäli pelaaja ottaa tätä **vähemmän** tai enemmän tikkejä, hän saa pisteikseen
+vastaavan tikkimäärän verran ”plussaa” tai ”miinusta”.
+
+Esimerkiksi jos neljän hengen pelissä etumies ottaa yhteensä 1 tikin, hänen pistemääränsä
+on -1.
+
+|            | Etumies | Muut |
+| ---------- | ------- | ---- |
+| Kolminpeli | 2       | 7    |
+| Nelinpeli  | 0       | 4    |

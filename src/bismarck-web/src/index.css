@@ -267,6 +267,18 @@ tr.odd-gametype {
   margin-left: 3rem;
   margin-bottom: auto;
   box-shadow: 0 4px 8px 0 var(--shadow-color);
+  max-width: 60rem;
+}
+
+.instructions > table {
+  border: 1px solid var(--superdark);
+  border-collapse: collapse;
+}
+
+.instructions > * th,
+.instructions > * td {
+  border: 1px solid var(--superdark);
+  padding: 0.5rem;
 }
 
 .close-modal {
