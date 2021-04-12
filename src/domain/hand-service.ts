@@ -142,10 +142,7 @@ export const getPlayersHand = async (
   gameId: string
 ): Promise<PlayersHand> => {
   const statute = await fetchHandStatute(gameId);
-  if (
-    !statute ||
-    (statute.handType.isChoice && !statute.handType.gameType.value)
-  ) {
+  if (!statute || (statute.handType.isChoice && !statute.handType.gameType)) {
     return { cards: [], extraCards: 0 };
   }
   const cards = await getPlayersCards(

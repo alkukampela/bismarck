@@ -84,6 +84,7 @@ router.post(
 
     chooseGameType(req.player, gameTypeChoice, req.params.id)
       .then((statute) => {
+        publishTrick(trickResponseDuringCardRemoval(), req.params.id);
         res.send(statute);
       })
       .catch((err) => {
