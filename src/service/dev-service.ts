@@ -79,4 +79,6 @@ export const importGameDump = async (
   for (const gameLogin of gameDump.gameLogins) {
     storeLoginIdForPlayer(gameLogin.gamePlayer, gameLogin.loginId);
   }
+
+  return Promise.resolve();
 };

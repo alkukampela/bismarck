@@ -26,7 +26,7 @@ export const HandScores = ({
     return calculatePointsForFinishedHand(trickScores);
   };
 
-  const isVisible = (isHandReady: boolean, scores: GameScoreBoard): boolean =>
+  const isVisible = (): boolean =>
     isHandReady && !!scores.trickScores.length && !scores.isFinished;
 
   const showButton = (): boolean => {
@@ -36,7 +36,7 @@ export const HandScores = ({
   return (
     <div
       style={{
-        display: isVisible(isHandReady, scores) ? 'block' : 'none',
+        display: isVisible() ? 'block' : 'none',
       }}
       className="final-scores-container"
     >
