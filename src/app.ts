@@ -1,6 +1,7 @@
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
+import { trickResponseDuringCardRemoval } from './domain/trick-machine';
 import { playerExtractor } from './service/auth-middleware';
 import { getGameDump, importGameDump } from './service/dev-service';
 import { PlayerRequest } from './service/player-request';
@@ -19,6 +20,7 @@ import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
+import helmet from 'helmet';
 import {
   addCardToTrick,
   chooseGameType,
@@ -30,7 +32,6 @@ import {
   removePlayersCard,
   startTrick,
 } from './domain/hand-service';
-import { trickResponseDuringCardRemoval } from './domain/trick-machine';
 
 const app = express();
 
@@ -46,6 +47,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 app.use(express.static(reactPath));
+app.use(helmet());
 
 const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
