@@ -34,6 +34,7 @@ import {
 } from './domain/hand-service';
 
 const app = express();
+app.use(helmet());
 
 const server = http.createServer(app);
 
@@ -47,7 +48,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 app.use(express.static(reactPath));
-app.use(helmet());
 
 const wss = new WebSocket.Server({ server });
 const port = process.env.PORT || 3001;
