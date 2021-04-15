@@ -2,9 +2,11 @@ import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { getTotalScores } from './domain/game-score-manager';
 import { initHand } from './domain/game-service';
 import { trickResponseDuringCardRemoval } from './domain/trick-machine';
-import { playerExtractor } from './service/auth-middleware';
 import { getGameDump, importGameDump } from './service/dev-service';
-import { PlayerRequest } from './service/player-request';
+import { GamePlayerRequest } from './service/game-player-request';
+import { GameRequest } from './service/game-request';
+import { gameIdExtractor } from './service/game-identifier-middleware';
+import { playerExtractor } from './service/player-middleware';
 import { tokenForLoginId } from './service/token-service';
 import { Card } from './types/card';
 import { GameDump } from './types/game-dump';
@@ -14,13 +16,13 @@ import { TrickResponse } from './types/trick-response';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
+import helmet from 'helmet';
 import * as http from 'http';
 import StatusCodes from 'http-status-codes';
 import morgan from 'morgan';
 import * as path from 'path';
 import url from 'url';
 import * as WebSocket from 'ws';
-import helmet from 'helmet';
 import {
   addCardToTrick,
   chooseGameType,
@@ -67,8 +69,9 @@ const publishTrick = (trick: TrickResponse, gameId: string) => {
 
 router.get(
   '/games/:id/hand/statute',
-  (req: express.Request, res: express.Response) => {
-    getStatute(req.params.id)
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    getStatute(req.gameId)
       .then((statute) => {
         res.send(statute);
       })
@@ -81,12 +84,13 @@ router.get(
 router.post(
   '/games/:id/hand/statute',
   playerExtractor,
-  (req: PlayerRequest, res: express.Response) => {
+  gameIdExtractor,
+  (req: GamePlayerRequest, res: express.Response) => {
     const gameTypeChoice = req.body as GameTypeChoice;
 
-    chooseGameType(req.player, gameTypeChoice, req.params.id)
+    chooseGameType(req.player, gameTypeChoice, req.gameId)
       .then((statute) => {
-        publishTrick(trickResponseDuringCardRemoval(), req.params.id);
+        publishTrick(trickResponseDuringCardRemoval(), req.gameId);
         res.send(statute);
       })
       .catch((err) => {
@@ -98,8 +102,9 @@ router.post(
 router.get(
   '/games/:id/hand/cards',
   playerExtractor,
-  async (req: PlayerRequest, res: express.Response) => {
-    const cards = await getPlayersHand(req.player, req.params.id);
+  gameIdExtractor,
+  async (req: GamePlayerRequest, res: express.Response) => {
+    const cards = await getPlayersHand(req.player, req.gameId);
     res.send(cards);
   }
 );
@@ -107,12 +112,13 @@ router.get(
 router.delete(
   '/games/:id/hand/cards',
   playerExtractor,
-  async (req: PlayerRequest, res: express.Response) => {
+  gameIdExtractor,
+  async (req: GamePlayerRequest, res: express.Response) => {
     const card: Card = {
       rank: req.query.rank as string,
       suit: req.query.suit as string,
     };
-    removePlayersCard(req.player, card, req.params.id)
+    removePlayersCard(req.player, card, req.gameId)
       .then(() => {
         res.sendStatus(StatusCodes.NO_CONTENT);
       })
@@ -124,20 +130,22 @@ router.delete(
 
 router.get(
   '/games/:id/hand/trick',
-  (req: express.Request, res: express.Response) => {
-    getCurrentTrick(req.params.id).then((trick) => res.send(trick));
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    getCurrentTrick(req.gameId).then((trick) => res.send(trick));
   }
 );
 
 router.post(
   '/games/:id/hand/trick',
   playerExtractor,
-  async (req: PlayerRequest, res: express.Response) => {
+  gameIdExtractor,
+  async (req: GamePlayerRequest, res: express.Response) => {
     const card = req.body as Card;
 
-    startTrick(req.player, card, req.params.id)
+    startTrick(req.player, card, req.gameId)
       .then((trick) => {
-        publishTrick(trick, req.params.id);
+        publishTrick(trick, req.gameId);
         res.send(trick);
       })
       .catch((err) => {
@@ -149,12 +157,13 @@ router.post(
 router.post(
   '/games/:id/hand/trick/cards',
   playerExtractor,
-  (req: PlayerRequest, res: express.Response) => {
+  gameIdExtractor,
+  (req: GamePlayerRequest, res: express.Response) => {
     const card = req.body as Card;
 
     addCardToTrick(req.player, card, req.params.id)
       .then((trick) => {
-        publishTrick(trick, req.params.id);
+        publishTrick(trick, req.gameId);
         res.send(trick);
       })
       .catch((err) => {
@@ -165,8 +174,9 @@ router.post(
 
 router.get(
   '/games/:id/hand/trick-count',
-  async (req: express.Request, res: express.Response) => {
-    getHandsTrickCounts(req.params.id).then((scores) => {
+  gameIdExtractor,
+  async (req: GameRequest, res: express.Response) => {
+    getHandsTrickCounts(req.gameId).then((scores) => {
       res.send(scores);
     });
   }
@@ -174,15 +184,17 @@ router.get(
 
 router.get(
   '/games/:id/hand/tablecards',
-  (req: express.Request, res: express.Response) => {
-    getTableCards(req.params.id).then((cards) => res.send(cards));
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    getTableCards(req.gameId).then((cards) => res.send(cards));
   }
 );
 
 router.get(
   '/games/:id/score',
-  (req: express.Request, res: express.Response) => {
-    getTotalScores(req.params.id).then((scores) => res.send(scores));
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    getTotalScores(req.gameId).then((scores) => res.send(scores));
   }
 );
 
@@ -197,10 +209,11 @@ router.post('/games', (req: express.Request, res: express.Response) => {
 
 router.post(
   '/games/:id/hand',
-  (req: express.Request, res: express.Response) => {
-    initHand(req.params.id)
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    initHand(req.gameId)
       .then((statute) => {
-        publishTrick(trickResponseDuringCardRemoval(), req.params.id);
+        publishTrick(trickResponseDuringCardRemoval(), req.gameId);
         res.send(statute);
       })
       .catch((err) => {
@@ -222,26 +235,34 @@ router.get(
   }
 );
 
-router.get('/dev/:id', (req: express.Request, res: express.Response) => {
-  getGameDump(req.params.id)
-    .then((gameDump) => {
-      res.send(gameDump);
-    })
-    .catch((err) => {
-      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-    });
-});
+router.get(
+  '/dev/:id',
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    getGameDump(req.gameId)
+      .then((gameDump) => {
+        res.send(gameDump);
+      })
+      .catch((err) => {
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
+      });
+  }
+);
 
-router.post('/dev/:id', (req: express.Request, res: express.Response) => {
-  const gameDump = req.body as GameDump;
-  importGameDump(req.params.id, gameDump)
-    .then(() => {
-      res.sendStatus(StatusCodes.NO_CONTENT);
-    })
-    .catch((err) => {
-      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-    });
-});
+router.post(
+  '/dev/:id',
+  gameIdExtractor,
+  (req: GameRequest, res: express.Response) => {
+    const gameDump = req.body as GameDump;
+    importGameDump(req.gameId, gameDump)
+      .then(() => {
+        res.sendStatus(StatusCodes.NO_CONTENT);
+      })
+      .catch((err) => {
+        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
+      });
+  }
+);
 
 wss.on('connection', (ws: WebSocketWithGameId, req: Request) => {
   console.log('Client connected');

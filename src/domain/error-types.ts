@@ -8,6 +8,7 @@ export enum ErrorTypes {
   GAME_TYPE_CHOSEN = 'Game type is already chosen',
   GAME_TYPE_NOT_CHOSEN = 'Game type is not chosen yet',
   ILLEGAL_CHOICE = 'Illegal game type choice',
+  INVALID_GAME_ID = 'Invalid game identifier',
   MUST_BE_ELDEST_HAND = 'Operation not allowed: player must be eldest hand',
   MUST_FOLLOW_SUIT_AND_TRUMP = 'Suit and trump suit must be followed',
   NOT_FOUND = 'Not found',

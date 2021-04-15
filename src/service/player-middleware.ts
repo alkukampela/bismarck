@@ -1,11 +1,11 @@
-import { PlayerRequest } from './player-request';
+import { GamePlayerRequest } from './game-player-request';
 import { GamePlayer } from '../persistence/game-player';
 import * as express from 'express';
 import StatusCodes from 'http-status-codes';
 import { verify, VerifyErrors } from 'jsonwebtoken';
 
 export const playerExtractor = (
-  req: PlayerRequest,
+  req: GamePlayerRequest,
   res: express.Response,
   next: () => void
 ): void => {
