@@ -9,6 +9,25 @@ This is a multiplayer (3 or 4 players) card game.
 * Node
 * Docker & docker-compose
 
+### Running
+
+Create `.env` files for back end and and front end.
+
+File for back end should be in the root of the repo with following contents:
+
+```txt
+DISABLE_EMAIL_SENDING=TRUE
+LOGIN_URL=http://localhost:1234/login/
+JWT_SECRET={ADD_YOUR SECRET}
+```
+
+File for front end should be in `src/bismarck-web` directory with following contents:
+
+```txt
+REACT_APP_API_URL=http://localhost:3001
+```
+
+Run following commands to start the application
 
 ```sh
 docker-compose up
@@ -23,4 +42,4 @@ npm run develop
 ```
 
 Browse to http://localhost:1234/create
-Fill the form and fetch tokens from terminal's stdout.
+Fill the form and fetch login urls from stdout of terminal where back end is running
