@@ -45,10 +45,10 @@ export const HandTitle = ({
   };
 
   return (
-    <div>
+    <>
       <h1>
         {gameModeName()} {trickCounter()}
       </h1>
-    </div>
+    </>
   );
 };

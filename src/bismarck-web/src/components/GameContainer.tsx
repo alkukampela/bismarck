@@ -134,7 +134,7 @@ export const GameContainer = () => {
   React.useEffect(() => () => socket.close(), [socket]);
 
   return (
-    <div>
+    <>
       <HandTitle
         handStatute={statute}
         trickNumber={trickResponse.trickNumber}
@@ -156,6 +156,6 @@ export const GameContainer = () => {
         isHandReady={isHandReady(trickResponse, statute)}
       />
       <FinalScores scores={scores} />
-    </div>
+    </>
   );
 };

@@ -14,17 +14,21 @@ export const TrickTakers = ({
   };
 
   return (
-    <div>
+    <div className="trick-takers">
       <h2>Tikit</h2>
-      {trickTakers.map((playerScore: PlayerScore, index: number) => (
-        <div
-          key={index}
-          className={isMyScore(playerScore.player.name) ? 'my-score' : ''}
-        >
-          <span>{playerScore.player.name}: </span>
-          <span>{playerScore.score}</span>
-        </div>
-      ))}
+      <table>
+        <tbody>
+          {trickTakers.map((playerScore: PlayerScore, index: number) => (
+          <tr
+            key={index}
+            className={isMyScore(playerScore.player.name) ? 'my-score' : ''}
+          >
+            <td>{playerScore.player.name}: </td>
+            <td className="score">{playerScore.score}</td>
+          </tr>
+        ))}
+        </tbody>
+      </table>
     </div>
   );
 };

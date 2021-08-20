@@ -17,7 +17,7 @@ export const Instructions = () => {
   };
 
   return (
-    <div>
+    <>
       <div
         id="instructions-modal"
         className="modal"
@@ -45,6 +45,6 @@ export const Instructions = () => {
       >
         <div className="icon"></div>
       </div>
-    </div>
+    </>
   );
 };

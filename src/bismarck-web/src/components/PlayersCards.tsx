@@ -29,7 +29,7 @@ export const PlayersCards = ({
   }
 
   return (
-    <div>
+    <>
       <ExtraCardDisplay amount={numberOfExtraCards} />
       <div className="players-cards">
         {cards.map((card: CardType, index: number) => (
@@ -42,6 +42,6 @@ export const PlayersCards = ({
           />
         ))}
       </div>
-    </div>
+    </>
   );
 };

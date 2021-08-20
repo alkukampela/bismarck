@@ -34,7 +34,7 @@ export const Login: React.FunctionComponent<Identifier> = (props) => {
   }, []);
 
   return (
-    <div>
+    <>
       {!!gameId && (
         <Redirect
           push
@@ -45,6 +45,6 @@ export const Login: React.FunctionComponent<Identifier> = (props) => {
         />
       )}
       <h1>Virheellinen tunniste</h1>
-    </div>
+    </>
   );
 };

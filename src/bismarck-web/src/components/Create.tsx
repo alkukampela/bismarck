@@ -63,7 +63,7 @@ export const Create = () => {
   };
 
   return (
-    <div>
+    <>
       <h1>Alusta peli</h1>
 
       <div className="tabbed-area">
@@ -152,6 +152,6 @@ export const Create = () => {
           }}
         />
       )}
-    </div>
+    </>
   );
 };

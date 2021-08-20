@@ -179,9 +179,6 @@ label {
   font-weight: 800;
 }
 
-.my-score {
-  font-style: italic;
-}
 
 table.score-sheet {
   border-spacing: 0;
@@ -415,4 +412,20 @@ tr.odd-gametype {
 .create-form > * input[type='text'],
 .create-form > * input[type='email'] {
   float: right;
+}
+
+.trick-takers > table {
+  border-collapse: collapse;
+}
+
+.trick-takers > table > tbody > tr > td {
+  padding: 0.125rem;
+}
+
+.trick-takers .score {
+  padding-left: 1rem;
+}
+
+.my-score {
+  text-decoration: underline;
 }
