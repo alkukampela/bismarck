@@ -2,7 +2,7 @@ import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
 import * as React from 'react';
 
-export const MainTitle = () => {
+export const MainTitleScreen = () => {
   const wordToCards = (word: string): CardType[] => {
     const suits: string[] = ['♦️', '♣️', '♥️', '♠️'];
     return [...word].map((letter, index) => {

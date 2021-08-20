@@ -1,5 +1,5 @@
-import { Create } from './Create';
-import { Game } from './Game';
+import { CreateGame } from './CreateGame';
+import { GameContainer } from './GameContainer';
 import { Instructions } from './Instructions';
 import { Login } from './Login';
 import * as React from 'react';
@@ -10,11 +10,11 @@ export const App = () => {
     <Router>
       <Switch>
         <Route path="/create">
-          <Create />
+          <CreateGame />
         </Route>
         <Route exact path="/login/:identifier" component={Login} />
         <Route path="/">
-          <Game />
+          <GameContainer />
         </Route>
       </Switch>
       <Instructions />

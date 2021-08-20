@@ -3,7 +3,7 @@ import { createGame } from '../services/api-service';
 import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 
-export const Create = () => {
+export const CreateGame = () => {
   const MIN_PLAYERS = 3;
   const MAX_PLAYERS = 4;
 

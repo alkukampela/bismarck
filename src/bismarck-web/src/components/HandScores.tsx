@@ -29,9 +29,7 @@ export const HandScores = ({
   const isVisible = (): boolean =>
     isHandReady && !!scores.trickScores.length && !scores.isFinished;
 
-  const showButton = (): boolean => {
-    return !!game.player || !!game.token;
-  };
+  const showButton = (): boolean => !!game.player || !!game.token;
 
   return (
     <div
