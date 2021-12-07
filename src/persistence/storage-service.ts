@@ -21,7 +21,7 @@ const ONE_DAY_EXPIRATION = 86400;
 const redis: Redis.Redis = new Redis(process.env.REDIS_URL);
 
 const store = (key: string, subject: StorageType): void => {
-  void redis.set(key, JSON.stringify(subject), 'EX', ONE_DAY_EXPIRATION);
+  redis.set(key, JSON.stringify(subject), 'EX', ONE_DAY_EXPIRATION);
 };
 
 const fetch = async (key: string): Promise<string> => {
@@ -29,7 +29,7 @@ const fetch = async (key: string): Promise<string> => {
 };
 
 const del = (key: string): void => {
-  void redis.del(key);
+  redis.del(key);
 };
 
 const getGamesKey = (identifier: string): string => `game:${identifier}`;

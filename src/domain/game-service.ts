@@ -37,7 +37,7 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
     return Promise.reject(new Error(ErrorTypes.GAME_ENDED));
   }
 
-  void setUpHand(gameId, game);
+  setUpHand(gameId, game);
   clearTrick(gameId);
   const updatedGame = {
     ...game,
