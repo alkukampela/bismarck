@@ -191,7 +191,7 @@ export const removePlayersCard = async (
     return Promise.reject(Error(ErrorTypes.NO_MORE_CARDS_TO_REMOVE));
   }
 
-  removeCard(card, gameId);
+  void removeCard(card, gameId);
   return card;
 };
 
@@ -295,7 +295,7 @@ export const startTrick = async (
   );
   const trick = initTrick(card, player, statute, trickNumber);
 
-  removeCard(card, gameId);
+  void removeCard(card, gameId);
   storeTrick(trick, gameId);
 
   return Promise.resolve(convertToTrickResponse(trick));
@@ -359,7 +359,7 @@ export const addCardToTrick = async (
       handTricks,
       statute.handType.gameType.value
     );
-    saveTrickPoints(handScore, statute, gameId);
+    void saveTrickPoints(handScore, statute, gameId);
   }
 
   storeTrick(updatedTrick, gameId);

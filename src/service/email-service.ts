@@ -70,7 +70,7 @@ export const sendGameLink = (
       console.log(`Sent email to ${registerPlayer.email}`);
       console.log(data.messageId);
     })
-    .catch((err) => {
+    .catch((err: Error) => {
       // TODO throw error and inform about failed game creation
       console.error(err, err.stack);
     });
