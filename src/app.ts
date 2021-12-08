@@ -10,7 +10,6 @@ import { playerExtractor } from './service/player-middleware';
 import { tokenForLoginId } from './service/token-service';
 import { Card } from './types/card';
 import { GameDump } from './types/game-dump';
-import { GameTypeChoice } from './types/game-type-choice';
 import { RegisterPlayer } from './types/register-player';
 import { TrickResponse } from './types/trick-response';
 import cors from 'cors';
@@ -146,7 +145,10 @@ router.post(
   playerExtractor,
   gameIdExtractor,
   async (req: GamePlayerRequest, res: express.Response) => {
-    const card = req.body as Card;
+    const card: Card = {
+      rank: req.body.rank as string,
+      suit: req.body.suit as string,
+    };
 
     startTrick(req.player, card, req.gameId)
       .then((trick) => {
