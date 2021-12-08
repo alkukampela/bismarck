@@ -34,6 +34,8 @@ import {
   removePlayersCard,
   startTrick,
 } from './domain/hand-service';
+import { GameType } from './types/game-type';
+import { Suit } from './types/suit';
 
 const app = express();
 app.use(helmet());
@@ -75,7 +77,7 @@ router.get(
       .then((statute) => {
         res.send(statute);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -86,14 +88,17 @@ router.post(
   playerExtractor,
   gameIdExtractor,
   (req: GamePlayerRequest, res: express.Response) => {
-    const gameTypeChoice = req.body as GameTypeChoice;
+    const gameTypeChoice = {
+      gameType: req.body.gameType as GameType,
+      trumpSuit: req.body?.gameType as Suit,
+    };
 
     chooseGameType(req.player, gameTypeChoice, req.gameId)
       .then((statute) => {
         publishTrick(trickResponseDuringCardRemoval(), req.gameId);
         res.send(statute);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -122,7 +127,7 @@ router.delete(
       .then(() => {
         res.sendStatus(StatusCodes.NO_CONTENT);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -148,7 +153,7 @@ router.post(
         publishTrick(trick, req.gameId);
         res.send(trick);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -166,7 +171,7 @@ router.post(
         publishTrick(trick, req.gameId);
         res.send(trick);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -202,7 +207,7 @@ router.post('/games', (req: express.Request, res: express.Response) => {
   const players = req.body.players as RegisterPlayer[];
   createGameAndInvitatePlayers(players)
     .then((game) => res.send(game))
-    .catch((err) => {
+    .catch((err: Error) => {
       res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
     });
 });
@@ -216,7 +221,7 @@ router.post(
         publishTrick(trickResponseDuringCardRemoval(), req.gameId);
         res.send(statute);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -229,7 +234,7 @@ router.get(
       .then((result) => {
         res.send(result);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -243,7 +248,7 @@ router.get(
       .then((gameDump) => {
         res.send(gameDump);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
@@ -258,7 +263,7 @@ router.post(
       .then(() => {
         res.sendStatus(StatusCodes.NO_CONTENT);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
       });
   }
