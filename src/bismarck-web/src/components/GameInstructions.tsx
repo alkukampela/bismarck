@@ -1,19 +1,15 @@
-import instructions from '../static/instructions.md';
+import Instuctions from '../static/instructions.mdx';
 import * as React from 'react';
 
-export const Instructions = () => {
-  const [showModal, setShowMaodal] = React.useState<boolean>(false);
-
-  const printInstructions = () => {
-    return { __html: instructions };
-  };
+export const GameInstructions = () => {
+  const [showModal, setShowModal] = React.useState<boolean>(false);
 
   const closeModal = () => {
-    setShowMaodal(false);
+    setShowModal(false);
   };
 
   const displayModal = () => {
-    setShowMaodal(true);
+    setShowModal(true);
   };
 
   return (
@@ -29,10 +25,9 @@ export const Instructions = () => {
               &times;
             </span>
           </div>
-          <div
-            dangerouslySetInnerHTML={printInstructions()}
-            className="instructions"
-          />
+          <div className="instructions">
+            <Instuctions/>
+            </div>
         </div>
       </div>
 
