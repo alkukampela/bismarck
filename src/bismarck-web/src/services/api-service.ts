@@ -162,8 +162,7 @@ export const createGame = async (players: any): Promise<CreateGameResponse> => {
   return ((await createdGame.json()) as CreateGameResponse) || Promise.reject;
 };
 
-export const fetchToken = async (
-  identifier: string,
-  fallbackValue: TokenResponse
-): Promise<TokenResponse> =>
-  performGet<TokenResponse>(`tokens/${identifier}`, fallbackValue);
+export const fetchToken = async (loginId: string): Promise<TokenResponse> => {
+  const response = await performPost('fetch-token', { loginId });
+  return ((await response.json()) as TokenResponse) || Promise.reject;
+};

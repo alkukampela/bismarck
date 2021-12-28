@@ -35,6 +35,7 @@ import {
 } from './domain/hand-service';
 import { GameType } from './types/game-type';
 import { Suit } from './types/suit';
+import { FetchTokenRequest } from './types/fetch-token-request';
 
 const app = express();
 app.use(helmet());
@@ -229,18 +230,16 @@ router.post(
   }
 );
 
-router.get(
-  '/tokens/:loginId',
-  (req: express.Request, res: express.Response) => {
-    tokenForLoginId(req.params.loginId)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
-  }
-);
+router.post('/fetch-token', (req: express.Request, res: express.Response) => {
+  const request = req.body as FetchTokenRequest;
+  tokenForLoginId(request.loginId)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err: Error) => {
+      res.status(StatusCodes.FORBIDDEN).send({ error: err.message });
+    });
+});
 
 router.get(
   '/dev/:id',

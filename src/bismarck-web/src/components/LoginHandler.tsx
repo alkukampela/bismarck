@@ -3,27 +3,27 @@ import { fetchToken } from '../services/api-service';
 import * as React from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 
-interface TokenState {
-  token: string;
+interface LoginIdState {
+  loginId: string;
 }
 
 export const LoginHandler: React.FunctionComponent = () => {
   const [gameId, setGameId] = React.useState<string>('');
 
   const getTokenResponse = async (identifier: string): Promise<TokenResponse> =>
-    fetchToken(identifier, { gameId: '', player: { name: '' }, token: '' });
+    fetchToken(identifier);
 
   const location = useLocation();
 
   React.useEffect(() => {
-    const state = location.state as TokenState;
-    const identifier = state.token || '';
+    const state = location.state as LoginIdState;
+    const loginId = state.loginId || '';
 
-    if (!identifier) {
+    if (!loginId) {
       return;
     }
 
-    getTokenResponse(identifier).then((tokenResponse) => {
+    getTokenResponse(loginId).then((tokenResponse) => {
       if (!!tokenResponse.gameId) {
         sessionStorage.setItem(
           `token_${tokenResponse.gameId}`,

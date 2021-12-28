@@ -71,7 +71,6 @@ export const sendLoginId = (
       console.log(data.messageId);
     })
     .catch((err: Error) => {
-      // TODO throw error and inform about failed game creation
       console.error(err, err.stack);
     });
 };

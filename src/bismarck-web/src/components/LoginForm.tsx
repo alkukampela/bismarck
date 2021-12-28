@@ -8,11 +8,11 @@ export const LoginForm = () => {
     event.preventDefault();
 
     const target = event.target as typeof event.target & {
-      token: { value: string };
+      loginId: { value: string };
     };
 
-    const token = target.token.value;
-    navigate('/login', { state: { token } });
+    const loginId = target.loginId.value;
+    navigate('/login', { state: { loginId } });
   };
 
   return (
@@ -20,12 +20,12 @@ export const LoginForm = () => {
       <h1>Syötä kirjautumistunniste</h1>
       <div>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="token">
+          <label htmlFor="loginId">
             Kirjautumistunniste:
             <input
               type="text"
-              name="token"
-              id="token"
+              name="loginId"
+              id="loginId"
               className="name"
               defaultValue=""
               pattern="[A-Za-z0-9]{5}"
