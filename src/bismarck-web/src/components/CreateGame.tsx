@@ -143,14 +143,7 @@ export const CreateGame = () => {
         </div>
       </div>
 
-      {!!gameId && (
-        <Navigate
-          to={{
-            pathname: '/',
-            search: `game=${gameId}`,
-          }}
-        />
-      )}
+      {!!gameId && <Navigate to={'/'} />}
     </>
   );
 };

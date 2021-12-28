@@ -19,14 +19,14 @@ export const TrickTakers = ({
       <table>
         <tbody>
           {trickTakers.map((playerScore: PlayerScore, index: number) => (
-          <tr
-            key={index}
-            className={isMyScore(playerScore.player.name) ? 'my-score' : ''}
-          >
-            <td>{playerScore.player.name}: </td>
-            <td className="score">{playerScore.score}</td>
-          </tr>
-        ))}
+            <tr
+              key={index}
+              className={isMyScore(playerScore.player.name) ? 'my-score' : ''}
+            >
+              <td>{playerScore.player.name}: </td>
+              <td className="score">{playerScore.score}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

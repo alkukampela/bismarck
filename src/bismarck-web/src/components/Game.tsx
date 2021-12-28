@@ -36,9 +36,8 @@ export const Game = () => {
 
   const [tableCards, setTableCards] = React.useState<Card[]>([]);
   const [playersHand, setPlayersHand] = React.useState<PlayersHand>(emptyHand);
-  const [trickResponse, setTrickResponse] = React.useState<TrickResponse>(
-    emptyTrickResponse
-  );
+  const [trickResponse, setTrickResponse] =
+    React.useState<TrickResponse>(emptyTrickResponse);
   const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
   const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);

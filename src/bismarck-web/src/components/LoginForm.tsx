@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {
-  useNavigate,
-} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -13,9 +11,8 @@ export const LoginForm = () => {
       token: { value: string };
     };
 
-    const token = target.token.value
-    console.log(token)
-    navigate(`/login/${token}`);
+    const token = target.token.value;
+    navigate('/login', { state: { token } });
   };
 
   return (
@@ -31,7 +28,7 @@ export const LoginForm = () => {
               id="token"
               className="name"
               defaultValue=""
-              pattern="[A-Za-z0-9]{6}"
+              pattern="[A-Za-z0-9]{5}"
               required
             />
           </label>
@@ -40,4 +37,4 @@ export const LoginForm = () => {
       </div>
     </>
   );
-}
+};

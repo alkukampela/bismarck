@@ -26,8 +26,8 @@ export const GameInstructions = () => {
             </span>
           </div>
           <div className="instructions">
-            <Instuctions/>
-            </div>
+            <Instuctions />
+          </div>
         </div>
       </div>
 

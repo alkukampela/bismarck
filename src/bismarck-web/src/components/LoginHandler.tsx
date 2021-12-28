@@ -1,18 +1,26 @@
 import { TokenResponse } from '../../../types/token-response';
 import { fetchToken } from '../services/api-service';
 import * as React from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
+
+interface TokenState {
+  token: string;
+}
 
 export const LoginHandler: React.FunctionComponent = () => {
   const [gameId, setGameId] = React.useState<string>('');
-  const { identifier } = useParams()
 
   const getTokenResponse = async (identifier: string): Promise<TokenResponse> =>
     fetchToken(identifier, { gameId: '', player: { name: '' }, token: '' });
 
+  const location = useLocation();
+
   React.useEffect(() => {
+    const state = location.state as TokenState;
+    const identifier = state.token || '';
+
     if (!identifier) {
-      return
+      return;
     }
 
     getTokenResponse(identifier).then((tokenResponse) => {
@@ -38,6 +46,7 @@ export const LoginHandler: React.FunctionComponent = () => {
             pathname: '/',
             search: `game=${gameId}`,
           }}
+          replace={true}
         />
       )}
       <h1>Virheellinen tunniste</h1>

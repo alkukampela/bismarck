@@ -9,8 +9,8 @@ export const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/create" element={<CreateGame />}/>
-        <Route path="/login/:identifier" element={<LoginHandler />}/>
+        <Route path="/create" element={<CreateGame />} />
+        <Route path="/login" element={<LoginHandler />} />
         <Route path="/" element={<GameContainer />} />
       </Routes>
       <GameInstructions />
