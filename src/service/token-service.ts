@@ -22,3 +22,51 @@ export const tokenForLoginId = async (
     gameId: gamePlayer.gameId,
   };
 };
+
+export const generateLoginId = (loginIdLength: number): string => {
+  const idChars: string[] = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+  ];
+
+  const randonmChar = () => {
+    return idChars[Math.floor(Math.random() * idChars.length)];
+  };
+
+  return [...Array(loginIdLength).keys()].reduce(
+    (previous) => previous + randonmChar(),
+    ''
+  );
+};

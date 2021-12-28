@@ -1,6 +1,6 @@
 import { Game } from './Game';
-import { MainTitleScreen } from './MainTitleScreen';
 import { PanicButton } from './PanicButton';
+import { StartScreen } from './StartScreen';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as QueryString from 'query-string';
 import * as React from 'react';
@@ -19,7 +19,7 @@ export const GameContainer = () => {
     <Provider value={game}>
       <PanicButton />
       {!!gameId && <Game />}
-      {!gameId && <MainTitleScreen />}
+      {!gameId && <StartScreen />}
     </Provider>
   );
 };

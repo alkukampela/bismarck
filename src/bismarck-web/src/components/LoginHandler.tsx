@@ -1,24 +1,21 @@
 import { TokenResponse } from '../../../types/token-response';
 import { fetchToken } from '../services/api-service';
 import * as React from 'react';
-import { Redirect } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 
-interface Identifier {
-  match: {
-    params: {
-      identifier: string;
-    };
-  };
-}
-
-export const Login: React.FunctionComponent<Identifier> = (props) => {
+export const LoginHandler: React.FunctionComponent = () => {
   const [gameId, setGameId] = React.useState<string>('');
+  const { identifier } = useParams()
 
   const getTokenResponse = async (identifier: string): Promise<TokenResponse> =>
     fetchToken(identifier, { gameId: '', player: { name: '' }, token: '' });
 
   React.useEffect(() => {
-    getTokenResponse(props.match.params.identifier).then((tokenResponse) => {
+    if (!identifier) {
+      return
+    }
+
+    getTokenResponse(identifier).then((tokenResponse) => {
       if (!!tokenResponse.gameId) {
         sessionStorage.setItem(
           `token_${tokenResponse.gameId}`,
@@ -36,8 +33,7 @@ export const Login: React.FunctionComponent<Identifier> = (props) => {
   return (
     <>
       {!!gameId && (
-        <Redirect
-          push
+        <Navigate
           to={{
             pathname: '/',
             search: `game=${gameId}`,

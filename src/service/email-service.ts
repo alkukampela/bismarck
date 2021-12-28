@@ -4,24 +4,25 @@ import { MailOptions } from 'nodemailer/lib/json-transport';
 
 const htmlMailMessage = (
   registerPlayer: RegisterPlayer,
-  loginUrl: string
+  loginId: string
 ): string => {
   return `Hei <b>${registerPlayer.player.name}</b>,<br/>
-Klikkaa alla olevaa linkki&auml;, niin p&auml;&auml;set nauttimaan
-j&auml;nnitt&auml;vist&auml; hetkist&auml; hienon korttipelin parissa:<br/>
 
-<a href="${loginUrl}">T&auml;st&auml; pelaamaan</a><br/><br/>
+  Sy&ouml;t&auml; alla oleva koodi pelin etusivulle, niin p&auml;&auml;set nauttimaan
+  j&auml;nnitt&auml;vist&auml; hetkist&auml; hienon korttipelin parissa:<br/>
 
-<b>Onnea peliin!</b>`;
+  Kirjautumiskoodisi on <b>${loginId}</b><br/><br/>
+
+  <b>Onnea peliin!</b>`;
 };
 
 const textMailMessage = (
   registerPlayer: RegisterPlayer,
-  loginUrl: string
+  loginId: string
 ): string => {
   return `Hei ${registerPlayer.player.name},
-Klikkaa alla olevaa linkkiä, niin pääset nauttimaan jännittävistä hetkistä hienon korttipelin parissa:
-${loginUrl}
+Syötä alla olevaa koodi pelin etusivulle, niin pääset nauttimaan jännittävistä hetkistä hienon korttipelin parissa:
+${loginId}
 Onnea peliin!`;
 };
 
@@ -33,17 +34,16 @@ export const mailOptions = (
   loginId: string,
   registerPlayer: RegisterPlayer
 ): MailOptions => {
-  const loginUrl = `${process.env.LOGIN_URL}${loginId}`;
   return {
     from,
     subject,
     to: registerPlayer.email,
-    text: textMailMessage(registerPlayer, loginUrl),
-    html: htmlMailMessage(registerPlayer, loginUrl),
+    text: textMailMessage(registerPlayer, loginId),
+    html: htmlMailMessage(registerPlayer, loginId),
   };
 };
 
-export const sendGameLink = (
+export const sendLoginId = (
   registerPlayer: RegisterPlayer,
   loginId: string
 ): void => {

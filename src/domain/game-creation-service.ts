@@ -1,5 +1,5 @@
 import { getHandStatute } from './hand-statute-machine';
-import { sendGameLink } from '../service/email-service';
+import { sendLoginId } from '../service/email-service';
 import { CreateGameResponse } from '../types/create-game-response';
 import { Game } from '../types/game';
 import { RegisterPlayer } from '../types/register-player';
@@ -10,6 +10,7 @@ import {
   storeHandStatute,
   storeLoginIdForPlayer,
 } from '../persistence/storage-service';
+import { generateLoginId } from '../service/token-service';
 
 const initGameObject = (players: RegisterPlayer[]): Game => {
   return {
@@ -38,7 +39,7 @@ const createMapWithPlayerIds = (
   const playerIds = new Map<string, RegisterPlayer>();
 
   players.forEach((item) => {
-    playerIds.set(generateIdentifier(), item);
+    playerIds.set(generateLoginId(5), item);
   });
 
   return playerIds;
@@ -55,14 +56,12 @@ export const createGameAndInvitatePlayers = async (
     return Promise.reject(new Error('Players must have unique names'));
   }
 
-  // TODO validate emails
-
   const gameId = generateIdentifier();
   const playerIds = createMapWithPlayerIds(players);
 
   playerIds.forEach((value, loginId) => {
     storeLoginIdForPlayer({ gameId, player: value.player }, loginId);
-    sendGameLink(value, loginId);
+    sendLoginId(value, loginId);
   });
 
   const game = initGameObject(players);

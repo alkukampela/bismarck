@@ -1,7 +1,7 @@
 import { RegisterPlayer } from '../../../types/register-player';
 import { createGame } from '../services/api-service';
 import * as React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 export const CreateGame = () => {
   const MIN_PLAYERS = 3;
@@ -144,8 +144,7 @@ export const CreateGame = () => {
       </div>
 
       {!!gameId && (
-        <Redirect
-          push
+        <Navigate
           to={{
             pathname: '/',
             search: `game=${gameId}`,
