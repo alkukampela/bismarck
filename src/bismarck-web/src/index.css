@@ -179,7 +179,6 @@ label {
   font-weight: 800;
 }
 
-
 table.score-sheet {
   border-spacing: 0;
   border-collapse: collapse;
@@ -222,7 +221,7 @@ tr.odd-gametype {
 }
 
 #help-button > .icon {
-  -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgdmlld0JveD0iMCAwIDExIDExIj48cGF0aCBkPSJNNS42IDAuOWMtMC42IDAtMS4xIDAuNS0xLjEgMS4xczAuNSAxLjEgMS4xIDEuMSAxLjEtMC41IDEuMS0xLjFTNi4yIDAuOSA1LjYgMC45ek0zIDRMMyA0LjdDMyA0LjcgNC41IDQuNiA0LjUgNnYxLjVjMCAxLjUtMS41IDEuNy0xLjUgMS43TDMgMTBoNS4yTDguMiA5LjJjMCAwLTEuMiAwLTEuMi0xLjVMNyA1YzAgMCAwLTEtMS0xSDN6IiBmaWxsPSIjMDEwMTAxIi8+PC9zdmc+);
+  -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggc3R5bGU9ImZpbGw6IzAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2Utd2lkdGg6MS41MzYxNCIgZD0iTTUuNi45Yy0uMTA3LjAwMy0uMjE0LjAyLS4zMTcuMDUtLjUyNS4xNDUtLjkyMi42NjYtLjkwNSAxLjIxMy0uMDA4LjQyMi4yMS44MzMuNTY2IDEuMDZhMS4yNiAxLjI2IDAgMCAwIDEuOTUtMS4wODEgMS4yMzQgMS4yMzQgMCAwIDAtLjQxNi0uOTExQTEuMjE0IDEuMjE0IDAgMCAwIDUuNi45Wk0zLjY2MyA0LjIxOHMtLjAwNC4zNDMtLjAxNC4zNDdjLjE5OC4xMTIuNzEuMjQzLjc1Mi44MzYuMDAyLjYzNy4wMDEgMS4yNzQuMDAxIDEuOTFsLS4wMDEgMS45MWMtLjA0MS41OTQtLjU1NC43MjQtLjc1Mi44MzcuMDEuMDAzLjAxNC4zNDYuMDE0LjM0NmgzLjg1OXMuMDA1LS4zNDQuMDE1LS4zNDdjLS4xOTktLjExMy0uNzExLS4yNDItLjc1Mi0uODM1LS4wMDUtMS42NjggMC0zLjMzNi0uMDAyLTUuMDA0aC0yLjM4WiIvPjwvc3ZnPg==);
   -webkit-mask-position-x: center;
   -webkit-mask-position-y: center;
   -webkit-mask-repeat: no-repeat;
@@ -428,4 +427,15 @@ tr.odd-gametype {
 
 .my-score {
   text-decoration: underline;
+}
+
+.delayedError {
+  visibility: hidden;
+  animation: 1s linear 0.5s forwards delayedShow;
+}
+
+@keyframes delayedShow {
+  to {
+    visibility: visible;
+  }
 }

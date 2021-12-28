@@ -49,7 +49,9 @@ export const LoginHandler: React.FunctionComponent = () => {
           replace={true}
         />
       )}
-      <h1>Virheellinen tunniste</h1>
+      <div className="delayedError">
+        <h1>Virheellinen tunniste</h1>
+      </div>
     </>
   );
 };
