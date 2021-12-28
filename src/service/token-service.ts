@@ -2,6 +2,7 @@ import { ErrorTypes } from '../domain/error-types';
 import { fetchPlayerWithLoginId } from '../persistence/storage-service';
 import { TokenResponse } from '../types/token-response';
 import { sign } from 'jsonwebtoken';
+import { randomInt } from 'crypto';
 
 export const tokenForLoginId = async (
   loginId: string
@@ -62,7 +63,7 @@ export const generateLoginId = (loginIdLength: number): string => {
   ];
 
   const randonmChar = () => {
-    return idChars[Math.floor(Math.random() * idChars.length)];
+    return idChars[randomInt(idChars.length)];
   };
 
   return [...Array(loginIdLength).keys()].reduce(
