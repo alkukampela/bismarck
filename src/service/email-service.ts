@@ -9,9 +9,11 @@ const htmlMailMessage = (
   return `Hei <b>${registerPlayer.player.name}</b>,<br/>
 
   Sy&ouml;t&auml; alla oleva koodi pelin etusivulle, niin p&auml;&auml;set nauttimaan
-  j&auml;nnitt&auml;vist&auml; hetkist&auml; hienon korttipelin parissa:<br/>
+  j&auml;nnitt&auml;vist&auml; hetkist&auml; hienon korttipelin parissa.<br/>
 
   Kirjautumiskoodisi on <b>${loginId}</b><br/><br/>
+
+  Pelin löydät osoitteesta bismarck piste monster.</br>
 
   <b>Onnea peliin!</b>`;
 };
@@ -22,7 +24,11 @@ const textMailMessage = (
 ): string => {
   return `Hei ${registerPlayer.player.name},
 Syötä alla olevaa koodi pelin etusivulle, niin pääset nauttimaan jännittävistä hetkistä hienon korttipelin parissa:
+
 ${loginId}
+
+Pelin löydät osoitteesta bismarck piste monster.
+
 Onnea peliin!`;
 };
 

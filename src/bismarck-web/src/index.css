@@ -342,6 +342,10 @@ tr.odd-gametype {
   margin-right: 0.5rem;
 }
 
+.loginForm > * input[type='text'] {
+  text-transform: uppercase;
+}
+
 .tabbed-area {
   display: flex;
   flex-direction: column;

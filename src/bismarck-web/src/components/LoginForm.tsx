@@ -11,7 +11,7 @@ export const LoginForm = () => {
       loginId: { value: string };
     };
 
-    const loginId = target.loginId.value;
+    const loginId = target.loginId.value.toUpperCase().trim();
     navigate('/login', { state: { loginId } });
   };
 
@@ -19,14 +19,13 @@ export const LoginForm = () => {
     <>
       <h1>Syötä kirjautumistunniste</h1>
       <div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="loginForm">
           <label htmlFor="loginId">
             Kirjautumistunniste:
             <input
               type="text"
               name="loginId"
               id="loginId"
-              className="name"
               defaultValue=""
               pattern="[A-Za-z0-9]{5}"
               required

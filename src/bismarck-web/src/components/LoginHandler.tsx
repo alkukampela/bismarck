@@ -2,10 +2,7 @@ import { TokenResponse } from '../../../types/token-response';
 import { fetchToken } from '../services/api-service';
 import * as React from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
-
-interface LoginIdState {
-  loginId: string;
-}
+import { LoginIdState } from '../domain/login-id-state';
 
 export const LoginHandler: React.FunctionComponent = () => {
   const [gameId, setGameId] = React.useState<string>('');
