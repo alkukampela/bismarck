@@ -6,8 +6,8 @@ This is a multiplayer (3 or 4 players) card game.
 
 ### Prerequirements
 
-* Node
-* Docker & docker-compose
+- Node
+- Docker & docker-compose
 
 ### Running
 
@@ -17,7 +17,6 @@ File for back end should be in the root of the repo with following contents:
 
 ```txt
 DISABLE_EMAIL_SENDING=TRUE
-LOGIN_URL=http://localhost:1234/login/
 JWT_SECRET={ADD_YOUR SECRET}
 ```
 
@@ -42,4 +41,4 @@ npm run develop
 ```
 
 Browse to http://localhost:1234/create
-Fill the form and fetch login urls from stdout of terminal where back end is running
+Fill the form and fetch login codes from stdout of terminal where back end is running
