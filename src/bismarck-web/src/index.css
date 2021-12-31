@@ -66,8 +66,9 @@ input[type='button'] {
   font-family: var(--main-font-family);
 }
 
+input[type='submit']:disabled,
 input[type='button']:disabled {
-  color: #aaaaaa;
+  color: #888888;
   cursor: not-allowed;
 }
 
@@ -344,6 +345,24 @@ tr.odd-gametype {
 
 .loginForm > * input[type='text'] {
   text-transform: uppercase;
+}
+
+.login-id-field {
+  background-color: rgb(248, 249, 250);
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 0.3rem;
+  font-size: 2rem;
+  margin: 0.25rem;
+  height: 3.5rem;
+  outline: none;
+  text-align: center;
+  width: 3rem;
+}
+
+.login-id-field:focus {
+  border-color: rgb(0, 123, 255);
+  outline: none;
+  transform: scale(1.05);
 }
 
 .tabbed-area {
