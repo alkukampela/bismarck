@@ -48,7 +48,7 @@ h2 {
 button,
 input[type='submit'],
 input[type='button'] {
-  border-radius: 5px;
+  border-radius: 0.4rem;
   color: var(--whitelike);
   border: 0;
   outline: none;
@@ -136,10 +136,8 @@ label {
   width: 4rem;
   height: 5.6rem;
   background-color: var(--whitelike);
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  border-radius: 0.4rem;
   border: 1px solid transparent;
-  -webkit-box-shadow: 0 1px 1px var(--shadow-color);
   box-shadow: 0 1px 1px var(--shadow-color);
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -343,16 +341,20 @@ tr.odd-gametype {
   margin-right: 0.5rem;
 }
 
-.loginForm > * input[type='text'] {
-  text-transform: uppercase;
+.login-form-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .login-id-field {
-  background-color: rgb(248, 249, 250);
+  background-color: var(--whitelike);
   border: 1px solid rgb(204, 204, 204);
-  border-radius: 0.3rem;
+  border-radius: 0.4rem;
   font-size: 2rem;
-  margin: 0.25rem;
+  margin-right: 0.25rem;
+  margin-bottom: 0.75rem;
   height: 3.5rem;
   outline: none;
   text-align: center;
@@ -360,9 +362,9 @@ tr.odd-gametype {
 }
 
 .login-id-field:focus {
-  border-color: rgb(0, 123, 255);
+  border-color: var(--superdark);
   outline: none;
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .tabbed-area {

@@ -28,23 +28,21 @@ export const LoginForm = () => {
   };
 
   return (
-    <>
-      <h1>Kirjautumistunniste</h1>
-      <div>
-        <form onSubmit={handleSubmit} className="loginForm">
-          <ReactPinField
-            className="login-id-field"
-            length={5}
-            name="loginIdField"
-            id="loginIdField"
-            onChange={handleChange}
-            onComplete={handleComplete}
-            ref={loginIdFieldRef}
-            format={(input) => input.toUpperCase()}
-          />
-          <input type="submit" value="Kirjaudu" disabled={submitDisabled} />
-        </form>
-      </div>
-    </>
+    <div className="login-form-container">
+      <h2>Kirjautumistunniste</h2>
+      <form onSubmit={handleSubmit} className="loginForm">
+        <ReactPinField
+          className="login-id-field"
+          length={5}
+          name="loginIdField"
+          id="loginIdField"
+          onChange={handleChange}
+          onComplete={handleComplete}
+          ref={loginIdFieldRef}
+          format={(input) => input.toUpperCase()}
+        />
+        <input type="submit" value="Kirjaudu" disabled={submitDisabled} />
+      </form>
+    </div>
   );
 };
