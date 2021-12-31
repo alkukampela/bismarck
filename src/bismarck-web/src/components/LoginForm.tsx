@@ -20,7 +20,9 @@ export const LoginForm = () => {
     event.preventDefault();
 
     let loginId = '';
-    loginIdFieldRef.current?.inputs.forEach(x => { loginId += x.value} );
+    loginIdFieldRef.current?.inputs.forEach((singleCharInput) => {
+      loginId += singleCharInput.value;
+    });
 
     navigate('/login', { state: { loginId } });
   };
