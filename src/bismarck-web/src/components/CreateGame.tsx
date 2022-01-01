@@ -1,15 +1,15 @@
 import { RegisterPlayer } from '../../../types/register-player';
 import { createGame } from '../services/api-service';
 import * as React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const CreateGame = () => {
+  const navigate = useNavigate();
+
   const MIN_PLAYERS = 3;
   const MAX_PLAYERS = 4;
 
   const emptyPlayer = { player: { name: '' }, email: '' };
-
-  const [gameId, setGameId] = React.useState<string>('');
 
   const [players, setPlayers] = React.useState<RegisterPlayer[]>(
     Array(MIN_PLAYERS).fill({ ...emptyPlayer })
@@ -58,7 +58,7 @@ export const CreateGame = () => {
     });
 
     createGame({ players: registerPlayers }).then((response) => {
-      setGameId(response.id);
+      navigate('/');
     });
   };
 
@@ -142,8 +142,6 @@ export const CreateGame = () => {
           </form>
         </div>
       </div>
-
-      {!!gameId && <Navigate to={'/'} />}
     </>
   );
 };
