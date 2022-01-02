@@ -12,11 +12,7 @@ export const TrickCard = ({
 }) => {
   return (
     <div className="trick-card-container">
-      {!!trickCard.card ? (
-        <Card card={trickCard.card} />
-      ) : (
-        <EmptyCard />
-      )}
+      {!!trickCard.card ? <Card card={trickCard.card} /> : <EmptyCard />}
       <h2 className={isTaker ? 'taker' : ''}>{trickCard.player.name}</h2>
     </div>
   );

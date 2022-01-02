@@ -8,8 +8,8 @@ export const HelpButton = () => {
     <div
       id="help-button"
       role="button"
-      aria-label="Show instructions"
-      title="Show instructions"
+      aria-label="Näytä ohjeet"
+      title="Näytä ohjeet"
       onClick={() => navigate('/instructions')}
     >
       <div className="icon"></div>

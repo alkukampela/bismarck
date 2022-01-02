@@ -1,4 +1,3 @@
-
 import { GameContext } from '../GameContext';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { GameTypeChooser } from './GameTypeChooser';

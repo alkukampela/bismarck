@@ -7,7 +7,12 @@ export const Instructions = () => {
 
   return (
     <>
-      <span className="close-instructions" onClick={() => navigate(-1)}>
+      <span
+        className="close-instructions"
+        onClick={() => navigate(-1)}
+        aria-label="Sulje ohjeet"
+        title="Sulje ohjeet"
+      >
         &times;
       </span>
       <div className="instructions">

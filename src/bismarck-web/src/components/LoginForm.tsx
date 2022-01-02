@@ -29,7 +29,8 @@ export const LoginForm = () => {
 
   return (
     <div className="login-form-container">
-      <h2>Kirjautumistunniste</h2>
+      <h2>Peliin liittyminen</h2>
+      <p>Syötä sähköpostissa saamasi kirjautumiskoodi:</p>
       <form onSubmit={handleSubmit} className="loginForm">
         <ReactPinField
           className="login-id-field"
@@ -41,7 +42,7 @@ export const LoginForm = () => {
           ref={loginIdFieldRef}
           format={(input) => input.toUpperCase()}
         />
-        <input type="submit" value="Kirjaudu" disabled={submitDisabled} />
+        <input type="submit" value="Siirry pelaamaan" disabled={submitDisabled} />
       </form>
     </div>
   );

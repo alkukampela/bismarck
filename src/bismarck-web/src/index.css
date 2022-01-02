@@ -304,6 +304,12 @@ tr.odd-gametype {
   font-size: 1.4rem;
 }
 
+.start-screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .main-title-cards {
   display: flex;
   justify-content: center;
@@ -320,19 +326,20 @@ tr.odd-gametype {
   justify-content: center;
   flex-wrap: wrap;
   flex-direction: column;
+  padding-top: 3rem;
 }
 
 .login-id-field {
   background-color: var(--whitelike);
   border: 1px solid rgb(204, 204, 204);
   border-radius: 0.4rem;
-  font-size: 2rem;
-  margin-right: 0.25rem;
+  font-size: 2.5rem;
+  margin-right: 0.75rem;
   margin-bottom: 0.75rem;
-  height: 3.5rem;
+  height: 4rem;
   outline: none;
   text-align: center;
-  width: 3rem;
+  width: 3.5rem;
 }
 
 .login-id-field:focus {
