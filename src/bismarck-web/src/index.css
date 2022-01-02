@@ -284,7 +284,7 @@ tr.odd-gametype {
 
 .final-scores-container {
   background-color: var(--final-results-area);
-  padding: 0rem 2rem 1rem 2rem;
+  padding: 0 2rem 1rem 2rem;
   z-index: 200;
   position: absolute;
   top: 6rem;
@@ -358,12 +358,12 @@ tr.odd-gametype {
 .tab {
   cursor: pointer;
   padding: 10px 20px;
-  margin: 0px 2px;
+  margin: 0 2px;
   background: var(--superdark);
   display: inline-block;
   color: var(--whitelike);
-  border-radius: 5px 5px 0px 0px;
-  box-shadow: 1px 0px 0px var(--shadow-color);
+  border-radius: 5px 5px 0 0;
+  box-shadow: 1px 0 0 var(--shadow-color);
 }
 
 .tab:hover {
@@ -376,7 +376,7 @@ tr.odd-gametype {
   border-radius: 5px;
   overflow: hidden;
   padding: 1rem;
-  border-top-left-radius: 0px;
+  border-top-left-radius: 0;
 }
 
 .panel h2 {

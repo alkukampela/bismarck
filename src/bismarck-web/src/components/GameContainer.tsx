@@ -1,6 +1,5 @@
 import { Game } from './Game';
 import { HelpButton } from './HelpButton';
-import { PanicButton } from './PanicButton';
 import { StartScreen } from './StartScreen';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as React from 'react';
@@ -15,7 +14,6 @@ export const GameContainer = () => {
   return (
     <>
       <Provider value={game}>
-        <PanicButton />
         {!!gameId && <Game />}
         {!gameId && <StartScreen />}
       </Provider>

@@ -1,18 +1,22 @@
+
+import { GameContext } from '../GameContext';
+import { GameScoreBoard } from '../../../types/game-score-board';
 import { GameTypeChooser } from './GameTypeChooser';
+import { FinalScores } from './FinalScores';
+import { HandScores } from './HandScores';
 import { HandTitle } from './HandTitle';
+import { OnGoingGameScore } from './OnGoingGameScore';
+import { PanicButton } from './PanicButton';
+import { PlayerScore } from '../../../types/player-score';
 import { PlayersCards } from './PlayersCards';
+import { PlayersHand } from '../../../types/players-hand';
 import { StatuteSummary } from './Statute';
 import { TableCards } from './TableCards';
-import { OnGoingGameScore } from './OnGoingGameScore';
 import { Trick } from './Trick';
 import { TrickTakers } from './TrickTakers';
 import { Card } from '../../../types/card';
-import { GameScoreBoard } from '../../../types/game-score-board';
 import { HandStatute } from '../../../types/hand-statute';
-import { PlayerScore } from '../../../types/player-score';
-import { PlayersHand } from '../../../types/players-hand';
 import { TrickResponse, TrickStatus } from '../../../types/trick-response';
-import { GameContext } from '../GameContext';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
 import {
@@ -28,8 +32,6 @@ import {
   emptyTrickResponse,
   emptyStatue,
 } from '../domain/default-objects';
-import { FinalScores } from './FinalScores';
-import { HandScores } from './HandScores';
 
 export const Game = () => {
   const game = React.useContext(GameContext);
@@ -134,6 +136,7 @@ export const Game = () => {
 
   return (
     <>
+      <PanicButton />
       <HandTitle
         handStatute={statute}
         trickNumber={trickResponse.trickNumber}
