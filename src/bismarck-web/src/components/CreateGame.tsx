@@ -57,7 +57,7 @@ export const CreateGame = () => {
       };
     });
 
-    createGame({ players: registerPlayers }).then((response) => {
+    createGame({ players: registerPlayers }).then(() => {
       navigate('/');
     });
   };

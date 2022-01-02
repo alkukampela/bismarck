@@ -1,4 +1,5 @@
 import { Game } from './Game';
+import { HelpButton } from './HelpButton';
 import { PanicButton } from './PanicButton';
 import { StartScreen } from './StartScreen';
 import { GameContextProvider as Provider } from '../GameContext';
@@ -12,10 +13,13 @@ export const GameContainer = () => {
   const game = { player, gameId, token };
 
   return (
-    <Provider value={game}>
-      <PanicButton />
-      {!!gameId && <Game />}
-      {!gameId && <StartScreen />}
-    </Provider>
+    <>
+      <Provider value={game}>
+        <PanicButton />
+        {!!gameId && <Game />}
+        {!gameId && <StartScreen />}
+      </Provider>
+      <HelpButton />
+    </>
   );
 };
