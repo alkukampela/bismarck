@@ -241,7 +241,7 @@ tr.odd-gametype {
   position: fixed;
   float: right;
   width: 4rem;
-  right: 2rem;
+  right: 0.125rem;
   top: 2rem;
 }
 
@@ -252,13 +252,15 @@ tr.odd-gametype {
   cursor: pointer;
 }
 
+.instructions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 2rem;
+  margin-top: 0.125rem;
+}
+
 .instructions {
-  padding-top: 0.125rem;
-  padding-right: 2rem;
-  padding-left: 2rem;
-  padding-bottom: 3rem;
-  margin-right: 1rem;
-  margin-left: 3rem;
   max-width: 60rem;
 }
 

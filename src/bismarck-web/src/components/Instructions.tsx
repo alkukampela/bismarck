@@ -15,8 +15,10 @@ export const Instructions = () => {
       >
         &times;
       </span>
-      <div className="instructions">
-        <InstuctionsContent />
+      <div className="instructions-container">
+        <div className="instructions">
+          <InstuctionsContent />
+        </div>
       </div>
     </>
   );
