@@ -42,7 +42,11 @@ export const LoginForm = () => {
           ref={loginIdFieldRef}
           format={(input) => input.toUpperCase()}
         />
-        <input type="submit" value="Siirry pelaamaan" disabled={submitDisabled} />
+        <input
+          type="submit"
+          value="Siirry pelaamaan"
+          disabled={submitDisabled}
+        />
       </form>
     </div>
   );

@@ -72,12 +72,29 @@ input[type='button']:disabled {
   cursor: not-allowed;
 }
 
+input[type='text'],
+input[type='email'] {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: var(--main-font-family);
+}
+
 fieldset {
   border: 0;
+  margin: 0;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+}
+
+legend {
+  font-weight: 800;
 }
 
 label {
   display: block;
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
 }
 
 .panic-button {
@@ -335,13 +352,13 @@ tr.odd-gametype {
   background-color: var(--whitelike);
   border: 1px solid rgb(204, 204, 204);
   border-radius: 0.4rem;
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin-right: 0.75rem;
   margin-bottom: 0.75rem;
-  height: 4rem;
+  height: 3.5rem;
   outline: none;
   text-align: center;
-  width: 3.5rem;
+  width: 3rem;
 }
 
 .login-id-field:focus {
@@ -388,37 +405,27 @@ tr.odd-gametype {
   border-top-left-radius: 0;
 }
 
-.panel h2 {
-  margin-bottom: 1rem;
+.create-form-container {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2rem;
+  margin-top: 0.125rem;
+  max-width: 60rem;
 }
 
-.panel input[type='submit'] {
-  float: right;
+.create-form-container h2 {
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+}
+
+.create-form-container > * > input[type='submit'] {
+  margin-left: 1rem;
 }
 
 #three-players:checked ~ .tabs #three-players-tab,
 #four-players:checked ~ .tabs #four-players-tab {
   background: var(--whitelike);
   color: var(--superdark);
-}
-
-.create-form > fieldset {
-  padding-left: 0;
-}
-
-.create-form > * legend {
-  font-weight: 800;
-}
-
-.create-form > * label {
-  margin-bottom: 0.5rem;
-  margin-left: 1rem;
-  max-width: 16rem;
-}
-
-.create-form > * input[type='text'],
-.create-form > * input[type='email'] {
-  float: right;
 }
 
 .trick-takers > table {

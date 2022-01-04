@@ -64,7 +64,7 @@ export const CreateGame = () => {
 
   return (
     <>
-      <h1>Alusta peli</h1>
+      <h1>Käynnistä peli</h1>
 
       <div className="tabbed-area">
         <input
@@ -100,17 +100,17 @@ export const CreateGame = () => {
           </label>
         </div>
         <div className="panel">
-          <h2>Syötä pelaajien tiedot</h2>
+          <div className="create-form-container">
+            <h2>Syötä pelaajien tiedot</h2>
 
-          <form onSubmit={handleSubmit} className="create-form">
-            {players.map((_val, idx) => {
-              const nameId = `name-${idx}`;
-              const emailId = `email-${idx}`;
-              return (
-                <fieldset key={`player-${idx}`}>
-                  <legend>{`${idx + 1}. pelaaja`}</legend>
-                  <label htmlFor={nameId}>
-                    Nimi:
+            <form onSubmit={handleSubmit} className="create-form">
+              {players.map((_val, idx) => {
+                const nameId = `name-${idx}`;
+                const emailId = `email-${idx}`;
+                return (
+                  <fieldset key={`player-${idx}`}>
+                    <legend>{`${idx + 1}. pelaaja`}</legend>
+                    <label htmlFor={nameId}>Nimi:</label>
                     <input
                       type="text"
                       name={nameId}
@@ -119,11 +119,10 @@ export const CreateGame = () => {
                       className="name"
                       value={players[idx].player.name}
                       onChange={handleNameChange}
+                      placeholder={`Pelaajan ${idx + 1} nimi`}
                       required
                     />
-                  </label>
-                  <label htmlFor={emailId}>
-                    Sähköposti:
+                    <label htmlFor={emailId}>Sähköposti:</label>
                     <input
                       type="email"
                       name={emailId}
@@ -132,14 +131,15 @@ export const CreateGame = () => {
                       className="email"
                       value={players[idx].email}
                       onChange={handleEmailChange}
+                      placeholder={`pelaaja_${idx + 1}@email.com`}
                       required
                     />
-                  </label>
-                </fieldset>
-              );
-            })}
-            <input type="submit" value="Lähetä" />
-          </form>
+                  </fieldset>
+                );
+              })}
+              <input type="submit" value="Lähetä" />
+            </form>
+          </div>
         </div>
       </div>
     </>
