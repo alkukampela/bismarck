@@ -90,7 +90,7 @@ router.post(
   (req: GamePlayerRequest, res: express.Response) => {
     const gameTypeChoice = {
       gameType: req.body.gameType as GameType,
-      trumpSuit: req.body?.gameType as Suit,
+      trumpSuit: req.body?.trumpSuit as Suit,
     };
 
     chooseGameType(req.player, gameTypeChoice, req.gameId)
