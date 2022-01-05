@@ -45,8 +45,8 @@ export const Game = () => {
 
   const socket = SocketFactory.getSocket(game.gameId);
 
-  const tableCardsAreVisible = (): boolean => {
-    return !trickResponse.cards.some((tc) => !!tc.card);
+  const isHandStarted = (): boolean => {
+    return trickResponse.cards.some((tc) => !!tc.card);
   };
 
   const isHandReady = (
@@ -140,9 +140,9 @@ export const Game = () => {
         handStatute={statute}
         trickNumber={trickResponse.trickNumber}
       />
-      <Trick trickResponse={trickResponse} />
       <GameTypeChooser handStatute={statute} player={game.player} />
-      <TableCards cards={tableCards} show={tableCardsAreVisible()} />
+      <TableCards cards={tableCards} show={!isHandStarted()} />
+      <Trick trickResponse={trickResponse} show={isHandStarted()} />
       <PlayersCards
         hand={playersHand}
         trickStatus={trickResponse.trickStatus}

@@ -4,9 +4,18 @@ import { TrickResponse } from '../../../types/trick-response';
 import * as CSS from 'csstype';
 import * as React from 'react';
 
-export const Trick = ({ trickResponse }: { trickResponse: TrickResponse }) => {
-  const getColumns = (numberOfCards: number): CSS.Properties => {
-    return { columnCount: numberOfCards };
+export const Trick = ({
+  trickResponse,
+  show,
+}: {
+  trickResponse: TrickResponse;
+  show: boolean;
+}) => {
+  const getStyle = (show: boolean, numberOfCards: number): CSS.Properties => {
+    return {
+      display: show ? 'block' : 'none',
+      columnCount: numberOfCards,
+    };
   };
 
   const isTaker = (playerCard: TC): boolean => {
@@ -17,7 +26,7 @@ export const Trick = ({ trickResponse }: { trickResponse: TrickResponse }) => {
   };
 
   return (
-    <div className="trick" style={getColumns(trickResponse.cards.length)}>
+    <div className="trick" style={getStyle(show, trickResponse.cards.length)}>
       {trickResponse.cards.map((playerCard: TC, index: number) => (
         <TrickCard
           trickCard={playerCard}
