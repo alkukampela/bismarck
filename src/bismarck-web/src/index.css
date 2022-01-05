@@ -4,8 +4,8 @@
   --superdark: #000020;
   --tab-hover: rgba(0, 0, 20, 0.5);
   --shadow-color: rgba(168, 167, 167, 0.25);
-  --background-from: #1499f1;
-  --background-to: #386ac7;
+  --background-from: #29a3b3;
+  --background-to: #1c7480;
   --button-from: #9819ff;
   --button-to: #510391;
   --info-area: rgba(3, 3, 3, 0.2);
@@ -124,7 +124,7 @@ label {
 .choice-buttons {
   columns: 6;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   padding-bottom: 1rem;
   flex-wrap: wrap;
 }
@@ -132,7 +132,7 @@ label {
 .table-cards {
   columns: 4;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   padding-bottom: 2rem;
 }
 
@@ -165,7 +165,7 @@ label {
 .card > .suit {
   position: relative;
   top: -0.5rem;
-  font-size: 2.6rem;
+  font-size: 2.2rem;
   line-height: 2.6rem;
 }
 
@@ -186,7 +186,7 @@ label {
   flex-wrap: wrap;
   flex-direction: row;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin-right: 1rem;
 }
 
@@ -211,10 +211,6 @@ table.score-sheet td {
 
 tr.odd-gametype {
   background: rgba(124, 126, 124, 0.25);
-}
-
-.instructions p {
-  text-align: justify;
 }
 
 #help-button {
@@ -248,6 +244,7 @@ tr.odd-gametype {
   width: 2rem;
   margin-inline-start: 0;
 }
+
 .close-instructions {
   color: var(--whitelike);
   font-size: 3.5rem;
@@ -281,6 +278,10 @@ tr.odd-gametype {
   max-width: 60rem;
 }
 
+.instructions p {
+  text-align: justify;
+}
+
 .instructions > table {
   border: 1px solid var(--superdark);
   border-collapse: collapse;
@@ -299,28 +300,6 @@ tr.odd-gametype {
   padding-left: 0.8rem;
   margin-bottom: 0.8rem;
   border-radius: 5px;
-}
-
-.final-scores-container {
-  background-color: var(--final-results-area);
-  padding: 0 2rem 1rem 2rem;
-  z-index: 200;
-  position: absolute;
-  top: 6rem;
-  left: 50%;
-  margin-top: -3.125rem;
-  margin-left: -3.125rem;
-}
-
-.final-scores-container > table {
-  left: 50%;
-  transform: translateX(-50%);
-  position: relative;
-}
-
-.final-scores-list > li {
-  list-style: none;
-  font-size: 1.4rem;
 }
 
 .start-screen-container {

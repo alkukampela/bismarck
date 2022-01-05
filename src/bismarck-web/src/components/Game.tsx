@@ -1,7 +1,6 @@
 import { GameContext } from '../GameContext';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { GameTypeChooser } from './GameTypeChooser';
-import { FinalScores } from './FinalScores';
 import { HandScores } from './HandScores';
 import { HandTitle } from './HandTitle';
 import { OnGoingGameScore } from './OnGoingGameScore';
@@ -31,9 +30,11 @@ import {
   emptyTrickResponse,
   emptyStatue,
 } from '../domain/default-objects';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export const Game = () => {
   const game = React.useContext(GameContext);
+  const navigate = useNavigate();
 
   const [tableCards, setTableCards] = React.useState<Card[]>([]);
   const [playersHand, setPlayersHand] = React.useState<PlayersHand>(emptyHand);
@@ -90,6 +91,11 @@ export const Game = () => {
   const updateTotalScores = () => {
     fetchScores(game.gameId, emptyScores).then((fetchedScores) => {
       setScores(fetchedScores);
+      if (fetchedScores.isFinished) {
+        setTimeout(() => {
+          navigate(`/results?game=${game.gameId}`)
+        }, 2000)
+      }
     });
   };
 
@@ -140,8 +146,8 @@ export const Game = () => {
         handStatute={statute}
         trickNumber={trickResponse.trickNumber}
       />
-      <GameTypeChooser handStatute={statute} player={game.player} />
       <TableCards cards={tableCards} show={!isHandStarted()} />
+      <GameTypeChooser handStatute={statute} player={game.player} />
       <Trick trickResponse={trickResponse} show={isHandStarted()} />
       <PlayersCards
         hand={playersHand}
@@ -156,7 +162,6 @@ export const Game = () => {
         scores={scores}
         isHandReady={isHandReady(trickResponse, statute)}
       />
-      <FinalScores scores={scores} />
     </>
   );
 };

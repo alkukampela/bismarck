@@ -1,7 +1,7 @@
 import { Game } from './Game';
 import { HelpButton } from './HelpButton';
 import { StartScreen } from './StartScreen';
-import { gameIdExtractor as extractGameId } from '../services/game-id-extractor';
+import { extractGameId } from '../services/game-id-extractor';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as React from 'react';
 

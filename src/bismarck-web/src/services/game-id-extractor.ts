@@ -1,4 +1,4 @@
-export const gameIdExtractor = (doc: Document): string => {
+export const extractGameId = (doc: Document): string => {
   const params = new URLSearchParams(doc.location.search);
   return params.get('game') || '';
 };

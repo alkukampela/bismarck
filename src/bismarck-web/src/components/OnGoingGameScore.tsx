@@ -4,9 +4,9 @@ import * as React from 'react';
 
 export const OnGoingGameScore = ({ scores }: { scores: GameScoreBoard }) => {
   return (
-    <>
+    <div>
       <h2>Tilanne</h2>
       <ScoreSheet scores={scores} />
-    </>
+    </div>
   );
 };
