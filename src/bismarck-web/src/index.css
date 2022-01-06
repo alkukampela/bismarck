@@ -4,8 +4,8 @@
   --superdark: #000020;
   --tab-hover: rgba(0, 0, 20, 0.5);
   --shadow-color: rgba(168, 167, 167, 0.25);
-  --background-from: #29a3b3;
-  --background-to: #1c7480;
+  --background-from: #29a4d4;
+  --background-to: #1d7293;
   --button-from: #9819ff;
   --button-to: #510391;
   --info-area: rgba(3, 3, 3, 0.2);
@@ -78,6 +78,8 @@ input[type='email'] {
   padding: 0.5rem;
   font-size: 1rem;
   font-family: var(--main-font-family);
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 fieldset {
@@ -89,12 +91,6 @@ fieldset {
 
 legend {
   font-weight: 800;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  margin-top: 0.25rem;
 }
 
 .panic-button {
@@ -113,6 +109,7 @@ label {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+  margin-bottom: 0.5rem;
 }
 
 .players-card {
@@ -170,7 +167,7 @@ label {
 
 .card > .rank {
   position: relative;
-  font-size: 1.5rem;
+  font-size: 1.85rem;
   line-height: 1.5rem;
   font-weight: 700;
 }

@@ -3,15 +3,13 @@ import { GameScoreBoard } from '../../../types/game-score-board';
 import { GameTypeChooser } from './GameTypeChooser';
 import { HandScores } from './HandScores';
 import { HandTitle } from './HandTitle';
-import { OnGoingGameScore } from './OnGoingGameScore';
 import { PanicButton } from './PanicButton';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersCards } from './PlayersCards';
 import { PlayersHand } from '../../../types/players-hand';
-import { StatuteSummary } from './Statute';
+import { ScoreBoard } from './ScoreBoard';
 import { TableCards } from './TableCards';
 import { Trick } from './Trick';
-import { TrickTakers } from './TrickTakers';
 import { Card } from '../../../types/card';
 import { HandStatute } from '../../../types/hand-statute';
 import { TrickResponse, TrickStatus } from '../../../types/trick-response';
@@ -156,11 +154,7 @@ export const Game = () => {
         hand={playersHand}
         trickStatus={trickResponse.trickStatus}
       />
-      <div className="score-board">
-        <StatuteSummary statute={statute} />
-        <TrickTakers trickTakers={trickTakers} />
-        <OnGoingGameScore scores={scores} />
-      </div>
+      <ScoreBoard statute={statute} trickTakers={trickTakers} scores={scores} />
       <HandScores
         scores={scores}
         isHandReady={isHandReady(trickResponse, statute)}

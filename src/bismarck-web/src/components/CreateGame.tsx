@@ -110,7 +110,6 @@ export const CreateGame = () => {
                 return (
                   <fieldset key={`player-${idx}`}>
                     <legend>{`${idx + 1}. pelaaja`}</legend>
-                    <label htmlFor={nameId}>Nimi:</label>
                     <input
                       type="text"
                       name={nameId}
@@ -119,10 +118,9 @@ export const CreateGame = () => {
                       className="name"
                       value={players[idx].player.name}
                       onChange={handleNameChange}
-                      placeholder={`Pelaajan ${idx + 1} nimi`}
+                      placeholder="Pelaajan nimi"
                       required
                     />
-                    <label htmlFor={emailId}>Sähköposti:</label>
                     <input
                       type="email"
                       name={emailId}
@@ -131,7 +129,7 @@ export const CreateGame = () => {
                       className="email"
                       value={players[idx].email}
                       onChange={handleEmailChange}
-                      placeholder={`pelaaja_${idx + 1}@email.com`}
+                      placeholder="Pelajaan sähköpostiosoite"
                       required
                     />
                   </fieldset>
