@@ -18,11 +18,11 @@ export const Results = () => {
   }, []);
 
   return (
-    <div>
+    <div className="results-container">
       <h1>{scores.isFinished ? 'Lopputulokset' : 'Tilanne'}</h1>
 
       {scores.isFinished && (
-        <ul className="final-scores-list">
+        <ul className="final-player-positions">
           {calculateFinalResults(scores.trickScores).map(
             (playerScore, index) => (
               <li key={index}>

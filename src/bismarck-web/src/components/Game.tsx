@@ -93,8 +93,8 @@ export const Game = () => {
       setScores(fetchedScores);
       if (fetchedScores.isFinished) {
         setTimeout(() => {
-          navigate(`/results?game=${game.gameId}`)
-        }, 2000)
+          navigate(`/results?game=${game.gameId}`);
+        }, 3000);
       }
     });
   };

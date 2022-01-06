@@ -32,15 +32,19 @@ export const PlayersCards = ({
     <>
       <ExtraCardDisplay amount={numberOfExtraCards} />
       <div className="players-cards">
-        {cards.map((card: CardType, index: number) => (
-          <PlayersCard
-            card={card}
-            key={index}
-            trickStatus={trickStatus}
-            inRemovalStage={!!numberOfExtraCards}
-            onPlay={playCard}
-          />
-        ))}
+        {!!cards.length ? (
+          cards.map((card: CardType, index: number) => (
+            <PlayersCard
+              card={card}
+              key={index}
+              trickStatus={trickStatus}
+              inRemovalStage={!!numberOfExtraCards}
+              onPlay={playCard}
+            />
+          ))
+        ) : (
+          <div className="card" style={{ visibility: 'hidden' }} />
+        )}
       </div>
     </>
   );

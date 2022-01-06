@@ -116,7 +116,6 @@ label {
 }
 
 .players-card {
-  padding-bottom: 0.5rem;
   margin-right: 0.5rem;
   cursor: pointer;
 }
@@ -173,6 +172,7 @@ label {
   position: relative;
   font-size: 1.5rem;
   line-height: 1.5rem;
+  font-weight: 700;
 }
 
 .empty-card {
@@ -266,6 +266,7 @@ tr.odd-gametype {
   cursor: pointer;
 }
 
+.results-container,
 .instructions-container {
   display: flex;
   flex-direction: column;
@@ -432,4 +433,9 @@ tr.odd-gametype {
   to {
     visibility: visible;
   }
+}
+
+.final-player-positions > li {
+  list-style: none;
+  font-size: 1.4rem;
 }
