@@ -30,7 +30,7 @@ import {
   emptyTrickResponse,
   emptyStatue,
 } from '../domain/default-objects';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const Game = () => {
   const game = React.useContext(GameContext);
@@ -47,7 +47,10 @@ export const Game = () => {
   const socket = SocketFactory.getSocket(game.gameId);
 
   const isHandStarted = (): boolean => {
-    return trickResponse.cards.some((tc) => !!tc.card);
+    return (
+      trickResponse.cards.some((tc) => !!tc.card) ||
+      !!trickTakers.filter((tc) => tc.score > 0).length
+    );
   };
 
   const isHandReady = (
@@ -106,9 +109,9 @@ export const Game = () => {
   };
 
   React.useEffect(() => {
+    updateTrickTakers();
     updateTableCards();
     updateHand();
-    updateTrickTakers();
     updateTotalScores();
     updateStatute();
 
