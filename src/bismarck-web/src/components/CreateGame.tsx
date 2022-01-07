@@ -129,7 +129,7 @@ export const CreateGame = () => {
                       className="email"
                       value={players[idx].email}
                       onChange={handleEmailChange}
-                      placeholder="Pelajaan sähköpostiosoite"
+                      placeholder="Pelajan sähköpostiosoite"
                       required
                     />
                   </fieldset>

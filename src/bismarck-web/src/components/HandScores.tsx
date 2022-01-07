@@ -36,7 +36,7 @@ export const HandScores = ({
       style={{
         display: isVisible() ? 'block' : 'none',
       }}
-      className="final-scores-container"
+      className="hand-scores-container"
     >
       <h1>Jaon tulokset</h1>
       {handScores(scores.trickScores).map(
