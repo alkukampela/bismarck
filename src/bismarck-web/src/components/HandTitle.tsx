@@ -35,7 +35,7 @@ export const HandTitle = ({
       case GameType.TRUMP:
         return trumpGameTypeName(handStatute.handType.gameType?.trumpSuit);
     }
-    return 'Valinta';
+    return handStatute.handType.isChoice ? 'Valinta' : '';
   };
 
   const trickCounter = (): string => {

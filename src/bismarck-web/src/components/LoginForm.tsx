@@ -44,7 +44,7 @@ export const LoginForm = () => {
         />
         <input
           type="submit"
-          value="Siirry pelaamaan"
+          value="Pelaamaan"
           disabled={submitDisabled}
         />
       </form>
