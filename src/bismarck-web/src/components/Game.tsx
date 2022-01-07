@@ -145,7 +145,7 @@ export const Game = () => {
       <PanicButton />
       <HandTitle
         handStatute={statute}
-        trickNumber={trickResponse.trickNumber}
+        trickResponse={trickResponse}
       />
       <TableCards cards={tableCards} show={!isHandStarted()} />
       <GameTypeChooser handStatute={statute} player={game.player} />

@@ -1,14 +1,15 @@
 import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
+import { TrickResponse, TrickStatus } from '../../../types/trick-response';
 import { Suit } from '../../../types/suit';
 import * as React from 'react';
 
 export const HandTitle = ({
   handStatute,
-  trickNumber,
+  trickResponse,
 }: {
   handStatute: HandStatute;
-  trickNumber?: number;
+  trickResponse: TrickResponse;
 }) => {
   const trumpGameTypeName = (trumpSuit: Suit | undefined) => {
     switch (trumpSuit) {
@@ -34,12 +35,12 @@ export const HandTitle = ({
       case GameType.TRUMP:
         return trumpGameTypeName(handStatute.handType.gameType?.trumpSuit);
     }
-    return '';
+    return 'Valinta';
   };
 
   const trickCounter = (): string => {
-    if (typeof trickNumber === 'number') {
-      return `${trickNumber + 1}/${handStatute.tricksInHand}`;
+    if (trickResponse.trickStatus != TrickStatus.HAND_NOT_STARTED && !!trickResponse.trickNumber) {
+      return `${trickResponse.trickNumber + 1}/${handStatute.tricksInHand}`;
     }
     return '';
   };
