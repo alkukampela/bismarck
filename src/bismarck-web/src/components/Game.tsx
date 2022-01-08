@@ -143,10 +143,7 @@ export const Game = () => {
   return (
     <>
       <PanicButton />
-      <HandTitle
-        handStatute={statute}
-        trickResponse={trickResponse}
-      />
+      <HandTitle handStatute={statute} trickResponse={trickResponse} />
       <TableCards cards={tableCards} show={!isHandStarted()} />
       <GameTypeChooser handStatute={statute} player={game.player} />
       <Trick trickResponse={trickResponse} show={isHandStarted()} />

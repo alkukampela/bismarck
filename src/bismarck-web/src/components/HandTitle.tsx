@@ -39,7 +39,10 @@ export const HandTitle = ({
   };
 
   const trickCounter = (): string => {
-    if (trickResponse.trickStatus != TrickStatus.HAND_NOT_STARTED && !!trickResponse.trickNumber) {
+    if (
+      trickResponse.trickStatus != TrickStatus.HAND_NOT_STARTED &&
+      !!trickResponse.trickNumber
+    ) {
       return `${trickResponse.trickNumber + 1}/${handStatute.tricksInHand}`;
     }
     return '';

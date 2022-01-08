@@ -120,6 +120,10 @@ legend {
   cursor: pointer;
 }
 
+.selected-for-removal {
+  filter: brightness(70%);
+}
+
 .choice-buttons {
   columns: 6;
   display: flex;
