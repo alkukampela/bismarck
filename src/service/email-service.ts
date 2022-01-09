@@ -13,7 +13,7 @@ const htmlMailMessage = (
 
   Kirjautumiskoodisi on <b>${loginId}</b><br/><br/>
 
-  Pelin löydät osoitteesta bismarck piste monster.</br>
+  Pelin l&ouml;yd&auml;t osoitteesta <b>bismarck piste monster</b>.</br>
 
   <b>Onnea peliin!</b>`;
 };
