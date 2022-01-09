@@ -18,7 +18,7 @@
 }
 
 #root {
-  margin: 2rem;
+  margin: 0.5rem;
 }
 
 body {
@@ -112,7 +112,6 @@ legend {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
-  margin-bottom: 0.5rem;
 }
 
 .players-card {
@@ -155,6 +154,7 @@ legend {
   flex-direction: column;
   width: 4rem;
   height: 5.6rem;
+  margin-bottom: 0.5rem;
   background-color: var(--whitelike);
   border-radius: 0.4rem;
   border: 1px solid transparent;
@@ -320,7 +320,6 @@ tr.odd-gametype {
 }
 
 .main-title-card {
-  padding-bottom: 0.5rem;
   margin-right: 0.5rem;
 }
 
@@ -342,7 +341,7 @@ tr.odd-gametype {
   height: 3.5rem;
   outline: none;
   text-align: center;
-  width: 3rem;
+  width: 2.5rem;
 }
 
 .login-id-field:focus {
