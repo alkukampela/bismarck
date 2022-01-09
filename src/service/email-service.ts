@@ -11,11 +11,11 @@ const htmlMailMessage = (
   Sy&ouml;t&auml; alla oleva koodi pelin etusivulle, niin p&auml;&auml;set nauttimaan
   j&auml;nnitt&auml;vist&auml; hetkist&auml; hienon korttipelin parissa.<br/>
 
-  Kirjautumiskoodisi on <b>${loginId}</b><br/><br/>
+  Kirjautumiskoodisi on <b>${loginId}</b><br/>
 
-  Pelin l&ouml;yd&auml;t osoitteesta <b>bismarck piste monster</b>.</br>
+  Pelin l&ouml;yd&auml;t osoitteesta <b>bismarck piste monster</b>.<br/>
 
-  <b>Onnea peliin!</b>`;
+  <i>Onnea peliin!</i>`;
 };
 
 const textMailMessage = (

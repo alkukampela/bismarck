@@ -317,6 +317,7 @@ tr.odd-gametype {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 .main-title-card {
