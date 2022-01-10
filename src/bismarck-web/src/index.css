@@ -168,7 +168,7 @@ legend {
 .card > .suit {
   position: relative;
   top: -0.5rem;
-  font-size: 2.2rem;
+  font-size: 2rem;
   line-height: 2.6rem;
 }
 
@@ -176,7 +176,7 @@ legend {
   position: relative;
   font-size: 1.85rem;
   line-height: 1.5rem;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .empty-card {
