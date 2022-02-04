@@ -4,6 +4,8 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const CreateGame = () => {
+  const [isSent, setSent] = React.useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const MIN_PLAYERS = 3;
@@ -49,6 +51,7 @@ export const CreateGame = () => {
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
+    setSent(true);
 
     const registerPlayers: RegisterPlayer[] = players.map((input) => {
       return {
@@ -58,7 +61,9 @@ export const CreateGame = () => {
     });
 
     createGame({ players: registerPlayers }).then(() => {
-      navigate('/');
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     });
   };
 
@@ -103,7 +108,11 @@ export const CreateGame = () => {
           <div className="create-form-container">
             <h2>Syötä pelaajien tiedot</h2>
 
-            <form onSubmit={handleSubmit} className="create-form">
+            <form
+              onSubmit={handleSubmit}
+              className="create-form"
+              id="create-game-form"
+            >
               {players.map((_val, idx) => {
                 const nameId = `name-${idx}`;
                 const emailId = `email-${idx}`;
@@ -135,7 +144,15 @@ export const CreateGame = () => {
                   </fieldset>
                 );
               })}
-              <input type="submit" value="Lähetä" />
+              <button
+                className={isSent ? 'spinner' : ''}
+                disabled={isSent}
+                form="create-game-form"
+              >
+                <span style={{ visibility: isSent ? 'hidden' : 'visible' }}>
+                  Lähetä
+                </span>
+              </button>
             </form>
           </div>
         </div>
