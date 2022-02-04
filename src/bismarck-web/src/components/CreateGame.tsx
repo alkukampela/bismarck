@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 export const CreateGame = () => {
   const [isSent, setSent] = React.useState<boolean>(false);
+  const [containsDuplicates, setContainsDuplicates] =
+    React.useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -29,6 +31,11 @@ export const CreateGame = () => {
     }
   };
 
+  const areThereDuplicateNames = (players: RegisterPlayer[]): boolean => {
+    const uniqueNames = new Set(players.map((x) => x.player.name)).size;
+    return uniqueNames != players.length;
+  };
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const playerIndex = Number(event.target.dataset.idx);
     const updatedPlayers = [...players];
@@ -47,6 +54,7 @@ export const CreateGame = () => {
       player: { name: event.target.value },
     };
     setPlayers(updatedPlayers);
+    setContainsDuplicates(areThereDuplicateNames(updatedPlayers));
   };
 
   const handleSubmit = (event: React.SyntheticEvent) => {
@@ -146,7 +154,7 @@ export const CreateGame = () => {
               })}
               <button
                 className={isSent ? 'spinner' : ''}
-                disabled={isSent}
+                disabled={isSent || containsDuplicates}
                 form="create-game-form"
               >
                 <span style={{ visibility: isSent ? 'hidden' : 'visible' }}>
