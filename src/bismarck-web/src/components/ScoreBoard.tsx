@@ -1,5 +1,5 @@
 import { OnGoingGameScore } from './OnGoingGameScore';
-import { StatuteSummary } from './Statute';
+import { StatuteSummary } from './StatuteSummary';
 import { TrickTakers } from './TrickTakers';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';

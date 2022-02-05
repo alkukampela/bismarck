@@ -71,7 +71,7 @@ export const CreateGame = () => {
     createGame({ players: registerPlayers }).then(() => {
       setTimeout(() => {
         navigate('/');
-      }, 1500);
+      }, 1000);
     });
   };
 
