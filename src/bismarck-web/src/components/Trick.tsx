@@ -11,7 +11,7 @@ export const Trick = ({
   trickResponse: TrickResponse;
   show: boolean;
 }) => {
-  const getStyle = (show: boolean, numberOfCards: number): CSS.Properties => {
+  const getStyle = (numberOfCards: number): CSS.Properties => {
     return {
       display: show ? 'block' : 'none',
       columnCount: numberOfCards,
@@ -26,7 +26,7 @@ export const Trick = ({
   };
 
   return (
-    <div className="trick" style={getStyle(show, trickResponse.cards.length)}>
+    <div className="trick" style={getStyle(trickResponse.cards.length)}>
       {trickResponse.cards.map((playerCard: TC, index: number) => (
         <TrickCard
           trickCard={playerCard}

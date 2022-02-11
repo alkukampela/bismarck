@@ -31,9 +31,9 @@ export const CreateGame = () => {
     }
   };
 
-  const areThereDuplicateNames = (players: RegisterPlayer[]): boolean => {
+  const areThereDuplicateNames = (): boolean => {
     const uniqueNames = new Set(players.map((x) => x.player.name)).size;
-    return uniqueNames != players.length;
+    return uniqueNames !== players.length;
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +54,7 @@ export const CreateGame = () => {
       player: { name: event.target.value },
     };
     setPlayers(updatedPlayers);
-    setContainsDuplicates(areThereDuplicateNames(updatedPlayers));
+    setContainsDuplicates(areThereDuplicateNames());
   };
 
   const handleSubmit = (event: React.SyntheticEvent) => {
