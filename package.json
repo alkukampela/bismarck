@@ -70,7 +70,7 @@
     "bidirectional-map": "^1.1.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "fisher-yates": "^1.0.3",
     "helmet": "^4.6.0",
     "http-status-codes": "^2.2.0",
