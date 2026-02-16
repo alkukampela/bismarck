@@ -132,7 +132,7 @@ export const CreateGame = () => {
                       name={nameId}
                       data-idx={idx}
                       id={nameId}
-                      className="name"
+                      className="name full-width-input"
                       value={players[idx].player.name}
                       onChange={handleNameChange}
                       placeholder="Pelaajan nimi"
@@ -143,7 +143,7 @@ export const CreateGame = () => {
                       name={emailId}
                       data-idx={idx}
                       id={emailId}
-                      className="email"
+                      className="email full-width-input"
                       value={players[idx].email}
                       onChange={handleEmailChange}
                       placeholder="Pelajan sähköpostiosoite"

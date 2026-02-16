@@ -75,8 +75,8 @@ input[type='button']:disabled {
   cursor: not-allowed;
 }
 
-input[type='text'],
-input[type='email'] {
+input.full-width-input,
+input[type='email'].full-width-input {
   width: 100%;
   padding: 0.5rem;
   font-size: 1rem;
@@ -348,29 +348,45 @@ tr.odd-gametype {
 
 .login-form-container {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
   flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
   padding-top: 3rem;
+  text-align: left;
 }
 
 .login-id-field {
   background-color: var(--whitelike);
   border: 1px solid var(--shadow-color);
   border-radius: 0.4rem;
-  font-size: 2rem;
-  margin-right: 0.75rem;
-  margin-bottom: 0.75rem;
-  height: 3.5rem;
+  font-size: 1.75rem;
+  margin: 0.25rem;
+  height: 4.5rem;
   outline: none;
   text-align: center;
-  width: 2.5rem;
+  width: 3rem;
 }
 
 .login-id-field:focus {
   border-color: var(--superdark);
   outline: none;
   transform: scale(1.1);
+}
+
+.login-form-container form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.login-form-container form > input[type="submit"] {
+  flex: 0 0 100%;
+  order: 1;
+  align-self: center;
+  margin-top: 0.5rem;
+  width: auto;
+  max-width: 12rem;
 }
 
 .tabbed-area {

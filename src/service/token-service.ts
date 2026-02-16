@@ -2,7 +2,20 @@ import { ErrorTypes } from '../domain/error-types';
 import { fetchPlayerWithLoginId } from '../persistence/storage-service';
 import { TokenResponse } from '../types/token-response';
 import { sign } from 'jsonwebtoken';
-import { randomInt } from 'crypto';
+import { randomInt, randomBytes } from 'crypto';
+
+// `crypto.randomInt` was added in Node 14.10.0. some environments (e.g. older
+// Docker images) may not expose it, leading to the "is not a function" error
+// seen in production.  Provide a simple fallback so the service still works
+// when the native helper is missing.
+const secureRandomInt = (max: number): number => {
+  if (typeof randomInt === 'function') {
+    return randomInt(max);
+  }
+  // fall back to a pseudo‑random value based on randomBytes
+  const buf = randomBytes(4);
+  return buf.readUInt32BE(0) % max;
+};
 
 export const tokenForLoginId = async (
   loginId: string
@@ -63,7 +76,8 @@ export const generateLoginId = (loginIdLength: number): string => {
   ];
 
   const randonmChar = () => {
-    return idChars[randomInt(idChars.length)];
+    // use secureRandomInt instead of crypto.randomInt directly
+    return idChars[secureRandomInt(idChars.length)];
   };
 
   return [...Array(loginIdLength).keys()].reduce(
