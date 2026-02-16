@@ -1,8 +1,8 @@
 import { TrickCard } from './TrickCard';
 import { TrickCard as TC } from '../../../types/trick-card';
 import { TrickResponse } from '../../../types/trick-response';
-import * as CSS from 'csstype';
 import * as React from 'react';
+import { CSSProperties } from 'react';
 
 export const Trick = ({
   trickResponse,
@@ -11,7 +11,7 @@ export const Trick = ({
   trickResponse: TrickResponse;
   show: boolean;
 }) => {
-  const getStyle = (numberOfCards: number): CSS.Properties => {
+  const getStyle = (numberOfCards: number): CSSProperties => {
     return {
       display: show ? 'block' : 'none',
       columnCount: numberOfCards,
