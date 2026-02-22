@@ -14,7 +14,7 @@ export const ScoreBoard = ({
   statute: HandStatute;
   trickTakers: PlayerScore[];
   scores: GameScoreBoard;
-}) => {
+}): React.ReactElement => {
   return (
     <div className="score-board">
       <StatuteSummary statute={statute} />

@@ -218,7 +218,7 @@ export const chooseGameType = async (
     return Promise.reject(new Error(ErrorTypes.MUST_BE_ELDEST_HAND));
   }
 
-  if (!!statute.handType.gameType) {
+  if (statute.handType.gameType) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_CHOSEN));
   }
 

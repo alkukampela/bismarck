@@ -8,7 +8,7 @@ export const TableCards = ({
 }: {
   cards: CardType[];
   show: boolean;
-}) => {
+}): React.ReactElement => {
   return (
     <div style={{ display: show ? 'block' : 'none' }}>
       <h2>Pöytäkortit</h2>

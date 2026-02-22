@@ -52,27 +52,27 @@ export const importGameDump = async (
     return Promise.reject(Error(ErrorTypes.FORBIDDEN));
   }
 
-  if (!!gameDump.game) {
+  if (gameDump.game) {
     storeGame(gameDump.game, gameId);
   }
 
-  if (!!gameDump.cards) {
+  if (gameDump.cards) {
     storeCards(gameDump.cards, gameId);
   }
 
-  if (!!gameDump.playerScores) {
+  if (gameDump.playerScores) {
     storeScores(gameDump.playerScores, gameId);
   }
 
-  if (!!gameDump.handStatute) {
+  if (gameDump.handStatute) {
     storeHandStatute(gameDump.handStatute, gameId);
   }
 
-  if (!!gameDump.trick) {
+  if (gameDump.trick) {
     storeTrick(gameDump.trick, gameId);
   }
 
-  if (!!gameDump.trickScores) {
+  if (gameDump.trickScores) {
     storeTrickScores(gameDump.trickScores, gameId);
   }
 

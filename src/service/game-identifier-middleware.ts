@@ -11,7 +11,7 @@ export const gameIdExtractor = (
 ): void => {
   req.gameId = sanitizeId(req.params.id);
 
-  if (!!req.gameId) {
+  if (req.gameId) {
     next();
     return;
   }

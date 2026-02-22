@@ -1,7 +1,7 @@
 import { Card as CardType } from '../../../types/card';
 import * as React from 'react';
 
-export const Card = ({ card }: { card: CardType }) => {
+export const Card = ({ card }: { card: CardType }): React.ReactElement => {
   const getCardClass = (suit: string) => {
     return `card ${['♦️', '♥️'].includes(suit) ? 'red-card' : 'black-card'}`;
   };

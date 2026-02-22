@@ -9,7 +9,7 @@ export const ChoiceButton = ({
 }: {
   text: string;
   gameTypeChoice: GameTypeChoice;
-}) => {
+}): React.ReactElement => {
   const game = React.useContext(GameContext);
 
   const chooseGameType = () => {

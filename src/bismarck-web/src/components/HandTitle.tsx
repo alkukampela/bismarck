@@ -10,7 +10,7 @@ export const HandTitle = ({
 }: {
   handStatute: HandStatute;
   trickResponse: TrickResponse;
-}) => {
+}): React.ReactElement => {
   const trumpGameTypeName = (trumpSuit: Suit | undefined) => {
     switch (trumpSuit) {
       case Suit.DIAMOND:

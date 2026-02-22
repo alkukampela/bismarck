@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import PinField  from 'react-pin-field';
+import PinField from 'react-pin-field';
 
-export const LoginForm = () => {
+export const LoginForm = (): React.ReactElement => {
   const [submitDisabled, setSubmitDisabled] = React.useState(true);
   const [loginId, setLoginId] = React.useState('');
   const navigate = useNavigate();

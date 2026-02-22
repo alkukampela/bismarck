@@ -67,7 +67,7 @@ const playerWithTopRankedCardBySuit = (
     .filter((pc) => !!pc.card)
     .filter((pc) => getSuit(pc.card) === suit)
     .sort((a, b) => getRank(b.card) - getRank(a.card))[0];
-  if (!!playersCard) {
+  if (playersCard) {
     return playersCard.player;
   }
 };

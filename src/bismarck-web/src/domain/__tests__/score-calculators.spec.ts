@@ -22,7 +22,12 @@ const positionForPlayer = (
   return scores.filter((x) => x.player === player.name)[0].position;
 };
 
-const createInput = (scores: any): TrickScore[] => {
+interface PlayerScore {
+  player: Player;
+  totalPoints: number;
+}
+
+const createInput = (scores: PlayerScore[]): TrickScore[] => {
   return [
     {
       gameType: GameType.MISERE,
@@ -185,7 +190,7 @@ test('Ensure no positions without scores', () => {
 
   const actual = calculateFinalResults(input);
 
-  expect(actual).toBeEmpty;
+  expect(actual).toEqual([]);
 });
 
 test('Ensure correct hand points for first hand', () => {

@@ -6,6 +6,7 @@ import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
 import { TokenResponse } from '../../../types/token-response';
 import { CreateGameResponse } from '../../../types/create-game-response';
+import { RegisterPlayer } from '../../../types/register-player';
 
 const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
 
@@ -27,7 +28,7 @@ const performGet = async <T>(
   authHeader?: HeaderValue
 ): Promise<T> => {
   const headers = new Headers();
-  if (!!authHeader) {
+  if (authHeader) {
     headers.set(authHeader.key, authHeader.value);
   }
 
@@ -45,7 +46,7 @@ const performPost = async <T>(
 ): Promise<Response> => {
   const headers = new Headers();
   headers.set('Content-Type', 'application/json');
-  if (!!authHeader) {
+  if (authHeader) {
     headers.set(authHeader.key, authHeader.value);
   }
 
@@ -157,7 +158,9 @@ export const postChoice = (
     createAuthHeader(authToken)
   );
 
-export const createGame = async (players: any): Promise<CreateGameResponse> => {
+export const createGame = async (players: {
+  players: RegisterPlayer[];
+}): Promise<CreateGameResponse> => {
   const createdGame = await performPost('games', players);
   return ((await createdGame.json()) as CreateGameResponse) || Promise.reject;
 };

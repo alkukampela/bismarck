@@ -5,7 +5,7 @@ import { extractGameId } from '../services/game-id-extractor';
 import { GameContextProvider as Provider } from '../GameContext';
 import * as React from 'react';
 
-export const GameContainer = () => {
+export const GameContainer = (): React.ReactElement => {
   const gameId = extractGameId(document);
   const player = sessionStorage.getItem(`player_${gameId}`) || '';
   const token = sessionStorage.getItem(`token_${gameId}`) || '';

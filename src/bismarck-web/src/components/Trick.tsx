@@ -10,7 +10,7 @@ export const Trick = ({
 }: {
   trickResponse: TrickResponse;
   show: boolean;
-}) => {
+}): React.ReactElement => {
   const getStyle = (numberOfCards: number): CSSProperties => {
     return {
       display: show ? 'block' : 'none',

@@ -12,7 +12,7 @@ export const HandScores = ({
 }: {
   scores: GameScoreBoard;
   isHandReady: boolean;
-}) => {
+}): React.ReactElement => {
   const game = React.useContext(GameContext);
 
   const moveToNextHand = () => {

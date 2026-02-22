@@ -1,23 +1,31 @@
 module.exports = {
+  root: true,
   env: {
     browser: true,
-    es6: true,
-    node: true,
+    es2020: true,
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.json',
+    ecmaVersion: 2020,
     sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  plugins: ['@typescript-eslint', '@typescript-eslint/tslint'],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   rules: {
-    'react/jsx-uses-vars': 1,
-    'no-unused-vars': 1,
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'react/react-in-jsx-scope': 'off', // not needed in React 17+
   },
 };

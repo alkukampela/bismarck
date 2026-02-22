@@ -42,7 +42,7 @@ export const Game = () => {
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
   const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
 
-  const socket = SocketFactory.getSocket(game.gameId);
+  const socketRef = React.useRef(SocketFactory.getSocket(game.gameId));
 
   const isHandStarted = (): boolean => {
     return (
@@ -76,7 +76,7 @@ export const Game = () => {
   };
 
   const updateHand = () => {
-    if (!!game.token) {
+    if (game.token) {
       fetchPlayersHand(game.token, game.gameId, emptyHand).then((hand) => {
         setPlayersHand(hand);
       });
@@ -113,6 +113,7 @@ export const Game = () => {
     updateTotalScores();
     updateStatute();
 
+    const socket = socketRef.current;
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickResponse;
       setTrickResponse(trick);
@@ -138,7 +139,9 @@ export const Game = () => {
     };
   }, []);
 
-  React.useEffect(() => () => socket.close(), [socket]);
+  React.useEffect(() => () => {
+    socketRef.current.close();
+  }, []);
 
   return (
     <>

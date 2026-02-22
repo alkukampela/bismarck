@@ -18,7 +18,7 @@ export const playerExtractor = (
       token,
       process.env.JWT_SECRET,
       (err: VerifyErrors, gamePlayer: GamePlayer) => {
-        if (!!err) {
+        if (err) {
           res.sendStatus(StatusCodes.FORBIDDEN);
           return;
         }

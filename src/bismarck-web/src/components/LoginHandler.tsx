@@ -21,7 +21,7 @@ export const LoginHandler: React.FunctionComponent = () => {
     }
 
     getTokenResponse(loginId).then((tokenResponse) => {
-      if (!!tokenResponse.gameId) {
+      if (tokenResponse.gameId) {
         sessionStorage.setItem(
           `token_${tokenResponse.gameId}`,
           tokenResponse.token

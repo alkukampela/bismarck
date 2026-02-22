@@ -20,7 +20,7 @@ export class SocketFactory {
 
     const API_URL = process.env.REACT_APP_API_URL;
 
-    const wsUrl = !!API_URL
+    const wsUrl = API_URL
       ? wsUrlFromHttpUrl(API_URL)
       : wsUrlFromLocation(window.location);
 

@@ -32,7 +32,7 @@ export const trickScoresToCumulativeScores = (
         (score: { name: string }) => score.name === currentValue.name
       );
 
-      if (!!playersPoints) {
+      if (playersPoints) {
         playersPoints.points.push(currentValue.totalPoints);
       } else {
         {

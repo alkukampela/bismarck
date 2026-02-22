@@ -13,7 +13,7 @@ export const PlayersCards = ({
 }: {
   hand: PlayersHand;
   trickStatus: TrickStatus;
-}) => {
+}): React.ReactElement => {
   const game = React.useContext(GameContext);
 
   const [numberOfExtraCards, setNumberOfExtraCards] = React.useState<number>(0);
@@ -60,7 +60,7 @@ export const PlayersCards = ({
     <>
       <ExtraCardDisplay amount={numberOfExtraCards} />
       <div className="players-cards">
-        {!!cards.length ? (
+        {cards.length ? (
           cards.map((card: CardType, index: number) => (
             <PlayersCard
               card={card}
@@ -80,7 +80,7 @@ export const PlayersCards = ({
         type="button"
         onClick={removeCards}
         disabled={cardsToBeRemoved.length !== numberOfExtraCards}
-        style={{ display: !!numberOfExtraCards ? 'block' : 'none' }}
+        style={{ display: numberOfExtraCards ? 'block' : 'none' }}
       >
         Poista
       </button>

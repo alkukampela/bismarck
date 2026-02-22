@@ -6,7 +6,7 @@ import { Results } from './Results';
 import * as React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-export const App = () => {
+export const App = (): React.ReactElement => {
   return (
     <BrowserRouter>
       <Routes>
