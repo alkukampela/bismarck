@@ -58,7 +58,7 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.4.1",
     "jest": "^29.7.0",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.22",
     "prettier": "^2.5.1",
     "ts-jest": "^29.4.6",
     "ts-node": "^9.1.1",
