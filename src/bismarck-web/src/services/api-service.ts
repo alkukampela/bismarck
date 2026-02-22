@@ -8,7 +8,7 @@ import { TokenResponse } from '../../../types/token-response';
 import { CreateGameResponse } from '../../../types/create-game-response';
 import { RegisterPlayer } from '../../../types/register-player';
 
-const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
+const baseUrl = `${import.meta.env.VITE_API_URL}/api`;
 
 interface HeaderValue {
   key: string;
