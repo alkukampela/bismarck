@@ -18,7 +18,7 @@ export class SocketFactory {
       return buildWsUrl(url.host, url.protocol);
     };
 
-    const API_URL = process.env.REACT_APP_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const wsUrl = API_URL
       ? wsUrlFromHttpUrl(API_URL)

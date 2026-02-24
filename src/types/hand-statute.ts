@@ -1,6 +1,10 @@
 import { GameType } from './game-type';
-import { Suit } from './suit';
+import { SuitEnum } from './suit';
 import { Player } from './player';
+
+export type FullGameType =
+  | { value: GameType.TRUMP; trumpSuit: SuitEnum }
+  | { value: Exclude<GameType, GameType.TRUMP>; trumpSuit?: undefined };
 
 export interface HandStatute {
   handType: HandType;
@@ -12,8 +16,5 @@ export interface HandStatute {
 
 export interface HandType {
   isChoice: boolean;
-  gameType?: {
-    value: GameType;
-    trumpSuit?: Suit;
-  };
+  gameType?: FullGameType;
 }

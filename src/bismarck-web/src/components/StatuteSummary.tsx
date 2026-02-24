@@ -1,6 +1,6 @@
 import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
-import { Suit } from '../../../types/suit';
+import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
 
 export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
@@ -17,15 +17,15 @@ export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
     }
   };
 
-  const trumpSuitName = (trumpSuit: Suit): string => {
+  const trumpSuitName = (trumpSuit: SuitEnum): string => {
     switch (trumpSuit) {
-      case Suit.DIAMOND:
+      case SuitEnum.DIAMOND:
         return 'ruutu';
-      case Suit.CLUB:
+      case SuitEnum.CLUB:
         return 'risti';
-      case Suit.HEART:
+      case SuitEnum.HEART:
         return 'hertta';
-      case Suit.SPADE:
+      case SuitEnum.SPADE:
         return 'pata';
       default:
         return '';

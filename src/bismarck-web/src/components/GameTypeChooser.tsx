@@ -1,6 +1,6 @@
 import { ChoiceButton } from './ChoiceButton';
 import { GameType } from '../../../types/game-type';
-import { Suit } from '../../../types/suit';
+import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
 import { HandStatute } from '../../../types/hand-statute';
 
@@ -31,19 +31,19 @@ export const GameTypeChooser = ({
       <div className="choice-buttons">
         <ChoiceButton
           text="Ruutuvaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: Suit.DIAMOND }}
+          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.DIAMOND }}
         />
         <ChoiceButton
           text="Ristivaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: Suit.CLUB }}
+          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.CLUB }}
         />
         <ChoiceButton
           text="Herttavaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: Suit.HEART }}
+          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.HEART }}
         />
         <ChoiceButton
           text="Patavaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: Suit.SPADE }}
+          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.SPADE }}
         />
         <ChoiceButton
           text="Grandi"

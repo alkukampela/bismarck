@@ -3,7 +3,7 @@ import { createGame } from '../services/api-service';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const CreateGame = (): React.ReactElement => {
+export const CreateGame = (): JSX.Element => {
   const [isSent, setSent] = React.useState<boolean>(false);
   const [containsDuplicates, setContainsDuplicates] =
     React.useState<boolean>(false);

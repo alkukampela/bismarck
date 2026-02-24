@@ -1,1 +1,6 @@
-/dist
+node_modules/
+dist/
+build/
+src/bismarck-web/dist/
+src/bismarck-server/dist/
+coverage/

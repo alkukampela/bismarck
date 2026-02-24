@@ -1,12 +1,16 @@
 import { Card } from './Card';
-import { Card as CardType } from '../../../types/card';
+import { Card as CardType, Rank, Suit } from '../../../types/card';
 import * as React from 'react';
 
 export const GameTitle = (): React.ReactElement => {
   const wordToCards = (word: string): CardType[] => {
-    const suits: string[] = ['♦️', '♣️', '♥️', '♠️'];
+    const suits: Suit[] = ["♥️", "♣️", "♦️", "♠️"];
     return [...word].map((letter, index) => {
-      return { rank: letter.toUpperCase(), suit: suits[index % suits.length] };
+      return {
+        // Faking type is fine here becacuse it will
+        // used purely for display purposes.
+        rank: letter.toUpperCase() as Rank,
+        suit: suits[index % suits.length] };
     });
   };
 

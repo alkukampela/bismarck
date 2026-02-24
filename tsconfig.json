@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
+    "target": "esnext",
     "module": "esnext",
+    "strict": true,
     "esModuleInterop": true,
-    "target": "es6",
     "moduleResolution": "node",
-    "outDir": "dist",
     "sourceMap": true,
     "composite": true,
     "declaration": true,
-    "rootDir": "src"
-  },
-  "lib": ["es2015"],
-  "exclude": ["node_modules", ".vscode", "src/bismarck-web", "dist"]
+    "lib": ["dom", "es2015"]
+  }
 }

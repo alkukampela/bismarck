@@ -1,7 +1,7 @@
 import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
 import { TrickResponse, TrickStatus } from '../../../types/trick-response';
-import { Suit } from '../../../types/suit';
+import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
 
 export const HandTitle = ({
@@ -11,15 +11,15 @@ export const HandTitle = ({
   handStatute: HandStatute;
   trickResponse: TrickResponse;
 }): React.ReactElement => {
-  const trumpGameTypeName = (trumpSuit: Suit | undefined) => {
+  const trumpGameTypeName = (trumpSuit: SuitEnum | undefined) => {
     switch (trumpSuit) {
-      case Suit.DIAMOND:
+      case SuitEnum.DIAMOND:
         return 'Ruutuvaltti';
-      case Suit.CLUB:
+      case SuitEnum.CLUB:
         return 'Ristivaltti';
-      case Suit.HEART:
+      case SuitEnum.HEART:
         return 'Herttavaltti';
-      case Suit.SPADE:
+      case SuitEnum.SPADE:
         return 'Patavaltti';
       default:
         return 'Valtti';

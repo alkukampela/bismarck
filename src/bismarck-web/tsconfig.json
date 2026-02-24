@@ -1,17 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "strict": true,
-    "jsx": "react",
-    "rootDir": "./src",
-    "incremental": false,
-    "experimentalDecorators": true,
-    "lib": ["dom", "es2015"]
+    "jsx": "react-jsx",
+    "rootDir": "../",
   },
-  "references": [
-    {
-      "path": "../../tsconfig.json"
-    }
-  ]
+  "include": ["src", "../types/*.ts", "vite-env.d.ts"]
 }
