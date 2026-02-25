@@ -1,6 +1,6 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ErrorTypes } from '../domain/error-types';
+import { ErrorTypes } from '../types/error-types';
 import { GamePlayerRequest } from './game-player-request';
 import { GameRequest } from './game-request';
 

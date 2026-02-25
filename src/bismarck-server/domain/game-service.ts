@@ -1,24 +1,11 @@
-import { ErrorTypes } from './error-types';
+import { ErrorTypes } from '../types/error-types';
 import { getStatute, isCurrentHandFinished, setUpHand } from './hand-service';
-import { Game } from '../../types/game';
 import { HandStatute } from '../../types/hand-statute';
 import {
   fetchGame as fetchGameFromStore,
   storeGame,
   clearTrick,
 } from '../persistence/storage-service';
-
-export const nextHand = (game: Game, gameId: string): void => {
-  const updatedGame = {
-    ...game,
-    handNumber: game.handNumber + 1,
-  };
-  storeGame(updatedGame, gameId);
-};
-
-export const fetchGame = async (gameId: string): Promise<Game> => {
-  return fetchGameFromStore(gameId);
-};
 
 export const initHand = async (gameId: string): Promise<HandStatute> => {
   const isHandFinished = await isCurrentHandFinished(gameId);
@@ -27,7 +14,7 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
     return Promise.reject(new Error(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
   }
 
-  const game = await fetchGame(gameId);
+  const game = await fetchGameFromStore(gameId);
 
   if (!game) {
     return Promise.reject(new Error(ErrorTypes.GAME_NOT_FOUND));

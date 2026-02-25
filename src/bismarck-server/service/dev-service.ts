@@ -1,4 +1,4 @@
-import { ErrorTypes } from '../domain/error-types';
+import { ErrorTypes } from '../types/error-types';
 import {
   fetchCards,
   fetchGame,

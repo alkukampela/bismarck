@@ -1,5 +1,5 @@
 import { getSuit } from './card-mapper';
-import { ErrorTypes } from './error-types';
+import { ErrorTypes } from '../types/error-types';
 import { saveTrickPoints } from './game-score-manager';
 import { getHandsPoints, updatedTrickScore } from './hand-score';
 import {

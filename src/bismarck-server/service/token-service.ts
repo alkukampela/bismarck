@@ -1,4 +1,4 @@
-import { ErrorTypes } from '../domain/error-types';
+import { ErrorTypes } from '../types/error-types';
 import { fetchPlayerWithLoginId } from '../persistence/storage-service';
 import { TokenResponse } from '../../types/token-response';
 import jwt from 'jsonwebtoken';
