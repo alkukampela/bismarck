@@ -47,7 +47,8 @@
     "prettier": "^2.5.1",
     "ts-jest": "^29.4.6",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.68.1"
   },
   "dependencies": {
     "bidirectional-map": "^1.1.1",
