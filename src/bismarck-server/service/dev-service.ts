@@ -1,15 +1,13 @@
 import { ErrorTypes } from '../types/error-types';
 import {
   fetchCards,
-  fetchGame,
+  fetchGameState,
   fetchGamesLogins,
-  fetchHandStatute,
   fetchScores,
   fetchTrick,
   fetchTrickScores,
   storeCards,
-  storeGame,
-  storeHandStatute,
+  storeGameState,
   storeLoginIdForPlayer,
   storeScores,
   storeTrick,
@@ -22,19 +20,17 @@ export const getGameDump = async (gameId: string): Promise<GameDump> => {
     return Promise.reject(Error(ErrorTypes.FORBIDDEN));
   }
 
-  const game = await fetchGame(gameId);
+  const gameState = await fetchGameState(gameId);
   const cards = await fetchCards(gameId);
   const playerScores = await fetchScores(gameId);
-  const handStatute = await fetchHandStatute(gameId);
   const trick = await fetchTrick(gameId);
   const trickScores = await fetchTrickScores(gameId);
   const gameLogins = await fetchGamesLogins(gameId);
 
   return {
-    game,
+    gameState,
     cards,
     playerScores,
-    handStatute,
     trick,
     trickScores,
     gameLogins: Array.from(gameLogins, ([loginId, gamePlayer]) => ({
@@ -52,8 +48,8 @@ export const importGameDump = async (
     return Promise.reject(Error(ErrorTypes.FORBIDDEN));
   }
 
-  if (gameDump.game) {
-    storeGame(gameDump.game, gameId);
+  if (gameDump.gameState) {
+    storeGameState(gameDump.gameState, gameId);
   }
 
   if (gameDump.cards) {
@@ -62,10 +58,6 @@ export const importGameDump = async (
 
   if (gameDump.playerScores) {
     storeScores(gameDump.playerScores, gameId);
-  }
-
-  if (gameDump.handStatute) {
-    storeHandStatute(gameDump.handStatute, gameId);
   }
 
   if (gameDump.trick) {

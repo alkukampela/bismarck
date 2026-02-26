@@ -30,12 +30,12 @@ import {
   hasPlayerCard,
 } from './card-manager';
 import {
-  storeHandStatute,
-  fetchHandStatute,
   fetchTrick,
   storeTrick,
   fetchScores,
   storeScores,
+  fetchGameState,
+  storeGameState,
 } from '../persistence/storage-service';
 import {
   initTrick,
@@ -62,9 +62,9 @@ const isTrickOpen = async (gameId: string): Promise<boolean> => {
 };
 
 const defaultTrick = async (gameId: string): Promise<TrickResponse> => {
-  return fetchHandStatute(gameId)
-    .then((statute) => {
-      return emptyTrickResponse(statute.playerOrder);
+  return fetchGameState(gameId)
+    .then((gameState) => {
+      return emptyTrickResponse(gameState.handStatute.playerOrder);
     })
     .catch(() => {
       return emptyTrickResponse([]);
@@ -126,7 +126,10 @@ const playerHasCardsOfSuit = (
   return playersCards.some((card) => getSuit(card) === trickSuit);
 };
 
-export const setUpHand = async (gameId: string, game: Game): Promise<void> => {
+export const setUpHand = async (
+  gameId: string,
+  game: Game
+): Promise<HandStatute> => {
   initDeck(gameId);
 
   const handStatute = buildHandStatute(game, await getTrumpSuit(gameId));
@@ -137,25 +140,29 @@ export const setUpHand = async (gameId: string, game: Game): Promise<void> => {
     }),
     gameId
   );
-  storeHandStatute(handStatute, gameId);
+
+  return handStatute;
 };
 
 export const getPlayersHand = async (
   player: Player,
   gameId: string
 ): Promise<PlayersHand> => {
-  const statute = await fetchHandStatute(gameId);
-  if (!statute || (statute.isChoice && !statute.gameType)) {
+  const gameState = await fetchGameState(gameId);
+  if (
+    !gameState ||
+    (gameState.handStatute.isChoice && !gameState.handStatute.gameType)
+  ) {
     return { cards: [], extraCards: 0 };
   }
   const cards = await getPlayersCards(
-    getPlayersIndex(player, statute),
-    statute.playerOrder.length,
+    getPlayersIndex(player, gameState.handStatute),
+    gameState.players.length,
     gameId
   );
   return {
     cards,
-    extraCards: extraCardsAmount(cards.length, statute.playerOrder.length),
+    extraCards: extraCardsAmount(cards.length, gameState.players.length),
   };
 };
 
@@ -164,20 +171,20 @@ export const removePlayersCard = async (
   card: Card,
   gameId: string
 ): Promise<Card> => {
-  const statute = await fetchHandStatute(gameId);
+  const gameState = await fetchGameState(gameId);
 
-  if (!isEldestHand(player, statute)) {
+  if (!isEldestHand(player, gameState.handStatute)) {
     return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
   }
 
-  if (!statute.gameType?.value) {
+  if (!gameState.handStatute.gameType?.value) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
   }
-  const playerIndex = getPlayersIndex(player, statute);
+  const playerIndex = getPlayersIndex(player, gameState.handStatute);
 
   const hasPlayerGivenCard = await hasPlayerCard(
     playerIndex,
-    statute.playerOrder.length,
+    gameState.players.length,
     card,
     gameId
   );
@@ -187,7 +194,7 @@ export const removePlayersCard = async (
 
   const tooManyCards = await hasTooManyCards(
     playerIndex,
-    statute.playerOrder.length,
+    gameState.players.length,
     gameId
   );
   if (!tooManyCards) {
@@ -199,11 +206,11 @@ export const removePlayersCard = async (
 };
 
 export const getStatute = async (gameId: string): Promise<HandStatute> => {
-  const statute = await fetchHandStatute(gameId);
-  if (!statute) {
+  const gameState = await fetchGameState(gameId);
+  if (!gameState) {
     return Promise.reject(new Error(ErrorTypes.NOT_FOUND));
   }
-  return statute;
+  return gameState.handStatute;
 };
 
 export const getTableCards = async (gameId: string): Promise<Card[]> => {
@@ -215,13 +222,13 @@ export const chooseGameType = async (
   gameTypeChoice: GameTypeChoice,
   gameId: string
 ): Promise<HandStatute> => {
-  const statute = await fetchHandStatute(gameId);
+  const gameState = await fetchGameState(gameId);
 
-  if (!isEldestHand(player, statute)) {
+  if (!isEldestHand(player, gameState.handStatute)) {
     return Promise.reject(new Error(ErrorTypes.MUST_BE_ELDEST_HAND));
   }
 
-  if (statute.gameType) {
+  if (gameState.handStatute.gameType) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_CHOSEN));
   }
 
@@ -237,9 +244,16 @@ export const chooseGameType = async (
           }
       : { value: gameTypeChoice.gameType };
 
-  const chosenStatute = getStatuteAfterChoice(statute, validatedChoice);
+  const chosenStatute = getStatuteAfterChoice(
+    gameState.handStatute,
+    validatedChoice
+  );
 
-  storeHandStatute(chosenStatute, gameId);
+  const updatedGameState = {
+    ...gameState,
+    handStatute: chosenStatute,
+  };
+  storeGameState(updatedGameState, gameId);
   return chosenStatute;
 };
 
@@ -265,21 +279,21 @@ export const startTrick = async (
     return Promise.reject(new Error(ErrorTypes.TRICK_ALREADY_STARTED));
   }
 
-  const statute = await fetchHandStatute(gameId);
-  const playerIndex = getPlayersIndex(player, statute);
+  const gameState = await fetchGameState(gameId);
+  const playerIndex = getPlayersIndex(player, gameState.handStatute);
 
-  if (!statute?.gameType?.value) {
+  if (!gameState.handStatute.gameType?.value) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
   }
 
-  const trickLead = await getTrickLead(gameId, statute);
+  const trickLead = await getTrickLead(gameId, gameState.handStatute);
   if (player.name !== trickLead.name) {
     return Promise.reject(new Error(ErrorTypes.NOT_TRICK_LEAD));
   }
 
   const hasPlayerGivenCard = await hasPlayerCard(
     playerIndex,
-    statute.playerOrder.length,
+    gameState.players.length,
     card,
     gameId
   );
@@ -289,7 +303,7 @@ export const startTrick = async (
 
   const tooManyCards = await hasTooManyCards(
     playerIndex,
-    statute.playerOrder.length,
+    gameState.players.length,
     gameId
   );
   if (tooManyCards) {
@@ -298,10 +312,10 @@ export const startTrick = async (
 
   const trickNumber = await roundNumber(
     playerIndex,
-    statute.playerOrder.length,
+    gameState.players.length,
     gameId
   );
-  const trick = initTrick(card, player, statute, trickNumber);
+  const trick = initTrick(card, player, gameState.handStatute, trickNumber);
 
   removeCard(card, gameId);
   storeTrick(trick, gameId);
@@ -324,12 +338,12 @@ export const addCardToTrick = async (
     return Promise.reject(Error(ErrorTypes.OTHER_PLAYER_HAS_TURN));
   }
 
-  const statute = await fetchHandStatute(gameId);
-  const playerIndex = getPlayersIndex(player, statute);
+  const gameState = await fetchGameState(gameId);
+  const playerIndex = getPlayersIndex(player, gameState.handStatute);
 
   const hasPlayerGivenCard = await hasPlayerCard(
     playerIndex,
-    statute.playerOrder.length,
+    gameState.players.length,
     card,
     gameId
   );
@@ -362,13 +376,17 @@ export const addCardToTrick = async (
   const isHandFinished = await isCurrentHandFinished(gameId);
 
   if (isHandFinished) {
-    if (!statute.gameType?.value) {
+    const gameState = await fetchGameState(gameId);
+    if (!gameState.handStatute.gameType?.value) {
       // It should not be possible to reach this point without game type.
       throw new Error('Game type is not defined');
     }
     const handTricks = await fetchScores(gameId);
-    const handScore = getHandsPoints(handTricks, statute.gameType.value);
-    saveTrickPoints(handScore, statute, gameId);
+    const handScore = getHandsPoints(
+      handTricks,
+      gameState.handStatute.gameType.value
+    );
+    saveTrickPoints(handScore, gameState.handStatute, gameId);
   }
 
   storeTrick(updatedTrick, gameId);

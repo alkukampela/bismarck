@@ -1,12 +1,10 @@
 import { initialHandStatute } from './hand-statute-machine';
 import { sendLoginId } from '../service/email-service';
 import { CreateGameResponse } from '../../types/create-game-response';
-import { Game } from '../../types/game';
 import { RegisterPlayer } from '../../types/register-player';
 import { v4 as uuid } from 'uuid';
 import {
-  storeGame,
-  storeHandStatute,
+  storeGameState,
   storeLoginIdForPlayer,
 } from '../persistence/storage-service';
 import { generateLoginId } from '../service/token-service';
@@ -14,13 +12,6 @@ import { shuffle } from '../service/shuffle-service';
 import pino from 'pino';
 
 const logger = pino();
-
-const initGameObject = (players: RegisterPlayer[]): Game => {
-  return {
-    players: shuffle(players.map((item) => item.player)),
-    handNumber: 0,
-  };
-};
 
 const checkForDuplicatePlayers = (players: RegisterPlayer[]): boolean => {
   return (
@@ -70,14 +61,20 @@ export const createGameAndInvitatePlayers = async (
     logger.info(`Sent login ID to player: ${value.player.name}`);
   });
 
-  const game = initGameObject(players);
-
-  storeGame(game, gameId);
-
-  logger.info(`Initialized game with ID: ${gameId}`);
+  const game = {
+    players: shuffle(players.map((item) => item.player)),
+    handNumber: 0,
+  };
   const handStatute = initialHandStatute(game);
 
-  storeHandStatute(handStatute, gameId);
+  storeGameState(
+    {
+      ...game,
+      handStatute,
+    },
+    gameId
+  );
+  logger.info(`Initialized game with ID: ${gameId}`);
 
   return {
     id: gameId,
