@@ -82,7 +82,6 @@ test('Ensure correct statute for trump game choice', () => {
     isChoice: true,
     playerOrder: [PLAYER_1, PLAYER_2, PLAYER_3],
     eldestHand: PLAYER_1,
-    playersInGame: 3,
     tricksInHand: TRICKS_IN_3_PLAYER_GAME,
   };
 
@@ -107,7 +106,6 @@ test('Ensure correct statute for misere game choice', () => {
     isChoice: true,
     playerOrder: [PLAYER_2, PLAYER_3, PLAYER_1],
     eldestHand: PLAYER_2,
-    playersInGame: 3,
     tricksInHand: TRICKS_IN_3_PLAYER_GAME,
   };
 

@@ -23,6 +23,5 @@ export const emptyStatue: HandStatute = {
   gameType: undefined,
   isChoice: false,
   playerOrder: [],
-  playersInGame: 0,
   tricksInHand: 0,
 };

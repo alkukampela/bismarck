@@ -22,7 +22,6 @@ test('Ensure misere trick is initalized correctly', () => {
     PLAYER_1,
     {
       playerOrder: PLAYERS,
-      playersInGame: hasPlayerTurn.length,
       isChoice: false,
       gameType: {
         value: GameType.MISERE,
@@ -48,7 +47,6 @@ test('Ensure no trump trick is initialized correctly', () => {
     PLAYER_1,
     {
       playerOrder: PLAYERS,
-      playersInGame: hasPlayerTurn.length,
       isChoice: false,
       gameType: {
         value: GameType.NO_TRUMP,
@@ -74,7 +72,6 @@ test('Ensure trump trick is initialized correctly', () => {
     PLAYER_1,
     {
       playerOrder: PLAYERS,
-      playersInGame: hasPlayerTurn.length,
       isChoice: false,
       gameType: {
         value: GameType.TRUMP,
@@ -101,7 +98,6 @@ test('Ensure trump trick is initialized correctly with diamond suit', () => {
     PLAYER_1,
     {
       playerOrder: PLAYERS,
-      playersInGame: hasPlayerTurn.length,
       isChoice: false,
       gameType: {
         value: GameType.TRUMP,

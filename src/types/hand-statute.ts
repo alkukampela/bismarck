@@ -11,6 +11,5 @@ export interface HandStatute {
   isChoice: boolean;
   playerOrder: Player[];
   eldestHand: Player;
-  playersInGame: number;
   tricksInHand: number;
 }

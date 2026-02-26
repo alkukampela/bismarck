@@ -69,7 +69,6 @@ export const initialHandStatute = (game: Game): HandStatute => {
     isChoice: isChoiceTurn(game.handNumber, playersInGame),
     gameType: undefined,
     playerOrder,
-    playersInGame,
     tricksInHand: tricksInHand(playersInGame),
   };
 };
@@ -82,7 +81,7 @@ export const buildHandStatute = (
 
   const gameType = determineNonChoiceGameType(
     game.handNumber,
-    handStatute.playersInGame,
+    handStatute.playerOrder.length,
     trumpSuit
   );
   handStatute.gameType = gameType;

@@ -150,12 +150,12 @@ export const getPlayersHand = async (
   }
   const cards = await getPlayersCards(
     getPlayersIndex(player, statute),
-    statute.playersInGame,
+    statute.playerOrder.length,
     gameId
   );
   return {
     cards,
-    extraCards: extraCardsAmount(cards.length, statute.playersInGame),
+    extraCards: extraCardsAmount(cards.length, statute.playerOrder.length),
   };
 };
 
@@ -177,7 +177,7 @@ export const removePlayersCard = async (
 
   const hasPlayerGivenCard = await hasPlayerCard(
     playerIndex,
-    statute.playersInGame,
+    statute.playerOrder.length,
     card,
     gameId
   );
@@ -187,7 +187,7 @@ export const removePlayersCard = async (
 
   const tooManyCards = await hasTooManyCards(
     playerIndex,
-    statute.playersInGame,
+    statute.playerOrder.length,
     gameId
   );
   if (!tooManyCards) {
@@ -279,7 +279,7 @@ export const startTrick = async (
 
   const hasPlayerGivenCard = await hasPlayerCard(
     playerIndex,
-    statute.playersInGame,
+    statute.playerOrder.length,
     card,
     gameId
   );
@@ -289,7 +289,7 @@ export const startTrick = async (
 
   const tooManyCards = await hasTooManyCards(
     playerIndex,
-    statute.playersInGame,
+    statute.playerOrder.length,
     gameId
   );
   if (tooManyCards) {
@@ -298,7 +298,7 @@ export const startTrick = async (
 
   const trickNumber = await roundNumber(
     playerIndex,
-    statute.playersInGame,
+    statute.playerOrder.length,
     gameId
   );
   const trick = initTrick(card, player, statute, trickNumber);
@@ -329,7 +329,7 @@ export const addCardToTrick = async (
 
   const hasPlayerGivenCard = await hasPlayerCard(
     playerIndex,
-    statute.playersInGame,
+    statute.playerOrder.length,
     card,
     gameId
   );
