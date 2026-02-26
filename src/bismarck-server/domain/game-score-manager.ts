@@ -12,13 +12,19 @@ const pointsSoFar = (
   previousTrickScore: TrickScore,
   player: Player
 ): number => {
-  return (
-    (!!previousTrickScore &&
-      previousTrickScore.scores.find(
-        (currentScore) => currentScore.player.name === player.name
-      ).totalPoints) ||
-    0
+  if (!previousTrickScore) {
+    return 0;
+  }
+
+  const foundScore = previousTrickScore.scores.find(
+    (currentScore) => currentScore.player.name === player.name
   );
+
+  if (!foundScore) {
+    // Not supposed to happen if players are consistent across tricks.
+    throw new Error(`Player ${player.name} not found in previous trick score`);
+  }
+  return foundScore.totalPoints;
 };
 
 const calculateScore = (
@@ -53,9 +59,14 @@ export const saveTrickPoints = async (
 ): Promise<void> => {
   const allTrickPoints = (await fetchTrickScores(gameId)) || [];
 
+  if (!handStatute.gameType) {
+    // This should never happen if trick is ready.
+    throw new Error('Game type is not defined');
+  }
+
   const trickScore = {
-    isChoice: handStatute.handType.isChoice,
-    gameType: handStatute.handType.gameType.value,
+    isChoice: handStatute.isChoice,
+    gameType: handStatute.gameType.value,
     scores: calculateScore(trickPoints, allTrickPoints.slice(-1)[0]),
   };
 

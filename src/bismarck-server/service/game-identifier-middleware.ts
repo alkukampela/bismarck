@@ -1,8 +1,8 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ErrorTypes } from '../types/error-types';
-import { GamePlayerRequest } from './game-player-request';
-import { GameRequest } from './game-request';
+import { GamePlayerRequest } from '../types/game-player-request';
+import { GameRequest } from '../types/game-request';
 
 export const gameIdExtractor = (
   req: GameRequest | GamePlayerRequest,

@@ -1,4 +1,4 @@
-import { GamePlayerRequest } from './game-player-request';
+import { GamePlayerRequest } from '../types/game-player-request';
 import * as express from 'express';
 import StatusCodes from 'http-status-codes';
 import jwt from 'jsonwebtoken';

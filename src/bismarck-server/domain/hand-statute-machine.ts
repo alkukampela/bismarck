@@ -62,15 +62,12 @@ const switchTurns = (playerOrder: Player[], times: number): Player[] => {
 
 export const initialHandStatute = (game: Game): HandStatute => {
   const playersInGame = game.players.length;
-  const handType = {
-    isChoice: isChoiceTurn(game.handNumber, playersInGame),
-  };
-
   const playerOrder = switchTurns(game.players, game.handNumber);
 
   return {
     eldestHand: playerOrder[0],
-    handType,
+    isChoice: isChoiceTurn(game.handNumber, playersInGame),
+    gameType: undefined,
     playerOrder,
     playersInGame,
     tricksInHand: tricksInHand(playersInGame),
@@ -79,7 +76,7 @@ export const initialHandStatute = (game: Game): HandStatute => {
 
 export const buildHandStatute = (
   game: Game,
-  trumpSuit: SuitEnum
+  trumpSuit: SuitEnum | null
 ): HandStatute => {
   const handStatute = initialHandStatute(game);
 
@@ -88,7 +85,7 @@ export const buildHandStatute = (
     handStatute.playersInGame,
     trumpSuit
   );
-  handStatute.handType.gameType = gameType;
+  handStatute.gameType = gameType;
   return handStatute;
 };
 
@@ -98,9 +95,6 @@ export const getStatuteAfterChoice = (
 ): HandStatute => {
   return {
     ...handStatute,
-    handType: {
-      isChoice: true,
-      gameType: gameTypeChoice,
-    },
+    gameType: gameTypeChoice,
   };
 };

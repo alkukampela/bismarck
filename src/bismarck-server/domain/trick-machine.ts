@@ -39,7 +39,7 @@ export const initTrick = (
 ): Trick => {
   return {
     trickCards: initTrickCards(trickLead, handStatute.playerOrder, firstCard),
-    trumpSuit: handStatute.handType?.gameType?.trumpSuit || getSuit(firstCard),
+    trumpSuit: handStatute.gameType?.trumpSuit || getSuit(firstCard),
     trickSuit: getSuit(firstCard),
     trickNumber,
   };
@@ -116,7 +116,7 @@ export const convertToTrickResponse = (trick: Trick): TrickResponse => {
       ? TrickStatus.FINISHED
       : TrickStatus.UNFINISHED,
     cards: trick.trickCards,
-    taker: isTrickReady(trick) && getTaker(trick),
+    taker: isTrickReady(trick) ? getTaker(trick) : undefined,
     trickNumber: trick.trickNumber,
   };
 };

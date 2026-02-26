@@ -7,14 +7,10 @@ export type FullGameType =
   | { value: Exclude<GameType, GameType.TRUMP>; trumpSuit?: undefined };
 
 export interface HandStatute {
-  handType: HandType;
+  gameType: FullGameType | undefined;
+  isChoice: boolean;
   playerOrder: Player[];
   eldestHand: Player;
   playersInGame: number;
   tricksInHand: number;
-}
-
-export interface HandType {
-  isChoice: boolean;
-  gameType?: FullGameType;
 }

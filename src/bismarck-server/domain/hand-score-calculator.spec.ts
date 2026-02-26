@@ -1,4 +1,4 @@
-import { getHandsPoints, updatedTrickScore } from './hand-score';
+import { getHandsPoints, updatedTrickScore } from './hand-score-calculator';
 import { GameType } from '../../types/game-type';
 import { Player } from '../../types/player';
 import { PlayerScore } from '../../types/player-score';

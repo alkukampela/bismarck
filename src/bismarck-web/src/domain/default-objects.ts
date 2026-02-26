@@ -20,9 +20,8 @@ export const emptyTrickResponse: TrickResponse = {
 
 export const emptyStatue: HandStatute = {
   eldestHand: { name: '' },
-  handType: {
-    isChoice: false,
-  },
+  gameType: undefined,
+  isChoice: false,
   playerOrder: [],
   playersInGame: 0,
   tricksInHand: 0,

@@ -38,13 +38,13 @@ export const StatuteSummary = ({ statute }: { statute: HandStatute }) => {
       <div>Etuhenkilö: {statute.eldestHand.name}</div>
       <div>
         Pelimuoto:&nbsp;
-        {statute.handType.isChoice && 'valinta/'}
-        {statute.handType.gameType &&
-          gameTypeName(statute.handType.gameType.value)}
+        {statute.isChoice && 'valinta/'}
+        {statute.gameType &&
+          gameTypeName(statute.gameType.value)}
       </div>
-      {typeof statute.handType.gameType?.trumpSuit !== 'undefined' && (
+      {typeof statute.gameType?.trumpSuit !== 'undefined' && (
         <div>
-          Valttimaa: {trumpSuitName(statute.handType.gameType.trumpSuit)}
+          Valttimaa: {trumpSuitName(statute.gameType.trumpSuit)}
         </div>
       )}
     </div>

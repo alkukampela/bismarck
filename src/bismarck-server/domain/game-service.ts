@@ -2,7 +2,7 @@ import { ErrorTypes } from '../types/error-types';
 import { getStatute, isCurrentHandFinished, setUpHand } from './hand-service';
 import { HandStatute } from '../../types/hand-statute';
 import {
-  fetchGame as fetchGameFromStore,
+  fetchGame,
   storeGame,
   clearTrick,
 } from '../persistence/storage-service';
@@ -14,7 +14,7 @@ export const initHand = async (gameId: string): Promise<HandStatute> => {
     return Promise.reject(new Error(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
   }
 
-  const game = await fetchGameFromStore(gameId);
+  const game = await fetchGame(gameId);
 
   if (!game) {
     return Promise.reject(new Error(ErrorTypes.GAME_NOT_FOUND));

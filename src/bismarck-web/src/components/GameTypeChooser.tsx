@@ -14,8 +14,8 @@ export const GameTypeChooser = ({
   const shouldShowGameChooseType = (): boolean => {
     return (
       player === handStatute.eldestHand.name &&
-      handStatute.handType.isChoice &&
-      !handStatute.handType.gameType
+      handStatute.isChoice &&
+      !handStatute.gameType
     );
   };
 

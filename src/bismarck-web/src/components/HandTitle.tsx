@@ -27,15 +27,15 @@ export const HandTitle = ({
   };
 
   const gameModeName = (): string => {
-    switch (handStatute.handType.gameType?.value) {
+    switch (handStatute.gameType?.value) {
       case GameType.MISERE:
         return 'Misääri';
       case GameType.NO_TRUMP:
         return 'Grandi';
       case GameType.TRUMP:
-        return trumpGameTypeName(handStatute.handType.gameType?.trumpSuit);
+        return trumpGameTypeName(handStatute.gameType?.trumpSuit);
     }
-    return handStatute.handType.isChoice ? 'Valinta' : '';
+    return handStatute.isChoice ? 'Valinta' : '';
   };
 
   const trickCounter = (): string => {

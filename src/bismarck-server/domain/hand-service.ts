@@ -1,7 +1,7 @@
 import { getSuit } from './card-mapper';
 import { ErrorTypes } from '../types/error-types';
 import { saveTrickPoints } from './game-score-manager';
-import { getHandsPoints, updatedTrickScore } from './hand-score';
+import { getHandsPoints, updatedTrickScore } from './hand-score-calculator';
 import {
   buildHandStatute,
   getStatuteAfterChoice,
@@ -145,7 +145,7 @@ export const getPlayersHand = async (
   gameId: string
 ): Promise<PlayersHand> => {
   const statute = await fetchHandStatute(gameId);
-  if (!statute || (statute.handType.isChoice && !statute.handType.gameType)) {
+  if (!statute || (statute.isChoice && !statute.gameType)) {
     return { cards: [], extraCards: 0 };
   }
   const cards = await getPlayersCards(
@@ -170,7 +170,7 @@ export const removePlayersCard = async (
     return Promise.reject(Error(ErrorTypes.MUST_BE_ELDEST_HAND));
   }
 
-  if (!statute.handType?.gameType?.value) {
+  if (!statute.gameType?.value) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
   }
   const playerIndex = getPlayersIndex(player, statute);
@@ -221,7 +221,7 @@ export const chooseGameType = async (
     return Promise.reject(new Error(ErrorTypes.MUST_BE_ELDEST_HAND));
   }
 
-  if (statute.handType.gameType) {
+  if (statute.gameType) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_CHOSEN));
   }
 
@@ -268,7 +268,7 @@ export const startTrick = async (
   const statute = await fetchHandStatute(gameId);
   const playerIndex = getPlayersIndex(player, statute);
 
-  if (!statute?.handType?.gameType?.value) {
+  if (!statute?.gameType?.value) {
     return Promise.reject(new Error(ErrorTypes.GAME_TYPE_NOT_CHOSEN));
   }
 
@@ -362,11 +362,12 @@ export const addCardToTrick = async (
   const isHandFinished = await isCurrentHandFinished(gameId);
 
   if (isHandFinished) {
+    if (!statute.gameType?.value) {
+      // It should not be possible to reach this point without game type.
+      throw new Error('Game type is not defined');
+    }
     const handTricks = await fetchScores(gameId);
-    const handScore = getHandsPoints(
-      handTricks,
-      statute.handType.gameType.value
-    );
+    const handScore = getHandsPoints(handTricks, statute.gameType.value);
     saveTrickPoints(handScore, statute, gameId);
   }
 
