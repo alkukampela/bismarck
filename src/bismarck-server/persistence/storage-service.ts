@@ -1,6 +1,6 @@
-import { CardContainer } from './card-container';
-import { GamePlayer } from './game-player';
-import { Trick } from './trick';
+import { CardContainer } from '../types/card-container';
+import { GamePlayer } from '../types/game-player';
+import { Trick } from '../types/trick';
 import { Game } from '../../types/game';
 import { HandStatute } from '../../types/hand-statute';
 import { PlayerScore } from '../../types/player-score';

@@ -1,5 +1,5 @@
 import { getRank, getSuit } from './card-mapper';
-import { Trick } from '../persistence/trick';
+import { Trick } from '../types/trick';
 import { Card } from '../../types/card';
 import { HandStatute } from '../../types/hand-statute';
 import { Player } from '../../types/player';

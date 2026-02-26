@@ -1,5 +1,5 @@
 import { fromNumber, getRank, getSuit } from './card-mapper';
-import { CardContainer } from '../persistence/card-container';
+import { CardContainer } from '../types/card-container';
 import { fetchCards, storeCards } from '../persistence/storage-service';
 import { Card } from '../../types/card';
 import { SuitEnum } from '../../types/suit';

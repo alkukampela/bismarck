@@ -6,7 +6,7 @@ import {
   buildHandStatute,
   getStatuteAfterChoice,
 } from './hand-statute-machine';
-import { Trick } from '../persistence/trick';
+import { Trick } from '../types/trick';
 import { Card } from '../../types/card';
 import { Game } from '../../types/game';
 import { GameType } from '../../types/game-type';
