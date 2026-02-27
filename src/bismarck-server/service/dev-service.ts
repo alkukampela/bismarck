@@ -5,13 +5,11 @@ import {
   fetchGamesLogins,
   fetchScores,
   fetchTrick,
-  fetchTrickScores,
   storeCards,
   storeGameState,
   storeLoginIdForPlayer,
   storeScores,
   storeTrick,
-  storeTrickScores,
 } from '../persistence/storage-service';
 import { GameDump } from '../types/game-dump';
 
@@ -24,7 +22,6 @@ export const getGameDump = async (gameId: string): Promise<GameDump> => {
   const cards = await fetchCards(gameId);
   const playerScores = await fetchScores(gameId);
   const trick = await fetchTrick(gameId);
-  const trickScores = await fetchTrickScores(gameId);
   const gameLogins = await fetchGamesLogins(gameId);
 
   return {
@@ -32,7 +29,6 @@ export const getGameDump = async (gameId: string): Promise<GameDump> => {
     cards,
     playerScores,
     trick,
-    trickScores,
     gameLogins: Array.from(gameLogins, ([loginId, gamePlayer]) => ({
       loginId,
       gamePlayer,
@@ -62,10 +58,6 @@ export const importGameDump = async (
 
   if (gameDump.trick) {
     storeTrick(gameDump.trick, gameId);
-  }
-
-  if (gameDump.trickScores) {
-    storeTrickScores(gameDump.trickScores, gameId);
   }
 
   for (const gameLogin of gameDump.gameLogins) {

@@ -2,7 +2,6 @@ import { CardContainer } from '../types/card-container';
 import { GamePlayer } from '../types/game-player';
 import { Trick } from '../types/trick';
 import { PlayerScore } from '../../types/player-score';
-import { TrickScore } from '../../types/trick-score';
 import Redis from 'ioredis';
 import { GameState } from '../types/game-state';
 
@@ -10,7 +9,6 @@ type StorageType =
   | CardContainer[]
   | PlayerScore[]
   | Trick
-  | TrickScore[]
   | GamePlayer
   | GameState;
 
@@ -23,7 +21,11 @@ const store = (key: string, subject: StorageType): void => {
 };
 
 const fetch = async (key: string): Promise<string> => {
-  return redis.get(key);
+  const value = await redis.get(key);
+  if (value === null) {
+    throw new Error(`Key not found: ${key}`);
+  }
+  return value;
 };
 
 const del = (key: string): void => {
@@ -35,9 +37,6 @@ const getScoresKey = (identifier: string): string => `scores:${identifier}`;
 const getCardsKey = (identifier: string): string => `cards:${identifier}`;
 
 const getTrickKey = (identifier: string): string => `trick:${identifier}`;
-
-const getTrickScoresKey = (identifier: string): string =>
-  `trickscores:${identifier}`;
 
 const getGameStateKey = (identifier: string): string =>
   `gamestate:${identifier}`;
@@ -100,20 +99,6 @@ export const fetchTrick = async (identifier: string): Promise<Trick> => {
 
 export const clearTrick = (identifier: string): void => {
   del(getTrickKey(identifier));
-};
-
-export const storeTrickScores = (
-  trickScores: TrickScore[],
-  identifier: string
-): void => {
-  store(getTrickScoresKey(identifier), trickScores);
-};
-
-export const fetchTrickScores = async (
-  identifier: string
-): Promise<TrickScore[]> => {
-  const result = await fetch(getTrickScoresKey(identifier));
-  return JSON.parse(result) as TrickScore[];
 };
 
 export const storeLoginIdForPlayer = (

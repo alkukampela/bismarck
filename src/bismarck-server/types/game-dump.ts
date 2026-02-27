@@ -1,5 +1,4 @@
 import { PlayerScore } from '../../types/player-score';
-import { TrickScore } from '../../types/trick-score';
 import { CardContainer } from './card-container';
 import { GamePlayer } from './game-player';
 import { GameState } from './game-state';
@@ -10,7 +9,6 @@ export interface GameDump {
   cards: CardContainer[];
   playerScores: PlayerScore[];
   trick: Trick;
-  trickScores: TrickScore[];
   gameLogins: GameLogin[];
 }
 

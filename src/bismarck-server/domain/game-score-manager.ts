@@ -1,12 +1,9 @@
-import {
-  fetchTrickScores,
-  storeTrickScores,
-} from '../persistence/storage-service';
+import { fetchGameState } from '../persistence/storage-service';
 import { GameScoreBoard } from '../../types/game-score-board';
-import { HandStatute } from '../../types/hand-statute';
 import { Player } from '../../types/player';
 import { PlayerScore } from '../../types/player-score';
 import { TrickScore } from '../../types/trick-score';
+import { GameState } from '../types/game-state';
 
 const pointsSoFar = (
   previousTrickScore: TrickScore,
@@ -52,35 +49,30 @@ const isFinished = (trickScores: TrickScore[]): boolean => {
   return trickScores.length >= players * rounds;
 };
 
-export const saveTrickPoints = async (
+export const calculateTrickPoints = (
   trickPoints: PlayerScore[],
-  handStatute: HandStatute,
-  gameId: string
-): Promise<void> => {
-  const allTrickPoints = (await fetchTrickScores(gameId)) || [];
+  gameState: GameState
+): TrickScore => {
+  const allTrickPoints = gameState.trickScores;
 
-  if (!handStatute.gameType) {
+  if (!gameState.handStatute.gameType) {
     // This should never happen if trick is ready.
     throw new Error('Game type is not defined');
   }
 
-  const trickScore = {
-    isChoice: handStatute.isChoice,
-    gameType: handStatute.gameType.value,
+  return {
+    isChoice: gameState.handStatute.isChoice,
+    gameType: gameState.handStatute.gameType.value,
     scores: calculateScore(trickPoints, allTrickPoints.slice(-1)[0]),
   };
-
-  allTrickPoints.push(trickScore);
-
-  storeTrickScores(allTrickPoints, gameId);
 };
 
 export const getTotalScores = async (
   gameId: string
 ): Promise<GameScoreBoard> => {
-  const trickScores = (await fetchTrickScores(gameId)) || [];
+  const gameState = await fetchGameState(gameId);
   return {
-    trickScores,
-    isFinished: isFinished(trickScores),
+    trickScores: gameState.trickScores,
+    isFinished: isFinished(gameState.trickScores),
   };
 };

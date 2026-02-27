@@ -1,6 +1,6 @@
 import { getSuit } from './card-mapper';
 import { ErrorTypes } from '../types/error-types';
-import { saveTrickPoints } from './game-score-manager';
+import { calculateTrickPoints } from './game-score-manager';
 import { getHandsPoints, updatedTrickScore } from './hand-score-calculator';
 import {
   buildHandStatute,
@@ -376,17 +376,24 @@ export const addCardToTrick = async (
   const isHandFinished = await isCurrentHandFinished(gameId);
 
   if (isHandFinished) {
-    const gameState = await fetchGameState(gameId);
     if (!gameState.handStatute.gameType?.value) {
       // It should not be possible to reach this point without game type.
       throw new Error('Game type is not defined');
     }
+
     const handTricks = await fetchScores(gameId);
     const handScore = getHandsPoints(
       handTricks,
       gameState.handStatute.gameType.value
     );
-    saveTrickPoints(handScore, gameState.handStatute, gameId);
+
+    const curremtTrickPoints = calculateTrickPoints(handScore, gameState);
+    const updatedState = {
+      ...gameState,
+      trickScores: [...gameState.trickScores, curremtTrickPoints],
+    };
+
+    storeGameState(updatedState, gameId);
   }
 
   storeTrick(updatedTrick, gameId);

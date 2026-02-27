@@ -71,6 +71,7 @@ export const createGameAndInvitatePlayers = async (
     {
       ...game,
       handStatute,
+      trickScores: [],
     },
     gameId
   );
