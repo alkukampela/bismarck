@@ -37,6 +37,7 @@ import { GameType } from '../types/game-type';
 import { SuitEnum } from '../types/suit';
 import { FetchTokenRequest } from './types/fetch-token-request';
 import { fileURLToPath } from 'url';
+import { error } from 'console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -73,17 +74,30 @@ const publishTrick = (trick: TrickResponse, gameId: string) => {
   });
 };
 
+const handleError = (
+  res: express.Response,
+  err: unknown,
+  statusCode: number = StatusCodes.BAD_REQUEST
+) => {
+  if (err instanceof Error) {
+    res.status(statusCode).send({ error: err.message });
+  } else {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send({ error: 'Unexpected error' });
+  }
+};
+
 router.get(
   '/games/:id/hand/statute',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    getStatute(req.gameId)
-      .then((statute) => {
-        res.send(statute);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const statute = await getStatute(req.gameId);
+      res.send(statute);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
@@ -91,20 +105,22 @@ router.post(
   '/games/:id/hand/statute',
   playerExtractor,
   gameIdExtractor,
-  (req: GamePlayerRequest, res: express.Response) => {
-    const gameTypeChoice = {
-      gameType: req.body.gameType as GameType,
-      trumpSuit: req.body?.trumpSuit as SuitEnum | undefined,
-    };
-
-    chooseGameType(req.player, gameTypeChoice, req.gameId)
-      .then((statute) => {
-        publishTrick(trickResponseDuringCardRemoval(), req.gameId);
-        res.send(statute);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+  async (req: GamePlayerRequest, res: express.Response) => {
+    try {
+      const gameTypeChoice = {
+        gameType: req.body.gameType as GameType,
+        trumpSuit: req.body?.trumpSuit as SuitEnum | undefined,
+      };
+      const statute = await chooseGameType(
+        req.player,
+        gameTypeChoice,
+        req.gameId
+      );
+      publishTrick(trickResponseDuringCardRemoval(), req.gameId);
+      res.send(statute);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
@@ -113,8 +129,12 @@ router.get(
   playerExtractor,
   gameIdExtractor,
   async (req: GamePlayerRequest, res: express.Response) => {
-    const cards = await getPlayersHand(req.player, req.gameId);
-    res.send(cards);
+    try {
+      const cards = await getPlayersHand(req.player, req.gameId);
+      res.send(cards);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
@@ -123,25 +143,29 @@ router.delete(
   playerExtractor,
   gameIdExtractor,
   async (req: GamePlayerRequest, res: express.Response) => {
-    const card: Card = {
-      rank: req.query.rank as Rank,
-      suit: req.query.suit as Suit,
-    };
-    removePlayersCard(req.player, card, req.gameId)
-      .then(() => {
-        res.sendStatus(StatusCodes.NO_CONTENT);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+    try {
+      const card: Card = {
+        rank: req.query.rank as Rank,
+        suit: req.query.suit as Suit,
+      };
+      await removePlayersCard(req.player, card, req.gameId);
+      res.sendStatus(StatusCodes.NO_CONTENT);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
 router.get(
   '/games/:id/hand/trick',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    getCurrentTrick(req.gameId).then((trick) => res.send(trick));
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const trick = await getCurrentTrick(req.gameId);
+      res.send(trick);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
@@ -150,19 +174,17 @@ router.post(
   playerExtractor,
   gameIdExtractor,
   async (req: GamePlayerRequest, res: express.Response) => {
-    const card: Card = {
-      rank: req.body.rank as Rank,
-      suit: req.body.suit as Suit,
-    };
-
-    startTrick(req.player, card, req.gameId)
-      .then((trick) => {
-        publishTrick(trick, req.gameId);
-        res.send(trick);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+    try {
+      const card: Card = {
+        rank: req.body.rank as Rank,
+        suit: req.body.suit as Suit,
+      };
+      const trick = await startTrick(req.player, card, req.gameId);
+      publishTrick(trick, req.gameId);
+      res.send(trick);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
@@ -170,17 +192,15 @@ router.post(
   '/games/:id/hand/trick/cards',
   playerExtractor,
   gameIdExtractor,
-  (req: GamePlayerRequest, res: express.Response) => {
-    const card = req.body as Card;
-
-    addCardToTrick(req.player, card, req.params.id)
-      .then((trick) => {
-        publishTrick(trick, req.gameId);
-        res.send(trick);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+  async (req: GamePlayerRequest, res: express.Response) => {
+    try {
+      const card = req.body as Card;
+      const trick = await addCardToTrick(req.player, card, req.params.id);
+      publishTrick(trick, req.gameId);
+      res.send(trick);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
@@ -188,89 +208,102 @@ router.get(
   '/games/:id/hand/trick-count',
   gameIdExtractor,
   async (req: GameRequest, res: express.Response) => {
-    getHandsTrickCounts(req.gameId).then((scores) => {
+    try {
+      const scores = await getHandsTrickCounts(req.gameId);
       res.send(scores);
-    });
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
 router.get(
   '/games/:id/hand/tablecards',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    getTableCards(req.gameId).then((cards) => res.send(cards));
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const cards = await getTableCards(req.gameId);
+      res.send(cards);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
 router.get(
   '/games/:id/score',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    getTotalScores(req.gameId).then((scores) => res.send(scores));
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const scores = await getTotalScores(req.gameId);
+      res.send(scores);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
-router.post('/games', (req: express.Request, res: express.Response) => {
-  const players = req.body.players as RegisterPlayer[];
-  createGameAndInvitatePlayers(players)
-    .then((game) => res.send(game))
-    .catch((err: Error) => {
-      res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-    });
+router.post('/games', async (req: express.Request, res: express.Response) => {
+  try {
+    const players = req.body.players as RegisterPlayer[];
+    const game = await createGameAndInvitatePlayers(players);
+    res.send(game);
+  } catch (err: unknown) {
+    handleError(res, err);
+  }
 });
 
 router.post(
   '/games/:id/hand',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    initHand(req.gameId)
-      .then((statute) => {
-        publishTrick(trickResponseDuringCardRemoval(), req.gameId);
-        res.send(statute);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const statute = await initHand(req.gameId);
+      publishTrick(trickResponseDuringCardRemoval(), req.gameId);
+      res.send(statute);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
-router.post('/fetch-token', (req: express.Request, res: express.Response) => {
-  const request = req.body as FetchTokenRequest;
-  tokenForLoginId(request.loginId)
-    .then((result) => {
+router.post(
+  '/fetch-token',
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const request = req.body as FetchTokenRequest;
+      const result = await tokenForLoginId(request.loginId);
       res.send(result);
-    })
-    .catch((err: Error) => {
-      res.status(StatusCodes.FORBIDDEN).send({ error: err.message });
-    });
-});
+    } catch (err: unknown) {
+      handleError(res, err, StatusCodes.FORBIDDEN);
+    }
+  }
+);
 
 router.get(
   '/dev/:id',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    getGameDump(req.gameId)
-      .then((gameDump) => {
-        res.send(gameDump);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const gameDump = await getGameDump(req.gameId);
+      res.send(gameDump);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
 router.post(
   '/dev/:id',
   gameIdExtractor,
-  (req: GameRequest, res: express.Response) => {
-    const gameDump = req.body as GameDump;
-    importGameDump(req.gameId, gameDump)
-      .then(() => {
-        res.sendStatus(StatusCodes.NO_CONTENT);
-      })
-      .catch((err: Error) => {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: err.message });
-      });
+  async (req: GameRequest, res: express.Response) => {
+    try {
+      const gameDump = req.body as GameDump;
+      await importGameDump(req.gameId, gameDump);
+      res.sendStatus(StatusCodes.NO_CONTENT);
+    } catch (err: unknown) {
+      handleError(res, err);
+    }
   }
 );
 
