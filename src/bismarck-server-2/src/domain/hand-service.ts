@@ -47,6 +47,7 @@ import {
   convertToTrickResponse,
 } from './trick-machine';
 import pino from 'pino';
+import { GameStorage } from '../persistence/game-storage';
 
 const logger = pino();
 
@@ -209,25 +210,20 @@ export const removePlayersCard = async (
 };
 
 export const getStatute = async (
-  gameId: string,
-  env: Env
+  stub: DurableObjectStub<GameStorage>
 ): Promise<HandStatute> => {
-  logger.info(`Getting statute for gameId: ${gameId}`);
-  const id = env.GAME_STORAGE.idFromName(gameId);
-  const stub = env.GAME_STORAGE.get(id);
-
   const gameState = await stub.fetchGameState();
-  logger.info(
-    `Fetched game state for gameId: ${gameId}, found: ${!!gameState}`
-  );
+  logger.info(`Game state found: ${!!gameState}`);
   if (!gameState) {
     return Promise.reject(new Error(ErrorTypes.NOT_FOUND));
   }
   return gameState.handStatute;
 };
 
-export const getTableCards = async (gameId: string): Promise<Card[]> => {
-  return getTableCardsFromStorage(gameId);
+export const getTableCards = async (
+  stub: DurableObjectStub<GameStorage>
+): Promise<Card[]> => {
+  return getTableCardsFromStorage(stub);
 };
 
 export const chooseGameType = async (

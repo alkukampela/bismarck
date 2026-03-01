@@ -5,6 +5,7 @@ import { Card } from '../../../types/card';
 import { SuitEnum } from '../../../types/suit';
 import { CardsOfDeck, DECK_SIZE } from '../types/cards-of-deck';
 import { shuffle } from '../service/shuffle-service';
+import { GameStorage } from '../persistence/game-storage';
 
 const TABLE_CARDS = 4;
 
@@ -57,8 +58,10 @@ export const extraCardsAmount = (
   playersInGame: number
 ): number => Math.max(cards - cardsInHand(playersInGame), 0);
 
-export const getTableCards = async (gameId: string): Promise<Card[]> => {
-  const cards = await fetchCards(gameId);
+export const getTableCards = async (
+  stub: DurableObjectStub<GameStorage>
+): Promise<Card[]> => {
+  const cards = await stub.fetchCards();
   if (!cards) {
     return [];
   }

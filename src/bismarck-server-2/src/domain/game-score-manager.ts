@@ -1,4 +1,3 @@
-import { fetchGameState } from '../persistence/storage-service';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
@@ -67,10 +66,7 @@ export const calculateTrickPoints = (
   };
 };
 
-export const getTotalScores = async (
-  gameId: string
-): Promise<GameScoreBoard> => {
-  const gameState = await fetchGameState(gameId);
+export const getTotalScores = (gameState: GameState): GameScoreBoard => {
   return {
     trickScores: gameState.trickScores,
     isFinished: isFinished(gameState.trickScores),

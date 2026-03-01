@@ -1,5 +1,9 @@
 import { AutoRouter } from 'itty-router';
-import { getCurrentTrick, getStatute } from './domain/hand-service';
+import {
+  getCurrentTrick,
+  getStatute,
+  getTableCards,
+} from './domain/hand-service';
 import { StatusCodes } from 'http-status-codes';
 import { tokenForLoginId } from './service/token-service';
 import { FetchTokenRequest } from './types/fetch-token-request';
@@ -11,16 +15,24 @@ import {
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { CreateGameRequest } from '../../types/create-game-request';
 import { handleError, jsonResponse } from './utils/api-helper';
+import { GameStorage } from './persistence/game-storage';
+import { getTotalScores } from './domain/game-score-manager';
 
 export { GameStorage } from './persistence/game-storage';
 
 const router = AutoRouter({ base: '/api' });
 
+const getStub = (gameId: string, env: Env): DurableObjectStub<GameStorage> => {
+  const id = env.GAME_STORAGE.idFromName(gameId);
+  return env.GAME_STORAGE.get(id);
+};
+
 router
   .get('/games/:id/hand/statute', async (request, env: Env) => {
     const gameId = request.params.id;
+    const stub = getStub(gameId, env);
     try {
-      const statute = await getStatute(gameId, env);
+      const statute = await getStatute(stub);
       return jsonResponse(statute);
     } catch (err: unknown) {
       return handleError(err);
@@ -38,7 +50,7 @@ router
     '/games/:id/hand/cards',
     () => new Response('Not implemented', { status: 501 })
   )
-  .get('/games/:id/hand/trick', async (request) => {
+  .get('/games/:id/hand/trick', async (request, env: Env) => {
     const gameId = request.params.id;
     const trick = await getCurrentTrick(gameId);
     return jsonResponse(trick);
@@ -55,14 +67,33 @@ router
     '/games/:id/hand/trick-count',
     () => new Response('Not implemented', { status: 501 })
   )
-  .get(
-    '/games/:id/hand/tablecards',
-    () => new Response('Not implemented', { status: 501 })
-  )
-  .get(
-    '/games/:id/score',
-    () => new Response('Not implemented', { status: 501 })
-  )
+  .get('/games/:id/hand/tablecards', async (request, env: Env) => {
+    const gameId = request.params.id;
+    const stub = getStub(gameId, env);
+    try {
+      const cards = await getTableCards(stub);
+      return jsonResponse(cards);
+    } catch (err: unknown) {
+      return handleError(err);
+    }
+  })
+  .get('/games/:id/score', async (request, env: Env) => {
+    const gameId = request.params.id;
+    const stub = getStub(gameId, env);
+    try {
+      const gameState = await stub.fetchGameState();
+      if (!gameState) {
+        return handleError(
+          new Error('Game state not found'),
+          StatusCodes.NOT_FOUND
+        );
+      }
+      const scores = getTotalScores(gameState);
+      jsonResponse(scores);
+    } catch (err: unknown) {
+      handleError(err);
+    }
+  })
   .post('/games', withCreateGameRequest, async (request, env: Env) => {
     try {
       const createGameRequest = getTypedContent<CreateGameRequest>(request);

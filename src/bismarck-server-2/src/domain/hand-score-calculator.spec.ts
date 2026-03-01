@@ -115,3 +115,108 @@ test('Ensure trick taker is updated correctly', () => {
     { player: PLAYER_2, score: 4 },
   ]);
 });
+
+describe('Zero-sum constraint validation', () => {
+  test('getHandsPoints produces zero-sum results for 4-player TRUMP game', () => {
+    const scores = [
+      { player: PLAYER_1, score: 6 },
+      { player: PLAYER_2, score: 4 },
+      { player: PLAYER_3, score: 2 },
+      { player: PLAYER_4, score: 0 },
+    ];
+
+    const actual = getHandsPoints(scores, GameType.TRUMP);
+    const sum = actual.reduce((acc, ps) => acc + ps.score, 0);
+
+    expect(sum).toBe(0);
+  });
+
+  test('getHandsPoints produces zero-sum results for 4-player NO_TRUMP game', () => {
+    const scores = [
+      { player: PLAYER_1, score: 5 },
+      { player: PLAYER_2, score: 4 },
+      { player: PLAYER_3, score: 2 },
+      { player: PLAYER_4, score: 1 },
+    ];
+
+    const actual = getHandsPoints(scores, GameType.NO_TRUMP);
+    const sum = actual.reduce((acc, ps) => acc + ps.score, 0);
+
+    expect(sum).toBe(0);
+  });
+
+  test('getHandsPoints produces zero-sum results for 4-player MISERE game', () => {
+    const scores = [
+      { player: PLAYER_1, score: 1 },
+      { player: PLAYER_2, score: 4 },
+      { player: PLAYER_3, score: 2 },
+      { player: PLAYER_4, score: 5 },
+    ];
+
+    const actual = getHandsPoints(scores, GameType.MISERE);
+    const sum = actual.reduce((acc, ps) => acc + ps.score, 0);
+
+    expect(sum).toBe(0);
+  });
+
+  test('getHandsPoints produces zero-sum results for 3-player TRUMP game', () => {
+    const scores = [
+      { player: PLAYER_1, score: 11 },
+      { player: PLAYER_2, score: 3 },
+      { player: PLAYER_3, score: 2 },
+    ];
+
+    const actual = getHandsPoints(scores, GameType.TRUMP);
+    const sum = actual.reduce((acc, ps) => acc + ps.score, 0);
+
+    expect(sum).toBe(0);
+  });
+
+  test('getHandsPoints produces zero-sum results for 3-player NO_TRUMP game', () => {
+    const scores = [
+      { player: PLAYER_1, score: 8 },
+      { player: PLAYER_2, score: 5 },
+      { player: PLAYER_3, score: 3 },
+    ];
+
+    const actual = getHandsPoints(scores, GameType.NO_TRUMP);
+    const sum = actual.reduce((acc, ps) => acc + ps.score, 0);
+
+    expect(sum).toBe(0);
+  });
+
+  test('getHandsPoints produces zero-sum results for 3-player MISERE game', () => {
+    const scores = [
+      { player: PLAYER_1, score: 3 },
+      { player: PLAYER_2, score: 6 },
+      { player: PLAYER_3, score: 7 },
+    ];
+
+    const actual = getHandsPoints(scores, GameType.MISERE);
+    const sum = actual.reduce((acc, ps) => acc + ps.score, 0);
+
+    expect(sum).toBe(0);
+  });
+
+  test('getHandsPoints maintains zero-sum across various trick distributions', () => {
+    // Test edge cases and unusual distributions
+    const testCases = [
+      { tricks: [12, 0, 0, 0], gameType: GameType.TRUMP, players: 4 },
+      { tricks: [3, 3, 3, 3], gameType: GameType.NO_TRUMP, players: 4 },
+      { tricks: [16, 0, 0], gameType: GameType.TRUMP, players: 3 },
+      { tricks: [0, 12, 4], gameType: GameType.MISERE, players: 3 },
+    ];
+
+    testCases.forEach(({ tricks, gameType }) => {
+      const scores = tricks.map((score, i) => ({
+        player: { name: `Player${i}` },
+        score,
+      }));
+
+      const result = getHandsPoints(scores, gameType);
+      const sum = result.reduce((acc, ps) => acc + ps.score, 0);
+
+      expect(sum).toBe(0);
+    });
+  });
+});
