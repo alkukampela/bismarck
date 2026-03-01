@@ -1,4 +1,3 @@
-import { DurableObject } from 'cloudflare:workers';
 import { AutoRouter } from 'itty-router';
 import { getCurrentTrick, getStatute } from './domain/hand-service';
 import { StatusCodes } from 'http-status-codes';
@@ -8,84 +7,16 @@ import {
   getTypedContent,
   withCreateGameRequest,
   withFetchTokenRequest,
-} from './validation/type-guard-middleware';
+} from './utils/type-guard-middleware';
 import { createGameAndInvitatePlayers } from './domain/game-creation-service';
 import { CreateGameRequest } from '../../types/create-game-request';
+import { handleError, jsonResponse } from './utils/api-helper';
 
-/**
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/durable-objects
- */
 export { GameStorage } from './persistence/game-storage';
-export class MyDurableObject extends DurableObject<Env> {
-  /**
-   * The constructor is invoked once upon creation of the Durable Object, i.e. the first call to
-   * 	`DurableObjectStub::get` for a given identifier (no-op constructors can be omitted)
-   *
-   * @param ctx - The interface for interacting with Durable Object state
-   * @param env - The interface to reference bindings declared in wrangler.jsonc
-   */
-  constructor(ctx: DurableObjectState, env: Env) {
-    super(ctx, env);
-  }
-
-  /**
-   * The Durable Object exposes an RPC method sayHello which will be invoked when a Durable
-   *  Object instance receives a request from a Worker via the same method invocation on the stub
-   *
-   * @param name - The name provided to a Durable Object instance from a Worker
-   * @returns The greeting to be sent back to the Worker
-   */
-  async sayHello(name: string): Promise<string> {
-    return `Hello, ${name}!`;
-  }
-}
-
-const handleError = (
-  err: unknown,
-  statusCode: number = StatusCodes.BAD_REQUEST
-): Response => {
-  if (err instanceof Error) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: statusCode,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } else {
-    return new Response(JSON.stringify({ error: 'Unexpected error' }), {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-};
-
-const jsonResponse = (data: unknown, status = 200): Response => {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
-};
 
 const router = AutoRouter({ base: '/api' });
 
-
 router
-  .get('/hello', async (env: Env) => {
-    // Create a stub to open a communication channel with the Durable Object
-    // instance named "foo".
-    //
-    // Requests from all Workers to the Durable Object instance named "foo"
-    // will go to a single remote Durable Object instance.
-    const stub = env.MY_DURABLE_OBJECT.getByName('foo');
-
-    // Call the `sayHello()` RPC method on the stub to invoke the method on
-    // the remote Durable Object instance.
-    const greeting = await stub.sayHello('world');
-
-    return new Response(greeting);
-  })
   .get('/games/:id/hand/statute', async (request, env: Env) => {
     const gameId = request.params.id;
     try {

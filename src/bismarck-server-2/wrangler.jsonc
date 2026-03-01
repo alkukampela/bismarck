@@ -10,12 +10,6 @@
 	"migrations": [
 		{
 			"new_sqlite_classes": [
-				"MyDurableObject"
-			],
-			"tag": "v1"
-		},
-		{
-			"new_sqlite_classes": [
 				"GameStorage"
 			],
 			"tag": "v1"
@@ -23,10 +17,6 @@
 	],
 	"durable_objects": {
 		"bindings": [
-			{
-				"class_name": "MyDurableObject",
-				"name": "MY_DURABLE_OBJECT"
-			},
 			{
 				"class_name": "GameStorage",
 				"name": "GAME_STORAGE"
