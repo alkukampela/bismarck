@@ -1,6 +1,6 @@
 import { DurableObject } from 'cloudflare:workers';
 import { AutoRouter } from 'itty-router';
-import { getCurrentTrick } from './domain/hand-service';
+import { getCurrentTrick, getStatute } from './domain/hand-service';
 import { StatusCodes } from 'http-status-codes';
 import { tokenForLoginId } from './service/token-service';
 import { FetchTokenRequest } from './types/fetch-token-request';
@@ -70,6 +70,7 @@ const jsonResponse = (data: unknown, status = 200): Response => {
 
 const router = AutoRouter({ base: '/api' });
 
+
 router
   .get('/hello', async (env: Env) => {
     // Create a stub to open a communication channel with the Durable Object
@@ -85,10 +86,15 @@ router
 
     return new Response(greeting);
   })
-  .get(
-    '/games/:id/hand/statute',
-    () => new Response('Not implemented', { status: 501 })
-  )
+  .get('/games/:id/hand/statute', async (request, env: Env) => {
+    const gameId = request.params.id;
+    try {
+      const statute = await getStatute(gameId, env);
+      return jsonResponse(statute);
+    } catch (err: unknown) {
+      return handleError(err);
+    }
+  })
   .post(
     '/games/:id/hand/statute',
     () => new Response('Not implemented', { status: 501 })
@@ -101,7 +107,8 @@ router
     '/games/:id/hand/cards',
     () => new Response('Not implemented', { status: 501 })
   )
-  .get('/games/:id/hand/trick', async ({ gameId }) => {
+  .get('/games/:id/hand/trick', async (request) => {
+    const gameId = request.params.id;
     const trick = await getCurrentTrick(gameId);
     return jsonResponse(trick);
   })

@@ -70,12 +70,13 @@ export const createGameAndInvitatePlayers = async (
   };
   const handStatute = initialHandStatute(game);
 
-  stub.storeGameState({
+  logger.info(`About to store game state for gameId: ${gameId}`);
+  await stub.storeGameState({
     ...game,
     handStatute,
     trickScores: [],
   });
-  logger.info(`Initialized game with ID: ${gameId}`);
+  logger.info(`Successfully stored game state for gameId: ${gameId}`);
 
   return {
     id: gameId,

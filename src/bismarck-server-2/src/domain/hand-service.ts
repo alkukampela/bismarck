@@ -46,6 +46,9 @@ import {
   emptyTrickResponse,
   convertToTrickResponse,
 } from './trick-machine';
+import pino from 'pino';
+
+const logger = pino();
 
 const getPlayersIndex = (player: Player, handStatute: HandStatute): number => {
   return handStatute.playerOrder.findIndex((x) => player.name === x.name);
@@ -205,8 +208,18 @@ export const removePlayersCard = async (
   return card;
 };
 
-export const getStatute = async (gameId: string): Promise<HandStatute> => {
-  const gameState = await fetchGameState(gameId);
+export const getStatute = async (
+  gameId: string,
+  env: Env
+): Promise<HandStatute> => {
+  logger.info(`Getting statute for gameId: ${gameId}`);
+  const id = env.GAME_STORAGE.idFromName(gameId);
+  const stub = env.GAME_STORAGE.get(id);
+
+  const gameState = await stub.fetchGameState();
+  logger.info(
+    `Fetched game state for gameId: ${gameId}, found: ${!!gameState}`
+  );
   if (!gameState) {
     return Promise.reject(new Error(ErrorTypes.NOT_FOUND));
   }

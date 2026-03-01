@@ -1,3 +1,4 @@
+import { CardContainer } from '../types/card-container';
 import { DurableObject } from 'cloudflare:workers';
 import { GameState } from '../types/game-state';
 import pino from 'pino';
@@ -7,46 +8,114 @@ const logger = pino();
 export class GameStorage extends DurableObject<Env> {
   sql = this.ctx.storage.sql;
 
+  static readonly TABLES = {
+    GAME_STATE: 'game_state',
+    CARDS: 'cards',
+  } as const;
+
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
 
-    const cursor = this.sql.exec(`PRAGMA table_list`);
-
-    if ([...cursor].find((t) => t.name === 'game_state')) {
-      logger.info('Table already exists');
-      return;
-    }
-
-    this.sql.exec(`
-			  CREATE TABLE IF NOT EXISTS game_state (
+    this.initTable(
+      GameStorage.TABLES.GAME_STATE,
+      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.GAME_STATE} (
           id      INTEGER PRIMARY KEY,
-			    state   TEXT NOT NULL
-			  )
-			`);
-    logger.info('Created game_state table');
+          state   TEXT NOT NULL
+        )`
+    );
+    this.initTable(
+      GameStorage.TABLES.CARDS,
+      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.CARDS} (
+          id    INTEGER PRIMARY KEY,
+          cards TEXT NOT NULL
+        )`
+    );
   }
 
   storeGameState(state: GameState) {
-    this.sql.exec(
-      `INSERT INTO game_state (id, state)
-       VALUES (1, ?)
-       ON CONFLICT(id)
-       DO UPDATE SET state=excluded.state;`,
-      JSON.stringify(state)
-    );
-    logger.info('Stored game state');
+    this.upsertSingleField(GameStorage.TABLES.GAME_STATE, 'state', state);
   }
 
   fetchGameState(): GameState | undefined {
-    const cursor = this.sql.exec(`SELECT state FROM game_state WHERE id = 1`);
+    return this.fetchSingleField<GameState>(
+      GameStorage.TABLES.GAME_STATE,
+      'state'
+    );
+  }
 
-    let result = cursor.toArray()[0];
+  storeCards(cards: CardContainer[]) {
+    this.upsertSingleField(GameStorage.TABLES.CARDS, 'cards', cards);
+  }
 
-    if (!result || typeof result.state !== 'string') {
-      logger.warn('No game state found');
+  fetchCards(): CardContainer[] | undefined {
+    return this.fetchSingleField<CardContainer[]>(
+      GameStorage.TABLES.CARDS,
+      'cards'
+    );
+  }
+
+  private initTable = (tableName: string, createTableSql: string) => {
+    const cursor = this.sql.exec(`PRAGMA table_list`);
+    if ([...cursor].find((t) => t.name === tableName)) {
+      this.log(`${tableName} table already exists`);
+      return;
+    }
+    this.sql.exec(createTableSql);
+    this.log(`Created ${tableName} table`);
+  };
+
+  private fetchSingleField<T>(table: string, field: string): T | undefined {
+    this.log(`Fetching ${field} from table ${table}`);
+    const cursor = this.sql.exec(`SELECT ${field} FROM ${table} WHERE id = 1`);
+    const result = cursor.toArray()[0];
+
+    if (!result) {
+      this.log(`No row found in table ${table}`, 'warn');
       return undefined;
     }
 
-    return JSON.parse(result.state) as GameState;
+    if (typeof result[field] !== 'string') {
+      this.log(
+        `Invalid data format for ${field} in table ${table}: expected string, got ${typeof result[
+          field
+        ]}`,
+        'error'
+      );
+      throw new Error(`Data corruption: ${table}.${field} is not a string`);
+    }
+
+    return JSON.parse(result[field]) as T;
+  }
+
+  private upsertSingleField<T>(table: string, field: string, data: T): void {
+    this.log(`Upserting ${field} in ${table}`);
+    const result = this.sql.exec(
+      `INSERT INTO ${table} (id, ${field})
+       VALUES (1, ?)
+       ON CONFLICT(id)
+       DO UPDATE SET ${field}=excluded.${field};`,
+      JSON.stringify(data)
+    );
+
+    this.log(`Rows written: ${result.rowsWritten}`);
+    if (result.rowsWritten !== 1) {
+      this.log(`Expected to affect 1 row in ${table}.${field}`, 'error');
+      throw new Error(`Upsert failed for ${table}.${field}`);
+    }
+    this.log(`Successfully upserted ${field} in ${table}`);
+  }
+
+  private log(
+    message: string,
+    level: 'info' | 'warn' | 'error' = 'info'
+  ): void {
+    const logMessage = `[DO: ${this.ctx.id.toString()}] ${message}`;
+    if (level === 'info') {
+      logger.info(logMessage);
+    } else if (level === 'warn') {
+      logger.warn(logMessage);
+    } else {
+      logger.error(logMessage);
+    }
   }
 }
