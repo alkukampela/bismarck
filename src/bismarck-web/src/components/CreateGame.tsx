@@ -1,4 +1,3 @@
-import { RegisterPlayer } from '../../../types/register-player';
 import { createGame } from '../services/api-service';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +12,11 @@ export const CreateGame = (): JSX.Element => {
   const MIN_PLAYERS = 3;
   const MAX_PLAYERS = 4;
 
-  const emptyPlayer = { player: { name: '' }, email: '' };
 
-  const [players, setPlayers] = React.useState<RegisterPlayer[]>(
+  type PlayerInput = { player: { name: string }; email: string };
+  const emptyPlayer: PlayerInput = { player: { name: '' }, email: '' };
+
+  const [players, setPlayers] = React.useState<PlayerInput[]>(
     Array(MIN_PLAYERS).fill({ ...emptyPlayer })
   );
 
@@ -61,14 +62,17 @@ export const CreateGame = (): JSX.Element => {
     event.preventDefault();
     setSent(true);
 
-    const registerPlayers: RegisterPlayer[] = players.map((input) => {
-      return {
-        email: input.email.trim(),
-        player: { name: input.player.name.trim() },
-      };
-    });
 
-    createGame({ players: registerPlayers }).then(() => {
+    const request = {
+      players: players.map((input) => ({
+        email: input.email.trim(),
+        player: {
+          name: input.player.name.trim(),
+        },
+      })),
+    };
+
+    createGame(request).then(() => {
       setTimeout(() => {
         navigate('/');
       }, 1000);

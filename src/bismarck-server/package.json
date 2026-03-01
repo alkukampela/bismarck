@@ -37,8 +37,6 @@
     "@types/nodemailer": "^6.4.4",
     "@types/uuid": "^8.3.4",
     "@types/ws": "^8.2.2",
-    "@typescript-eslint/eslint-plugin": "^8.56.0",
-    "@typescript-eslint/parser": "^8.56.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.4.1",
@@ -47,8 +45,7 @@
     "prettier": "^2.5.1",
     "ts-jest": "^29.4.6",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.68.1"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "bidirectional-map": "^1.1.1",

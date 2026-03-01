@@ -6,7 +6,7 @@ import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
 import { TokenResponse } from '../../../types/token-response';
 import { CreateGameResponse } from '../../../types/create-game-response';
-import { RegisterPlayer } from '../../../types/register-player';
+import { CreateGameRequest } from '../../../types/create-game-request';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/api`;
 
@@ -158,10 +158,10 @@ export const postChoice = (
     createAuthHeader(authToken)
   );
 
-export const createGame = async (players: {
-  players: RegisterPlayer[];
-}): Promise<CreateGameResponse> => {
-  const createdGame = await performPost('games', players);
+export const createGame = async (
+  createGameRequest: CreateGameRequest
+): Promise<CreateGameResponse> => {
+  const createdGame = await performPost('games', createGameRequest);
   return ((await createdGame.json()) as CreateGameResponse) || Promise.reject;
 };
 

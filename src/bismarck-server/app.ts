@@ -37,7 +37,6 @@ import { GameType } from '../types/game-type';
 import { SuitEnum } from '../types/suit';
 import { FetchTokenRequest } from './types/fetch-token-request';
 import { fileURLToPath } from 'url';
-import { error } from 'console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
