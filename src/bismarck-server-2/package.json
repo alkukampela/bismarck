@@ -23,9 +23,10 @@
     "wrangler": "^4.69.0"
   },
   "dependencies": {
-    "itty-router": "^5.0.23",
+    "@tsndr/cloudflare-worker-jwt": "^3.2.1",
     "http-status-codes": "^2.2.0",
     "ioredis": "^4.28.5",
+    "itty-router": "^5.0.23",
     "jsonwebtoken": "^8.5.1",
     "nodemailer": "^7.0.11",
     "uuid": "^8.3.2"

@@ -10,7 +10,7 @@ import { Trick } from '../types/trick';
 import { Card } from '../../types/card';
 import { Game } from '../../types/game';
 import { GameType } from '../../types/game-type';
-import { GameTypeChoice } from '../../types/game-type-choice';
+import { GameTypeChoiceRequest } from '../../types/game-type-choice-request';
 import { FullGameType, HandStatute } from '../../types/hand-statute';
 import { Player } from '../../types/player';
 import { PlayerScore } from '../../types/player-score';
@@ -219,7 +219,7 @@ export const getTableCards = async (gameId: string): Promise<Card[]> => {
 
 export const chooseGameType = async (
   player: Player,
-  gameTypeChoice: GameTypeChoice,
+  gameTypeChoice: GameTypeChoiceRequest,
   gameId: string
 ): Promise<HandStatute> => {
   const gameState = await fetchGameState(gameId);

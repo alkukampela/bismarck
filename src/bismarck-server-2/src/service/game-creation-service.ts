@@ -1,10 +1,11 @@
-import { initialHandStatute } from './hand-statute-machine';
-import { sendLoginId } from '../service/email-service';
+import { initialHandStatute } from '../domain/hand-statute-machine';
+import { sendLoginId } from './email-service';
 import { CreateGameResponse } from '../../../types/create-game-response';
 import { CreateGameRequest } from '../../../types/create-game-request';
 import { v4 as uuid } from 'uuid';
-import { generateLoginId } from '../service/token-service';
-import { shuffle } from '../service/shuffle-service';
+import { generateLoginId } from './token-service';
+import { storeLoginToken } from './login-token-service';
+import { shuffle } from './shuffle-service';
 import pino from 'pino';
 
 const logger = pino();
@@ -44,16 +45,13 @@ export const createGameAndInvitatePlayers = async (
 
   for (const createPlayer of request.players) {
     const loginId = generateLoginId(5);
-    await env.LOGIN_TOKENS.put(
+    await storeLoginToken(
       loginId,
-      JSON.stringify({
+      {
         gameId,
         player: createPlayer.player,
-      }),
-      {
-        // 24 hours
-        expirationTtl: 864_000,
-      }
+      },
+      env
     );
     logger.info(`Generated login ID for player: ${createPlayer.player.name}`);
     sendLoginId({

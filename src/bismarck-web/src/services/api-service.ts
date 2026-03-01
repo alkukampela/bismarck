@@ -1,6 +1,6 @@
 import { Card } from '../../../types/card';
 import { GameScoreBoard } from '../../../types/game-score-board';
-import { GameTypeChoice } from '../../../types/game-type-choice';
+import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
@@ -150,7 +150,7 @@ export const initHand = (authToken: string, gameId: string): Promise<boolean> =>
 export const postChoice = (
   authToken: string,
   gameId: string,
-  gameTypeChoice: GameTypeChoice
+  gameTypeChoice: GameTypeChoiceRequest
 ): Promise<boolean> =>
   postAndForget(
     `games/${gameId}/hand/statute`,

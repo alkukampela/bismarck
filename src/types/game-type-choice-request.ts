@@ -1,7 +1,7 @@
 import { GameType } from './game-type';
 import { SuitEnum } from './suit';
 
-export interface GameTypeChoice {
+export interface GameTypeChoiceRequest {
   gameType: GameType;
   trumpSuit?: SuitEnum;
 }

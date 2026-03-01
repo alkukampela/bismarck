@@ -1,4 +1,4 @@
-import { GameTypeChoice } from '../../../types/game-type-choice';
+import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
 import { GameContext } from '../GameContext';
 import { postChoice } from '../services/api-service';
 import * as React from 'react';
@@ -8,7 +8,7 @@ export const ChoiceButton = ({
   gameTypeChoice,
 }: {
   text: string;
-  gameTypeChoice: GameTypeChoice;
+  gameTypeChoice: GameTypeChoiceRequest;
 }): React.ReactElement => {
   const game = React.useContext(GameContext);
 

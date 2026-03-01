@@ -10,7 +10,7 @@ import { Trick } from '../types/trick';
 import { Card } from '../../../types/card';
 import { Game } from '../../../types/game';
 import { GameType } from '../../../types/game-type';
-import { GameTypeChoice } from '../../../types/game-type-choice';
+import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
 import { FullGameType, HandStatute } from '../../../types/hand-statute';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
@@ -46,8 +46,8 @@ import {
   emptyTrickResponse,
   convertToTrickResponse,
 } from './trick-machine';
-import pino from 'pino';
 import { GameStorage } from '../persistence/game-storage';
+import pino from 'pino';
 
 const logger = pino();
 
@@ -228,10 +228,13 @@ export const getTableCards = async (
 
 export const chooseGameType = async (
   player: Player,
-  gameTypeChoice: GameTypeChoice,
-  gameId: string
+  gameTypeChoice: GameTypeChoiceRequest,
+  stub: DurableObjectStub<GameStorage>
 ): Promise<HandStatute> => {
-  const gameState = await fetchGameState(gameId);
+  const gameState = await stub.fetchGameState();
+  if (!gameState) {
+    return Promise.reject(new Error(ErrorTypes.NOT_FOUND));
+  }
 
   if (!isEldestHand(player, gameState.handStatute)) {
     return Promise.reject(new Error(ErrorTypes.MUST_BE_ELDEST_HAND));
@@ -262,7 +265,7 @@ export const chooseGameType = async (
     ...gameState,
     handStatute: chosenStatute,
   };
-  storeGameState(updatedGameState, gameId);
+  stub.storeGameState(updatedGameState);
   return chosenStatute;
 };
 
@@ -411,13 +414,13 @@ export const addCardToTrick = async (
 };
 
 export const getHandsTrickCounts = async (
-  gameId: string
+  stub: DurableObjectStub<GameStorage>
 ): Promise<PlayerScore[]> => {
-  const tricks = await fetchScores(gameId);
-  if (!tricks) {
+  const trickPoints = await stub.fetchTrickPoints();
+  if (!trickPoints) {
     return [];
   }
-  return tricks;
+  return trickPoints;
 };
 
 export const isCurrentHandFinished = async (
