@@ -43,6 +43,7 @@ export class GameError extends Error {
       case ErrorTypes.CARD_ALREADY_PLAYED:
       case ErrorTypes.CARD_NOT_FOUND:
       case ErrorTypes.INVALID_QUERY_PARAMETERS:
+      case ErrorTypes.TRICK_NOT_FOUND:
         return StatusCodes.BAD_REQUEST;
 
       case ErrorTypes.TRICK_ALREADY_STARTED:

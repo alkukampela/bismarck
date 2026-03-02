@@ -8,7 +8,7 @@ import { GameError } from '../utils/game-error';
 export const initHand = async (
   stub: DurableObjectStub<GameStorage>
 ): Promise<HandStatute> => {
-  const deck = await stub.fetchCards();
+  const deck = await stub.fetchDeck();
   const isHandFinished = noCardsLeft(deck);
 
   if (!isHandFinished) {

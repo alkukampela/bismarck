@@ -2,6 +2,7 @@ import { CardContainer } from '../types/card-container';
 import { DurableObject } from 'cloudflare:workers';
 import { GameState } from '../types/game-state';
 import { PlayerScore } from '../../../types/player-score';
+import { Trick } from '../types/trick';
 import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { ErrorTypes } from '../types/error-types';
@@ -15,6 +16,7 @@ export class GameStorage extends DurableObject<Env> {
     GAME_STATE: 'game_state',
     CARDS: 'cards',
     TRICK_POINTS: 'trick_points',
+    TRICK: 'trick',
   } as const;
 
   constructor(ctx: DurableObjectState, env: Env) {
@@ -41,6 +43,13 @@ export class GameStorage extends DurableObject<Env> {
           points TEXT NOT NULL
         )`
     );
+    this.initTable(
+      GameStorage.TABLES.TRICK,
+      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.TRICK} (
+          id    INTEGER PRIMARY KEY,
+          trick TEXT NOT NULL
+        )`
+    );
   }
 
   storeGameState(state: GameState) {
@@ -54,11 +63,11 @@ export class GameStorage extends DurableObject<Env> {
     );
   }
 
-  storeCards(cards: CardContainer[]) {
+  storeDeck(cards: CardContainer[]) {
     this.upsertSingleField(GameStorage.TABLES.CARDS, 'cards', cards);
   }
 
-  fetchCards(): CardContainer[] {
+  fetchDeck(): CardContainer[] {
     return (
       this.fetchSingleField<CardContainer[]>(
         GameStorage.TABLES.CARDS,
@@ -76,6 +85,14 @@ export class GameStorage extends DurableObject<Env> {
       GameStorage.TABLES.TRICK_POINTS,
       'points'
     );
+  }
+
+  storeTrick(trick: Trick) {
+    this.upsertSingleField(GameStorage.TABLES.TRICK, 'trick', trick);
+  }
+
+  fetchTrick(): Trick | undefined {
+    return this.fetchSingleField<Trick>(GameStorage.TABLES.TRICK, 'trick');
   }
 
   private initTable = (tableName: string, createTableSql: string) => {

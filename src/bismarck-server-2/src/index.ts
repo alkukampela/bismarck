@@ -114,7 +114,7 @@ router
   )
   .get('/games/:id/hand/trick', async (request, env: Env) => {
     const stub = getStub(request.params.id, env);
-    const trick = await getCurrentTrick(stub, request.params.id);
+    const trick = await getCurrentTrick(stub);
     return jsonResponse(trick);
   })
   .post(
@@ -124,12 +124,7 @@ router
       try {
         const stub = getStub(request.params.id, env);
         const card = getTypedContent<CardRequest>(request);
-        const trick = await startTrick(
-          request.player,
-          card,
-          stub,
-          request.params.id
-        );
+        const trick = await startTrick(request.player, card, stub);
         // TODO implement publishing
         //publishTrick(trick, request.params.id);
         return jsonResponse(trick);
@@ -145,12 +140,7 @@ router
       try {
         const stub = getStub(request.params.id, env);
         const card = getTypedContent<CardRequest>(request);
-        const trick = await addCardToTrick(
-          request.player,
-          card,
-          stub,
-          request.params.id
-        );
+        const trick = await addCardToTrick(request.player, card, stub);
         // TODO implement publishing
         //publishTrick(trick, request.params.id);
         return jsonResponse(trick);

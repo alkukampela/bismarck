@@ -19,6 +19,7 @@ export enum ErrorTypes {
   PLAYER_NOT_IN_GAME = 'Player is not in the game',
   TRICK_ALREADY_STARTED = 'Trick is already ongoing',
   TRICK_NOT_STARTED = 'Trick is not started yet',
+  TRICK_NOT_FOUND = 'Trick not found',
   UNEXPECTED_ERROR = 'Unexpected error',
   INVALID_QUERY_PARAMETERS = 'Invalid query parameters',
 }

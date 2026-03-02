@@ -29,7 +29,6 @@ import {
   hasPlayerCard,
   noCardsLeft,
 } from './deck-operations';
-import { fetchTrick, storeTrick } from '../persistence/storage-service';
 import {
   initTrick,
   isTrickReady,
@@ -50,15 +49,6 @@ const getPlayersIndex = (player: Player, handStatute: HandStatute): number => {
   return handStatute.playerOrder.findIndex((x) => player.name === x.name);
 };
 
-const isTrickOpen = async (gameId: string): Promise<boolean> => {
-  try {
-    const trick = await fetchTrick(gameId);
-    return !isTrickReady(trick);
-  } catch {
-    return false;
-  }
-};
-
 const defaultTrick = async (
   stub: DurableObjectStub<GameStorage>
 ): Promise<TrickResponse> => {
@@ -69,16 +59,11 @@ const defaultTrick = async (
   return emptyTrickResponse(gameState.handStatute.playerOrder);
 };
 
-const getTrickLead = async (
-  gameId: string,
-  handStatute: HandStatute
+const getLeadPlayerForTrick = async (
+  trick: Trick | undefined,
+  eldestHand: Player
 ): Promise<Player> => {
-  try {
-    const trick = await fetchTrick(gameId);
-    return getTaker(trick);
-  } catch {
-    return handStatute.eldestHand;
-  }
+  return trick ? getTaker(trick) : eldestHand;
 };
 
 const isEldestHand = (player: Player, handStatute: HandStatute): boolean => {
@@ -135,7 +120,7 @@ export const setUpHand = (
   stub: DurableObjectStub<GameStorage>
 ): HandStatute => {
   const deck = initDeck();
-  stub.storeCards(deck);
+  stub.storeDeck(deck);
 
   return buildHandStatute(game, getTrumpSuit(deck));
 };
@@ -151,7 +136,7 @@ export const getPlayersHand = async (
   ) {
     return { cards: [], extraCards: 0 };
   }
-  const deck = await stub.fetchCards();
+  const deck = await stub.fetchDeck();
   const cards = getPlayersCards(
     getPlayersIndex(player, gameState.handStatute),
     gameState.players.length,
@@ -182,7 +167,7 @@ export const removePlayersCard = async (
   }
   const playerIndex = getPlayersIndex(player, gameState.handStatute);
 
-  const deck = await stub.fetchCards();
+  const deck = await stub.fetchDeck();
   if (deck.length === 0) {
     throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
@@ -209,7 +194,7 @@ export const removePlayersCard = async (
   }
 
   const updatedDeck = removeCard(card, deck);
-  await stub.storeCards(updatedDeck);
+  await stub.storeDeck(updatedDeck);
   return card;
 };
 
@@ -227,7 +212,7 @@ export const getStatute = async (
 export const getTableCards = async (
   stub: DurableObjectStub<GameStorage>
 ): Promise<Card[]> => {
-  const deck = await stub.fetchCards();
+  const deck = await stub.fetchDeck();
   return tableCardsFromDeck(deck);
 };
 
@@ -277,44 +262,42 @@ export const chooseGameType = async (
 };
 
 export const getCurrentTrick = async (
-  stub: DurableObjectStub<GameStorage>,
-  gameId: string
+  stub: DurableObjectStub<GameStorage>
 ): Promise<TrickResponse> => {
-  try {
-    const trick = await fetchTrick(gameId);
-    return convertToTrickResponse(trick);
-  } catch {
-    return await defaultTrick(stub);
-  }
+  const trick = await stub.fetchTrick();
+  return trick ? convertToTrickResponse(trick) : await defaultTrick(stub);
 };
 
 export const startTrick = async (
   player: Player,
   card: Card,
-  stub: DurableObjectStub<GameStorage>,
-  gameId: string
+  stub: DurableObjectStub<GameStorage>
 ): Promise<TrickResponse> => {
-  const isOpen = await isTrickOpen(gameId);
-  if (isOpen) {
-    throw new GameError(ErrorTypes.TRICK_ALREADY_STARTED);
-  }
-
   const gameState = await stub.fetchGameState();
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
-  const playerIndex = getPlayersIndex(player, gameState.handStatute);
 
   if (!gameState.handStatute.gameType?.value) {
     throw new GameError(ErrorTypes.GAME_TYPE_NOT_CHOSEN);
   }
 
-  const trickLead = await getTrickLead(gameId, gameState.handStatute);
+  const previousTrick = await stub.fetchTrick();
+  if (previousTrick && !isTrickReady(previousTrick)) {
+    throw new GameError(ErrorTypes.TRICK_ALREADY_STARTED);
+  }
+
+  const trickLead = await getLeadPlayerForTrick(
+    previousTrick,
+    gameState.handStatute.eldestHand
+  );
   if (player.name !== trickLead.name) {
     throw new GameError(ErrorTypes.NOT_TRICK_LEAD);
   }
 
-  const deck = await stub.fetchCards();
+  const playerIndex = getPlayersIndex(player, gameState.handStatute);
+
+  const deck = await stub.fetchDeck();
   if (deck.length === 0) {
     throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
@@ -340,39 +323,41 @@ export const startTrick = async (
     throw new GameError(ErrorTypes.CARDS_MUST_BE_REMOVED);
   }
 
+  const updatedDeck = removeCard(card, deck);
+  stub.storeDeck(updatedDeck);
+
   const trickNumber = roundNumber(playerIndex, gameState.players.length, deck);
   const trick = initTrick(card, player, gameState.handStatute, trickNumber);
+  stub.storeTrick(trick);
 
-  const updatedDeck = removeCard(card, deck);
-  stub.storeCards(updatedDeck);
-
-  storeTrick(trick, gameId);
-
-  return Promise.resolve(convertToTrickResponse(trick));
+  return convertToTrickResponse(trick);
 };
 
 export const addCardToTrick = async (
   player: Player,
   card: Card,
-  stub: DurableObjectStub<GameStorage>,
-  gameId: string
+  stub: DurableObjectStub<GameStorage>
 ): Promise<TrickResponse> => {
-  const isOpen = await isTrickOpen(gameId);
-  if (!isOpen) {
+  const trick = await stub.fetchTrick();
+  if (!trick) {
+    throw new GameError(ErrorTypes.TRICK_NOT_FOUND);
+  }
+
+  if (trick.trickCards.length === 0) {
     throw new GameError(ErrorTypes.TRICK_NOT_STARTED);
   }
 
-  const trick = await fetchTrick(gameId);
   if (!hasPlayerTurn(trick, player)) {
     throw new GameError(ErrorTypes.OTHER_PLAYER_HAS_TURN);
   }
+
   const gameState = await stub.fetchGameState();
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
   const playerIndex = getPlayersIndex(player, gameState.handStatute);
 
-  const deck = await stub.fetchCards();
+  const deck = await stub.fetchDeck();
   if (deck.length === 0) {
     throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
@@ -390,12 +375,12 @@ export const addCardToTrick = async (
 
   const isMoveLegal = await checkCardsLegality(playerIndex, card, trick, deck);
   if (!isMoveLegal) {
-    throw Error(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
+    throw new GameError(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
   }
 
   const updatedTrick = playCard(trick, player, card);
   const updatedDeck = removeCard(card, deck);
-  stub.storeCards(updatedDeck);
+  stub.storeDeck(updatedDeck);
 
   if (isTrickReady(updatedTrick)) {
     const playerScoresBefore = await stub.fetchTrickPoints();
@@ -432,7 +417,7 @@ export const addCardToTrick = async (
     }
   }
 
-  storeTrick(updatedTrick, gameId);
+  stub.storeTrick(updatedTrick);
 
   return convertToTrickResponse(updatedTrick);
 };
