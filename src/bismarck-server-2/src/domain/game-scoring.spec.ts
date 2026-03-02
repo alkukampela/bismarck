@@ -1,4 +1,4 @@
-import { calculateTrickPoints, getTotalScores } from './game-score-manager';
+import { calculateTrickPoints, getTotalScores } from './game-scoring';
 import { GameType } from '../../../types/game-type';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
@@ -154,7 +154,7 @@ describe('calculateTrickPoints', () => {
     const gameState = createMockGameState([], null);
 
     expect(() => calculateTrickPoints(trickPoints, gameState)).toThrow(
-      'Game type is not defined'
+      'Unexpected error'
     );
   });
 
@@ -199,7 +199,7 @@ describe('getTotalScores', () => {
   });
 
   test('should return isFinished as false for incomplete 3-player game', () => {
-    const trickScores: TrickScore[] = Array(11).fill({
+    const trickScores: TrickScore[] = Array(15).fill({
       isChoice: false,
       gameType: GameType.TRUMP,
       scores: [
@@ -216,7 +216,7 @@ describe('getTotalScores', () => {
   });
 
   test('should return isFinished as false for incomplete 4-player game', () => {
-    const trickScores: TrickScore[] = Array(15).fill({
+    const trickScores: TrickScore[] = Array(11).fill({
       isChoice: false,
       gameType: GameType.TRUMP,
       scores: [
@@ -233,8 +233,8 @@ describe('getTotalScores', () => {
     expect(result.isFinished).toBe(false);
   });
 
-  test('should return isFinished as true for complete 4-player game (16 tricks)', () => {
-    const trickScores: TrickScore[] = Array(16).fill({
+  test('should return isFinished as true for complete 4-player game', () => {
+    const trickScores: TrickScore[] = Array(12).fill({
       isChoice: false,
       gameType: GameType.TRUMP,
       scores: [
@@ -249,12 +249,12 @@ describe('getTotalScores', () => {
     const result = getTotalScores(gameState);
 
     expect(result.isFinished).toBe(true);
-    expect(result.trickScores.length).toBe(16);
+    expect(result.trickScores.length).toBe(12);
   });
 
-  test('should return isFinished as true for complete 3-player game (12 tricks)', () => {
+  test('should return isFinished as true for complete 3-player game', () => {
     const threePlayers = [PLAYER_1, PLAYER_2, PLAYER_3];
-    const trickScores: TrickScore[] = Array(12).fill({
+    const trickScores: TrickScore[] = Array(16).fill({
       isChoice: false,
       gameType: GameType.TRUMP,
       scores: [
@@ -276,7 +276,7 @@ describe('getTotalScores', () => {
     const result = getTotalScores(gameState);
 
     expect(result.isFinished).toBe(true);
-    expect(result.trickScores.length).toBe(12);
+    expect(result.trickScores.length).toBe(16);
   });
 
   test('should return isFinished as true for games with more than required tricks', () => {

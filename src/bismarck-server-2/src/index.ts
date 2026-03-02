@@ -1,10 +1,14 @@
 import { AutoRouter } from 'itty-router';
 import {
+  addCardToTrick,
   chooseGameType,
   getCurrentTrick,
   getHandsTrickCounts,
+  getPlayersHand,
   getStatute,
   getTableCards,
+  removePlayersCard,
+  startTrick,
 } from './domain/hand-service';
 import { StatusCodes } from 'http-status-codes';
 import { generateTokenForPlayer } from './service/token-service';
@@ -14,16 +18,21 @@ import {
   withCreateGameRequest,
   withFetchTokenRequest,
   withGameTypeChoiceRequest,
+  withCardRequest,
 } from './utils/type-guard-middleware';
 import { createGameAndInvitatePlayers } from './service/game-creation-service';
 import { CreateGameRequest } from '../../types/create-game-request';
+import { CardRequest } from '../../types/card-request';
 import { handleError, jsonResponse } from './utils/api-helper';
 import { GameStorage } from './persistence/game-storage';
-import { getTotalScores } from './domain/game-score-manager';
+import { getTotalScores } from './domain/game-scoring';
 import { loadGamePlayerByLoginId } from './service/login-token-service';
 import { authenticatedRoute } from './utils/auth-middleware';
 import { GameTypeChoiceRequest } from '../../types/game-type-choice-request';
-
+import { initHand } from './domain/game-service';
+import { GameError } from './utils/game-error';
+import { ErrorTypes } from './types/error-types';
+import { Card, Rank, Suit } from '../../types/card';
 
 export { GameStorage } from './persistence/game-storage';
 
@@ -40,7 +49,7 @@ router
     try {
       const statute = await getStatute(stub);
       return jsonResponse(statute);
-    } catch (err: unknown) {
+    } catch (err) {
       return handleError(err);
     }
   })
@@ -59,23 +68,42 @@ router
         // TODO implement publishing
         //publishTrick(trickResponseDuringCardRemoval(), req.gameId);
         return jsonResponse(statute);
-      } catch (err: unknown) {
+      } catch (err) {
         return handleError(err);
       }
-
-      return new Response('Not implemented', { status: 501 });
     })
   )
   .get(
     '/games/:id/hand/cards',
     authenticatedRoute(async (request, env: Env) => {
-      return new Response('Not implemented', { status: 501 });
+      try {
+        const stub = getStub(request.params.id, env);
+        const cards = await getPlayersHand(request.player, stub);
+        return jsonResponse(cards);
+      } catch (err) {
+        return handleError(err);
+      }
     })
   )
   .delete(
     '/games/:id/hand/cards',
     authenticatedRoute(async (request, env: Env) => {
-      return new Response('Not implemented', { status: 501 });
+      try {
+        const { rank, suit } = request.query;
+
+        if (!rank || !suit) {
+          throw new GameError(ErrorTypes.INVALID_QUERY_PARAMETERS);
+        }
+        const card: Card = {
+          rank: request.query.rank as Rank,
+          suit: request.query.suit as Suit,
+        };
+        const stub = getStub(request.params.id, env);
+        await removePlayersCard(request.player, card, stub);
+        return new Response(null, { status: StatusCodes.NO_CONTENT });
+      } catch (err: unknown) {
+        return handleError(err);
+      }
     })
   )
   .get('/games/:id/hand/trick', async (request, env: Env) => {
@@ -85,14 +113,44 @@ router
   })
   .post(
     '/games/:id/hand/trick',
+    withCardRequest,
     authenticatedRoute(async (request, env: Env) => {
-      return new Response('Not implemented', { status: 501 });
+      try {
+        const stub = getStub(request.params.id, env);
+        const card = getTypedContent<CardRequest>(request);
+        const trick = await startTrick(
+          request.player,
+          card,
+          stub,
+          request.params.id
+        );
+        // TODO implement publishing
+        //publishTrick(trick, request.params.id);
+        return jsonResponse(trick);
+      } catch (err) {
+        return handleError(err);
+      }
     })
   )
   .post(
     '/games/:id/hand/trick/cards',
+    withCardRequest,
     authenticatedRoute(async (request, env: Env) => {
-      return new Response('Not implemented', { status: 501 });
+      try {
+        const stub = getStub(request.params.id, env);
+        const card = getTypedContent<CardRequest>(request);
+        const trick = await addCardToTrick(
+          request.player,
+          card,
+          stub,
+          request.params.id
+        );
+        // TODO implement publishing
+        //publishTrick(trick, request.params.id);
+        return jsonResponse(trick);
+      } catch (err) {
+        return handleError(err);
+      }
     })
   )
   .get('/games/:id/hand/trick-count', async (request, env: Env) => {
@@ -100,7 +158,7 @@ router
     try {
       const scores = await getHandsTrickCounts(stub);
       return jsonResponse(scores);
-    } catch (err: unknown) {
+    } catch (err) {
       return handleError(err);
     }
   })
@@ -109,7 +167,7 @@ router
     try {
       const cards = await getTableCards(stub);
       return jsonResponse(cards);
-    } catch (err: unknown) {
+    } catch (err) {
       return handleError(err);
     }
   })
@@ -118,15 +176,12 @@ router
     try {
       const gameState = await stub.fetchGameState();
       if (!gameState) {
-        return handleError(
-          new Error('Game state not found'),
-          StatusCodes.NOT_FOUND
-        );
+        throw new GameError(ErrorTypes.GAME_NOT_FOUND);
       }
       const scores = getTotalScores(gameState);
-      jsonResponse(scores);
-    } catch (err: unknown) {
-      handleError(err);
+      return jsonResponse(scores);
+    } catch (err) {
+      return handleError(err);
     }
   })
   .post('/games', withCreateGameRequest, async (request, env: Env) => {
@@ -137,14 +192,22 @@ router
         env
       );
       return jsonResponse(creatGameResponse, StatusCodes.CREATED);
-    } catch (err: unknown) {
-      return handleError(err, StatusCodes.FORBIDDEN);
+    } catch (err) {
+      return handleError(err);
     }
   })
   .post(
     '/games/:id/hand',
     authenticatedRoute(async (request, env: Env) => {
-      return new Response('Not implemented', { status: 501 });
+      try {
+        const stub = getStub(request.params.id, env);
+        const statute = await initHand(stub);
+        // TODO implement publishing
+        //publishTrick(trickResponseDuringCardRemoval(), req.gameId);
+        return jsonResponse(statute);
+      } catch (err) {
+        return handleError(err);
+      }
     })
   )
   .post('/fetch-token', withFetchTokenRequest, async (request, env: Env) => {
@@ -153,8 +216,8 @@ router
       const gamePlayer = await loadGamePlayerByLoginId(content.loginId, env);
       const result = await generateTokenForPlayer(gamePlayer, env.JWT_SECRET);
       return jsonResponse(result);
-    } catch (err: unknown) {
-      return handleError(err, StatusCodes.FORBIDDEN);
+    } catch (err) {
+      return handleError(err);
     }
   })
   .get('/dev/:id', () => new Response('Not implemented', { status: 501 }))

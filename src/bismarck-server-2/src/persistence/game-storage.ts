@@ -3,6 +3,8 @@ import { DurableObject } from 'cloudflare:workers';
 import { GameState } from '../types/game-state';
 import { PlayerScore } from '../../../types/player-score';
 import pino from 'pino';
+import { GameError } from '../utils/game-error';
+import { ErrorTypes } from '../types/error-types';
 
 const logger = pino();
 
@@ -56,10 +58,12 @@ export class GameStorage extends DurableObject<Env> {
     this.upsertSingleField(GameStorage.TABLES.CARDS, 'cards', cards);
   }
 
-  fetchCards(): CardContainer[] | undefined {
-    return this.fetchSingleField<CardContainer[]>(
-      GameStorage.TABLES.CARDS,
-      'cards'
+  fetchCards(): CardContainer[] {
+    return (
+      this.fetchSingleField<CardContainer[]>(
+        GameStorage.TABLES.CARDS,
+        'cards'
+      ) ?? []
     );
   }
 
@@ -101,7 +105,7 @@ export class GameStorage extends DurableObject<Env> {
         ]}`,
         'error'
       );
-      throw new Error(`Data corruption: ${table}.${field} is not a string`);
+      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
 
     return JSON.parse(result[field]) as T;
@@ -117,10 +121,9 @@ export class GameStorage extends DurableObject<Env> {
       JSON.stringify(data)
     );
 
-    this.log(`Rows written: ${result.rowsWritten}`);
     if (result.rowsWritten !== 1) {
       this.log(`Expected to affect 1 row in ${table}.${field}`, 'error');
-      throw new Error(`Upsert failed for ${table}.${field}`);
+      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
     this.log(`Successfully upserted ${field} in ${table}`);
   }
@@ -130,12 +133,16 @@ export class GameStorage extends DurableObject<Env> {
     level: 'info' | 'warn' | 'error' = 'info'
   ): void {
     const logMessage = `[DO: ${this.ctx.id.toString()}] ${message}`;
-    if (level === 'info') {
-      logger.info(logMessage);
-    } else if (level === 'warn') {
-      logger.warn(logMessage);
-    } else {
-      logger.error(logMessage);
+    switch (level) {
+      case 'info':
+        logger.info(logMessage);
+        break;
+      case 'warn':
+        logger.warn(logMessage);
+        break;
+      case 'error':
+        logger.error(logMessage);
+        break;
     }
   }
 }

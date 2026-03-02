@@ -1,4 +1,5 @@
 export const DECK_SIZE = 52;
+export const TABLE_CARDS = 4;
 
 type Range<
   N extends number,

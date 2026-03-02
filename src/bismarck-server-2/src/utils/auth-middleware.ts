@@ -1,11 +1,14 @@
 import { Player } from '../../../types/player';
 import { StatusCodes } from 'http-status-codes';
 import { extrractGamePlayerFromValidToken } from '../service/token-service';
+import { ErrorTypes } from '../types/error-types';
+import { GameError } from './game-error';
 
 export interface AuthenticatedRequest extends Request {
   player: Player;
   validatedGameId: string;
   params: { id: string };
+  query: Record<string, string | string[]>;
 }
 
 /**
@@ -77,6 +80,7 @@ export const authenticatedRoute = (
     if (isAuthenticatedRequest(request)) {
       return handler(request, env);
     }
-    throw new Error('Authentication succeeded but request was not augmented');
+
+    throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   };
 };

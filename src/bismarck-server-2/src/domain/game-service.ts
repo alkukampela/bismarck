@@ -1,37 +1,48 @@
 import { ErrorTypes } from '../types/error-types';
-import { isCurrentHandFinished, setUpHand } from './hand-service';
+import { setUpHand } from './hand-service';
 import { HandStatute } from '../../../types/hand-statute';
-import {
-  clearTrick,
-  fetchGameState,
-  storeGameState,
-} from '../persistence/storage-service';
+import { GameStorage } from '../persistence/game-storage';
+import { noCardsLeft } from './deck-operations';
+import { GameError } from '../utils/game-error';
 
-export const initHand = async (gameId: string): Promise<HandStatute> => {
-  const isHandFinished = await isCurrentHandFinished(gameId);
+export const initHand = async (
+  stub: DurableObjectStub<GameStorage>
+): Promise<HandStatute> => {
+  const deck = await stub.fetchCards();
+  const isHandFinished = noCardsLeft(deck);
 
   if (!isHandFinished) {
-    return Promise.reject(new Error(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
+    return Promise.reject(new GameError(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
   }
 
-  const gameState = await fetchGameState(gameId);
+  const gameState = await stub.fetchGameState();
 
   if (!gameState) {
-    return Promise.reject(new Error(ErrorTypes.GAME_NOT_FOUND));
+    return Promise.reject(new GameError(ErrorTypes.GAME_NOT_FOUND));
   }
 
   if (gameState.handNumber >= gameState.players.length * 4) {
-    return Promise.reject(new Error(ErrorTypes.GAME_ENDED));
+    return Promise.reject(new GameError(ErrorTypes.GAME_ENDED));
   }
 
-  const handStatute = await setUpHand(gameId, gameState);
+  const handStatute = setUpHand(gameState, stub);
+
+  stub.storeTrickPoints(
+    handStatute.playerOrder.map((player) => {
+      return { player, score: 0 };
+    })
+  );
+
   const updatedGameState = {
     ...gameState,
     handNumber: gameState.handNumber + 1,
     handStatute,
   };
-  storeGameState(updatedGameState, gameId);
-  clearTrick(gameId);
+
+  stub.storeGameState(updatedGameState);
+
+  // TODO add implementation
+  //clearTrick(gameId);
 
   return handStatute;
 };

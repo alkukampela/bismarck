@@ -1,6 +1,7 @@
 export enum ErrorTypes {
   CARDS_MUST_BE_REMOVED = 'Eldest hand must remove cards before opening trick',
   CARD_NOT_FOUND = 'Card not found',
+  CARD_ALREADY_PLAYED = 'Card already played',
   CURRENT_HAND_NOT_FINISHED = "Can't start new hand when current is ongoing",
   FORBIDDEN = 'Forbidden operation',
   GAME_ENDED = 'Game has ended',
@@ -16,8 +17,8 @@ export enum ErrorTypes {
   NO_MORE_CARDS_TO_REMOVE = 'No more cards to be removed',
   OTHER_PLAYER_HAS_TURN = 'Other player has a turn',
   PLAYER_NOT_IN_GAME = 'Player is not in the game',
-  RECOVERY_SENT = 'Recovery SMS is already sent',
   TRICK_ALREADY_STARTED = 'Trick is already ongoing',
   TRICK_NOT_STARTED = 'Trick is not started yet',
   UNEXPECTED_ERROR = 'Unexpected error',
+  INVALID_QUERY_PARAMETERS = 'Invalid query parameters',
 }

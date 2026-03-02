@@ -1,4 +1,3 @@
-import { CardContainer } from '../types/card-container';
 import { Trick } from '../types/trick';
 import { PlayerScore } from '../../../types/player-score';
 import Redis from 'ioredis';
@@ -7,7 +6,7 @@ import pino from 'pino';
 
 const logger = pino();
 
-type StorageType = CardContainer[] | PlayerScore[] | Trick | GameState;
+type StorageType = PlayerScore[] | Trick | GameState;
 
 const ONE_DAY_EXPIRATION = 86400;
 
@@ -37,8 +36,6 @@ const del = (key: string): void => {
 
 const getScoresKey = (identifier: string): string => `scores:${identifier}`;
 
-const getCardsKey = (identifier: string): string => `cards:${identifier}`;
-
 const getTrickKey = (identifier: string): string => `trick:${identifier}`;
 
 const getGameStateKey = (identifier: string): string =>
@@ -56,20 +53,6 @@ export const fetchGameState = async (
 ): Promise<GameState> => {
   const result = await fetch(getGameStateKey(identifier));
   return JSON.parse(result) as GameState;
-};
-
-export const storeCards = (
-  cards: CardContainer[],
-  identifier: string
-): void => {
-  store(getCardsKey(identifier), cards);
-};
-
-export const fetchCards = async (
-  identifier: string
-): Promise<CardContainer[]> => {
-  const result = await fetch(getCardsKey(identifier));
-  return JSON.parse(result) as CardContainer[];
 };
 
 export const storeScores = (

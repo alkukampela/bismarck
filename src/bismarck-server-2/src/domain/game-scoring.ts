@@ -2,7 +2,13 @@ import { GameScoreBoard } from '../../../types/game-score-board';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
 import { TrickScore } from '../../../types/trick-score';
+import { DECK_SIZE, TABLE_CARDS } from '../types/cards-of-deck';
+import { ErrorTypes } from '../types/error-types';
 import { GameState } from '../types/game-state';
+import { GameError } from '../utils/game-error';
+import pino from 'pino';
+
+const logger = pino();
 
 const pointsSoFar = (
   previousTrickScore: TrickScore,
@@ -18,8 +24,10 @@ const pointsSoFar = (
 
   if (!foundScore) {
     // Not supposed to happen if players are consistent across tricks.
-    throw new Error(`Player ${player.name} not found in previous trick score`);
+    logger.error(`Player ${player.name} not found in previous trick score`);
+    throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
+
   return foundScore.totalPoints;
 };
 
@@ -41,11 +49,12 @@ const calculateScore = (
 
 const isFinished = (trickScores: TrickScore[]): boolean => {
   if (trickScores.length === 0) {
+    // No tricks played yet, so hand is not finished.
     return false;
   }
   const players = trickScores[0].scores.length;
-  const rounds = 4;
-  return trickScores.length >= players * rounds;
+  const tricksPerHand = (DECK_SIZE - TABLE_CARDS) / players;
+  return trickScores.length >= tricksPerHand;
 };
 
 export const calculateTrickPoints = (
@@ -56,7 +65,7 @@ export const calculateTrickPoints = (
 
   if (!gameState.handStatute.gameType) {
     // This should never happen if trick is ready.
-    throw new Error('Game type is not defined');
+    throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
 
   return {

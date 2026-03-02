@@ -1,10 +1,12 @@
-import { tricksInHand } from './card-manager';
+import { tricksInHand } from './deck-operations';
 import { Game } from '../../../types/game';
 import { GameType } from '../../../types/game-type';
 import { FullGameType, HandStatute } from '../../../types/hand-statute';
 import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
 import pino from 'pino';
+import { ErrorTypes } from '../types/error-types';
+import { GameError } from '../utils/game-error';
 
 const logger = pino();
 
@@ -30,7 +32,7 @@ const determineNonChoiceGameType = (
       break;
     default:
       logger.error('Invalid hand number for non-choice game type');
-      throw new Error('Invalid hand number for non-choice game type');
+      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
 
   if (gameType !== GameType.TRUMP) {
@@ -39,7 +41,7 @@ const determineNonChoiceGameType = (
 
   if (!trumpSuit) {
     logger.error('Trump suit must be provided for trump game type');
-    throw Error('Trump suit must be provided for trump game type');
+    throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
 
   return {

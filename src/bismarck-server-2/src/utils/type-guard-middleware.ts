@@ -3,6 +3,8 @@ import { FetchTokenRequest } from '../types/fetch-token-request';
 import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
 import { GameType } from '../../../types/game-type';
 import { SuitEnum } from '../../../types/suit';
+import { CardRequest } from '../../../types/card-request';
+import { Rank, Suit, ALL_RANKS, ALL_SUITS } from '../../../types/card';
 
 const isCreateGameRequest = (obj: any): obj is CreateGameRequest => {
   return (
@@ -45,6 +47,19 @@ const isGameTypeChoice = (obj: any): obj is GameTypeChoiceRequest => {
   return true;
 };
 
+const isCardRequest = (obj: any): obj is CardRequest => {
+  if (!obj || typeof obj !== 'object') {
+    return false;
+  }
+
+  return (
+    typeof obj.rank === 'string' &&
+    ALL_RANKS.includes(obj.rank as Rank) &&
+    typeof obj.suit === 'string' &&
+    ALL_SUITS.includes(obj.suit as Suit)
+  );
+};
+
 type TypeGuard<T> = (obj: any) => obj is T;
 
 const withTypedContent =
@@ -66,6 +81,7 @@ export const withCreateGameRequest =
   withTypedContent<CreateGameRequest>(isCreateGameRequest);
 export const withGameTypeChoiceRequest =
   withTypedContent<GameTypeChoiceRequest>(isGameTypeChoice);
+export const withCardRequest = withTypedContent<CardRequest>(isCardRequest);
 
 export const getTypedContent = <T>(request: Request): T => {
   return (request as any).content;

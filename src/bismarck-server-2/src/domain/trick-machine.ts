@@ -6,6 +6,11 @@ import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
 import { TrickCard } from '../../../types/trick-card';
 import { TrickResponse, TrickStatus } from '../../../types/trick-response';
+import pino from 'pino';
+import { ErrorTypes } from '../types/error-types';
+import { GameError } from '../utils/game-error';
+
+const logger = pino();
 
 const initTrickCards = (
   trickLead: Player,
@@ -80,7 +85,8 @@ export const getTaker = (trick: Trick): Player => {
   if (!taker) {
     // This should never happen as there should always
     // be a card of the trick suit
-    throw new Error('No taker found for this trick');
+    logger.error('No taker found for this trick');
+    throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
   return taker;
 };
