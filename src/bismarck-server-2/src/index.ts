@@ -1,4 +1,4 @@
-import { AutoRouter } from 'itty-router';
+import { AutoRouter, cors } from 'itty-router';
 import {
   addCardToTrick,
   chooseGameType,
@@ -36,6 +36,11 @@ import { Card, Rank, Suit } from '../../types/card';
 
 export { GameStorage } from './persistence/game-storage';
 
+const { preflight, corsify } = cors({
+  // TODO: for production, restrict to actual domain
+  origin: '*',
+});
+
 const router = AutoRouter({ base: '/api' });
 
 const getStub = (gameId: string, env: Env): DurableObjectStub<GameStorage> => {
@@ -44,6 +49,7 @@ const getStub = (gameId: string, env: Env): DurableObjectStub<GameStorage> => {
 };
 
 router
+  .all('*', preflight)
   .get('/games/:id/hand/statute', async (request, env: Env) => {
     const stub = getStub(request.params.id, env);
     try {
@@ -223,4 +229,6 @@ router
   .get('/dev/:id', () => new Response('Not implemented', { status: 501 }))
   .post('/dev/:id', () => new Response('Not implemented', { status: 501 }));
 
-export default { ...router } satisfies ExportedHandler<Env>;
+export default {
+  fetch: (req, env, ctx) => router.fetch(req, env, ctx).then(corsify),
+} satisfies ExportedHandler<Env>;
