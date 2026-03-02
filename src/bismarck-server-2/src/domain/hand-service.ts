@@ -29,14 +29,7 @@ import {
   hasPlayerCard,
   noCardsLeft,
 } from './deck-operations';
-import {
-  fetchTrick,
-  storeTrick,
-  fetchScores,
-  storeScores,
-  fetchGameState,
-  storeGameState,
-} from '../persistence/storage-service';
+import { fetchTrick, storeTrick } from '../persistence/storage-service';
 import {
   initTrick,
   isTrickReady,
@@ -66,13 +59,14 @@ const isTrickOpen = async (gameId: string): Promise<boolean> => {
   }
 };
 
-const defaultTrick = async (gameId: string): Promise<TrickResponse> => {
-  try {
-    const gameState = await fetchGameState(gameId);
-    return emptyTrickResponse(gameState.handStatute.playerOrder);
-  } catch {
+const defaultTrick = async (
+  stub: DurableObjectStub<GameStorage>
+): Promise<TrickResponse> => {
+  const gameState = await stub.fetchGameState();
+  if (!gameState) {
     return emptyTrickResponse([]);
   }
+  return emptyTrickResponse(gameState.handStatute.playerOrder);
 };
 
 const getTrickLead = async (
@@ -283,13 +277,14 @@ export const chooseGameType = async (
 };
 
 export const getCurrentTrick = async (
+  stub: DurableObjectStub<GameStorage>,
   gameId: string
 ): Promise<TrickResponse> => {
   try {
     const trick = await fetchTrick(gameId);
     return convertToTrickResponse(trick);
   } catch {
-    return await defaultTrick(gameId);
+    return await defaultTrick(stub);
   }
 };
 
@@ -399,38 +394,42 @@ export const addCardToTrick = async (
   }
 
   const updatedTrick = playCard(trick, player, card);
-
   const updatedDeck = removeCard(card, deck);
   stub.storeCards(updatedDeck);
 
   if (isTrickReady(updatedTrick)) {
-    const playerScoresBefore = await fetchScores(gameId);
+    const playerScoresBefore = await stub.fetchTrickPoints();
+    if (!playerScoresBefore) {
+      logger.error(
+        'Trick points not found when trying to update scores after trick is ready'
+      );
+      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
+    }
     const playerScoresAfter = updatedTrickScore(
       getTaker(updatedTrick),
       playerScoresBefore
     );
-    storeScores(playerScoresAfter, gameId);
-  }
+    stub.storeTrickPoints(playerScoresAfter);
 
-  if (noCardsLeft(updatedDeck)) {
-    if (!gameState.handStatute.gameType?.value) {
-      // It should not be possible to reach this point without game type.
-      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
+    if (noCardsLeft(updatedDeck)) {
+      if (!gameState.handStatute.gameType?.value) {
+        // It should not be possible to reach this point without game type.
+        throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
+      }
+
+      const handScore = getHandsPoints(
+        playerScoresAfter,
+        gameState.handStatute.gameType.value
+      );
+
+      const curremtTrickPoints = calculateTrickPoints(handScore, gameState);
+      const updatedState = {
+        ...gameState,
+        trickScores: [...gameState.trickScores, curremtTrickPoints],
+      };
+
+      stub.storeGameState(updatedState);
     }
-
-    const handTricks = await fetchScores(gameId);
-    const handScore = getHandsPoints(
-      handTricks,
-      gameState.handStatute.gameType.value
-    );
-
-    const curremtTrickPoints = calculateTrickPoints(handScore, gameState);
-    const updatedState = {
-      ...gameState,
-      trickScores: [...gameState.trickScores, curremtTrickPoints],
-    };
-
-    storeGameState(updatedState, gameId);
   }
 
   storeTrick(updatedTrick, gameId);

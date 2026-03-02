@@ -107,8 +107,8 @@ router
     })
   )
   .get('/games/:id/hand/trick', async (request, env: Env) => {
-    const gameId = request.params.id;
-    const trick = await getCurrentTrick(gameId);
+    const stub = getStub(request.params.id, env);
+    const trick = await getCurrentTrick(stub, request.params.id);
     return jsonResponse(trick);
   })
   .post(
