@@ -5,7 +5,7 @@ import { HandStatute } from '../../types/hand-statute';
 import { Player } from '../../types/player';
 import { SuitEnum } from '../../types/suit';
 import { TrickCard } from '../../types/trick-card';
-import { TrickResponse, TrickStatus } from '../../types/trick-response';
+import { TrickResponse } from '../../types/trick-response';
 
 const initTrickCards = (
   trickLead: Player,
@@ -96,7 +96,7 @@ export const hasPlayerTurn = (trick: Trick, player: Player): boolean => {
 
 export const emptyTrickResponse = (playerOrder: Player[]): TrickResponse => {
   return {
-    trickStatus: TrickStatus.HAND_NOT_STARTED,
+    trickStatus: 'HAND_NOT_STARTED',
     cards: playerOrder.map((player) => {
       return { player };
     }),
@@ -112,9 +112,7 @@ export const trickResponseDuringCardRemoval = (): TrickResponse => {
 
 export const convertToTrickResponse = (trick: Trick): TrickResponse => {
   return {
-    trickStatus: isTrickReady(trick)
-      ? TrickStatus.FINISHED
-      : TrickStatus.UNFINISHED,
+    trickStatus: isTrickReady(trick) ? 'FINISHED' : 'UNFINISHED',
     cards: trick.trickCards,
     taker: isTrickReady(trick) ? getTaker(trick) : undefined,
     trickNumber: trick.trickNumber,

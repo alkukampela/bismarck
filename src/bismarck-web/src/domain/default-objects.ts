@@ -2,7 +2,7 @@ import { GameScoreBoard } from '../../../types/game-score-board';
 import { HandStatute } from '../../../types/hand-statute';
 import { PlayersHand } from '../../../types/players-hand';
 import { TableCardsResponse } from '../../../types/table-cards-respons';
-import { TrickResponse, TrickStatus } from '../../../types/trick-response';
+import { TrickResponse } from '../../../types/trick-response';
 
 export const emptyScores: GameScoreBoard = {
   trickScores: [],
@@ -15,7 +15,7 @@ export const emptyHand: PlayersHand = {
 };
 
 export const emptyTrickResponse = (): TrickResponse => ({
-  trickStatus: TrickStatus.HAND_NOT_STARTED,
+  trickStatus: 'HAND_NOT_STARTED',
   cards: [],
 });
 

@@ -1,6 +1,6 @@
 import { GameType } from '../../../types/game-type';
 import { HandStatute } from '../../../types/hand-statute';
-import { TrickResponse, TrickStatus } from '../../../types/trick-response';
+import { TrickResponse } from '../../../types/trick-response';
 import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
 
@@ -40,7 +40,7 @@ export const HandTitle = ({
 
   const trickCounter = (): string => {
     if (
-      trickResponse.trickStatus !== TrickStatus.HAND_NOT_STARTED &&
+      trickResponse.trickStatus !== 'HAND_NOT_STARTED' &&
       !!trickResponse.trickNumber
     ) {
       return `${trickResponse.trickNumber + 1}/${handStatute.tricksInHand}`;

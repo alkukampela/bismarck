@@ -11,7 +11,7 @@ import { ScoreBoard } from './ScoreBoard';
 import { TableCards } from './TableCards';
 import { Trick } from './Trick';
 import { HandStatute } from '../../../types/hand-statute';
-import { TrickResponse, TrickStatus } from '../../../types/trick-response';
+import { TrickResponse } from '../../../types/trick-response';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
 import {
@@ -62,7 +62,7 @@ export const Game = () => {
     trick.trickNumber + 1 >= handStatute.tricksInHand;
 
   const isTrickReady = (trick: TrickResponse): boolean =>
-    trick.trickStatus === TrickStatus.FINISHED;
+    trick.trickStatus === 'FINISHED';
 
   const isFirstCardAfterChoice = (trick: TrickResponse): boolean => {
     return (
@@ -139,7 +139,7 @@ export const Game = () => {
         updateTotalScores();
       }
 
-      if (trick.trickStatus === TrickStatus.HAND_NOT_STARTED) {
+      if (trick.trickStatus === 'HAND_NOT_STARTED') {
         updateTableCards();
         updateHand();
         updateStatute();

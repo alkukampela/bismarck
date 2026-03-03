@@ -28,7 +28,7 @@ export const PlayersCard = ({
       return;
     }
 
-    if (trickStatus === TrickStatus.UNFINISHED) {
+    if (trickStatus === 'UNFINISHED') {
       if (await addToTrick(game.token, game.gameId, card)) {
         onPlay(card);
       }

@@ -3,9 +3,9 @@ import { PlayersCard } from './PlayersCard';
 import { GameContext } from '../GameContext';
 import { Card as CardType } from '../../../types/card';
 import { PlayersHand } from '../../../types/players-hand';
-import { TrickStatus } from '../../../types/trick-response';
 import { removeCard } from '../services/api-service';
 import * as React from 'react';
+import { TrickStatus } from '../../../types/trick-response';
 
 export const PlayersCards = ({
   hand,

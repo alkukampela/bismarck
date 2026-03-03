@@ -113,9 +113,13 @@ router
     })
   )
   .get('/games/:id/hand/trick', async (request, env: Env) => {
-    const stub = getStub(request.params.id, env);
-    const trick = await getCurrentTrick(stub);
-    return jsonResponse(trick);
+    try {
+      const stub = getStub(request.params.id, env);
+      const trick = await getCurrentTrick(stub);
+      return jsonResponse(trick);
+    } catch (err) {
+      return handleError(err);
+    }
   })
   .post(
     '/games/:id/hand/trick',
