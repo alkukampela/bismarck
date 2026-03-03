@@ -149,7 +149,7 @@ export const Game = () => {
   }, []);
 
   React.useEffect(() => () => {
-    socketRef.current.close();
+    SocketFactory.reset();
   }, []);
 
   return (

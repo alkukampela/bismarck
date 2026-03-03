@@ -33,4 +33,12 @@ export class SocketFactory {
     }
     return this._instance;
   }
+
+  public static reset(): void {
+    if (this._instance) {
+      this._instance.close();
+      // @ts-ignore
+      this._instance = undefined;
+    }
+  }
 }

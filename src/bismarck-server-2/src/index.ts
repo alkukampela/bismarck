@@ -36,6 +36,21 @@ import { Card, Rank, Suit } from '../../types/card';
 
 export { GameStorage } from './persistence/game-storage';
 
+const handleWebSocketUpgrade = async (
+  request: Request,
+  env: Env
+): Promise<Response> => {
+  const url = new URL(request.url);
+  const gameId = url.searchParams.get('gameId');
+
+  if (!gameId) {
+    return handleError(new GameError(ErrorTypes.GAME_NOT_FOUND));
+  }
+
+  const stub = getStub(gameId, env);
+  return await stub.fetch(request);
+};
+
 const { preflight, corsify } = cors({
   // TODO: for production, restrict to actual domain
   origin: '*',
@@ -71,8 +86,8 @@ router
           gameTypeChoice,
           stub
         );
-        // TODO implement publishing
-        //publishTrick(trickResponseDuringCardRemoval(), req.gameId);
+        // TODO: check if this is correct response
+        stub.broadcastTrick(await getCurrentTrick(stub));
         return jsonResponse(statute);
       } catch (err) {
         return handleError(err);
@@ -129,8 +144,7 @@ router
         const stub = getStub(request.params.id, env);
         const card = getTypedContent<CardRequest>(request);
         const trick = await startTrick(request.player, card, stub);
-        // TODO implement publishing
-        //publishTrick(trick, request.params.id);
+        stub.broadcastTrick(trick);
         return jsonResponse(trick);
       } catch (err) {
         return handleError(err);
@@ -145,8 +159,7 @@ router
         const stub = getStub(request.params.id, env);
         const card = getTypedContent<CardRequest>(request);
         const trick = await addCardToTrick(request.player, card, stub);
-        // TODO implement publishing
-        //publishTrick(trick, request.params.id);
+        stub.broadcastTrick(trick);
         return jsonResponse(trick);
       } catch (err) {
         return handleError(err);
@@ -202,8 +215,7 @@ router
       try {
         const stub = getStub(request.params.id, env);
         const statute = await initHand(stub);
-        // TODO implement publishing
-        //publishTrick(trickResponseDuringCardRemoval(), req.gameId);
+        stub.broadcastTrick(await getCurrentTrick(stub));
         return jsonResponse(statute);
       } catch (err) {
         return handleError(err);
@@ -219,10 +231,14 @@ router
     } catch (err) {
       return handleError(err);
     }
-  })
-  .get('/dev/:id', () => new Response('Not implemented', { status: 501 }))
-  .post('/dev/:id', () => new Response('Not implemented', { status: 501 }));
+  });
 
 export default {
-  fetch: (req, env, ctx) => router.fetch(req, env, ctx).then(corsify),
+  fetch: (req, env, ctx) => {
+    const upgradeHeader = req.headers.get('Upgrade');
+    if (upgradeHeader === 'websocket') {
+      return handleWebSocketUpgrade(req, env);
+    }
+    return router.fetch(req, env, ctx).then(corsify);
+  },
 } satisfies ExportedHandler<Env>;

@@ -56,7 +56,7 @@ const defaultTrick = async (
 ): Promise<TrickResponse> => {
   const gameState = await stub.fetchGameState();
   if (!gameState) {
-    return emptyTrickResponse([]);
+    throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
   return emptyTrickResponse(gameState.handStatute.playerOrder);
 };

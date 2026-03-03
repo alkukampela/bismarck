@@ -6,6 +6,7 @@ import { Trick } from '../types/trick';
 import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { ErrorTypes } from '../types/error-types';
+import { TrickResponse } from '../../../types/trick-response';
 
 const logger = pino();
 
@@ -98,6 +99,23 @@ export class GameStorage extends DurableObject<Env> {
   clearTrick() {
     this.sql.exec(`DELETE FROM ${GameStorage.TABLES.TRICK} WHERE id = 1`);
     this.log('Cleared trick data');
+  }
+
+  broadcastTrick(trick: TrickResponse) {
+    this.ctx.getWebSockets().forEach((ws) => ws.send(JSON.stringify(trick)));
+  }
+
+  private handleWebSocket() {
+    logger.info('WebSocket connection requested');
+    const [client, server] = Object.values(new WebSocketPair());
+
+    this.ctx.acceptWebSocket(server);
+    logger.info('WebSocket connection established');
+
+    return new Response(null, { status: 101, webSocket: client });
+  }
+  async fetch() {
+    return this.handleWebSocket();
   }
 
   private initTable = (tableName: string, createTableSql: string) => {
