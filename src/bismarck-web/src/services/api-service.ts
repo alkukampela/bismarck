@@ -8,7 +8,11 @@ import { TokenResponse } from '../../../types/token-response';
 import { CreateGameResponse } from '../../../types/create-game-response';
 import { CreateGameRequest } from '../../../types/create-game-request';
 import { TableCardsResponse } from '../../../types/table-cards-respons';
-import { emptyTableCardsResponse } from '../domain/default-objects';
+import {
+  emptyTableCardsResponse,
+  emptyTrickResponse,
+} from '../domain/default-objects';
+import { TrickResponse } from '../../../types/trick-response';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/api`;
 
@@ -82,6 +86,9 @@ const performDelete = async (
   });
   return resp.ok;
 };
+
+export const fetchTrick = async (gameId: string): Promise<TrickResponse> =>
+  performGet<TrickResponse>(`games/${gameId}/hand/trick`, emptyTrickResponse());
 
 export const fetchTableCards = async (
   gameId: string

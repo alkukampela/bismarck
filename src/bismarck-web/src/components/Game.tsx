@@ -20,6 +20,7 @@ import {
   fetchTableCards,
   fetchPlayersHand,
   fetchStatute,
+  fetchTrick,
 } from '../services/api-service';
 import {
   emptyHand,
@@ -70,6 +71,12 @@ export const Game = () => {
     );
   };
 
+  const updateTrick = () => {
+    fetchTrick(game.gameId).then((trick) => {
+      setTrickResponse(trick);
+    });
+  };
+
   const updateTableCards = () => {
     fetchTableCards(game.gameId).then((cards) => {
       setTableCards(cards);
@@ -110,6 +117,7 @@ export const Game = () => {
   React.useEffect(() => {
     updateTrickTakers();
     updateTableCards();
+    updateTrick();
     updateHand();
     updateTotalScores();
     updateStatute();

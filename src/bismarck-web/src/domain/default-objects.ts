@@ -14,10 +14,10 @@ export const emptyHand: PlayersHand = {
   extraCards: 0,
 };
 
-export const emptyTrickResponse: TrickResponse = {
+export const emptyTrickResponse = (): TrickResponse => ({
   trickStatus: TrickStatus.HAND_NOT_STARTED,
   cards: [],
-};
+});
 
 export const emptyStatue: HandStatute = {
   eldestHand: { name: '' },
