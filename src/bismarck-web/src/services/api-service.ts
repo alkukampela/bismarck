@@ -7,6 +7,8 @@ import { PlayersHand } from '../../../types/players-hand';
 import { TokenResponse } from '../../../types/token-response';
 import { CreateGameResponse } from '../../../types/create-game-response';
 import { CreateGameRequest } from '../../../types/create-game-request';
+import { TableCardsResponse } from '../../../types/table-cards-respons';
+import { emptyTableCardsResponse } from '../domain/default-objects';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/api`;
 
@@ -81,8 +83,13 @@ const performDelete = async (
   return resp.ok;
 };
 
-export const fetchTableCards = async (gameId: string): Promise<Card[]> =>
-  performGet<Card[]>(`games/${gameId}/hand/tablecards`, []);
+export const fetchTableCards = async (
+  gameId: string
+): Promise<TableCardsResponse> =>
+  performGet<TableCardsResponse>(
+    `games/${gameId}/hand/tablecards`,
+    emptyTableCardsResponse()
+  );
 
 export const fetchPlayersHand = async (
   authToken: string,

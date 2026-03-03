@@ -1,6 +1,7 @@
 import { ErrorTypes } from '../types/error-types';
 import { GamePlayer } from '../types/game-player';
 import pino from 'pino';
+import { GameError } from '../utils/game-error';
 
 const logger = pino();
 
@@ -33,7 +34,7 @@ export const loadGamePlayerByLoginId = async (
   const rawGamePlayer = await env.LOGIN_TOKENS.get(loginId);
 
   if (!rawGamePlayer) {
-    throw new Error(ErrorTypes.NOT_FOUND);
+    throw new GameError(ErrorTypes.NOT_FOUND);
   }
 
   try {
@@ -41,12 +42,12 @@ export const loadGamePlayerByLoginId = async (
 
     if (!gamePlayer.gameId || !gamePlayer.player) {
       logger.error(`Invalid game player data`);
-      throw new Error(ErrorTypes.UNEXPECTED_ERROR);
+      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
 
     return gamePlayer;
   } catch (error) {
     logger.error(`Error parsing game player data: ${error}`);
-    throw new Error(ErrorTypes.UNEXPECTED_ERROR);
+    throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
 };

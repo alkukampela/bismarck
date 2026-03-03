@@ -17,6 +17,7 @@ import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
 import { SuitEnum } from '../../../types/suit';
 import { TrickResponse } from '../../../types/trick-response';
+import { TableCardsResponse } from '../../../types/table-cards-respons';
 import {
   getTrumpSuit,
   initDeck,
@@ -42,6 +43,7 @@ import { GameStorage } from '../persistence/game-storage';
 import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { CardContainer } from '../types/card-container';
+import { TABLE_CARDS } from '../types/cards-of-deck';
 
 const logger = pino();
 
@@ -211,9 +213,24 @@ export const getStatute = async (
 
 export const getTableCards = async (
   stub: DurableObjectStub<GameStorage>
-): Promise<Card[]> => {
+): Promise<TableCardsResponse> => {
   const deck = await stub.fetchDeck();
-  return tableCardsFromDeck(deck);
+
+  if (
+    deck.length === 0 ||
+    deck.filter((card) => card.isPlayed).length > TABLE_CARDS
+  ) {
+    // Don't return table cards after hand has been started
+    return {
+      cards: [],
+      areCardsOnTheTable: false,
+    };
+  }
+
+  return {
+    cards: tableCardsFromDeck(deck),
+    areCardsOnTheTable: true,
+  };
 };
 
 export const chooseGameType = async (

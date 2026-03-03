@@ -10,7 +10,6 @@ import { PlayersHand } from '../../../types/players-hand';
 import { ScoreBoard } from './ScoreBoard';
 import { TableCards } from './TableCards';
 import { Trick } from './Trick';
-import { Card } from '../../../types/card';
 import { HandStatute } from '../../../types/hand-statute';
 import { TrickResponse, TrickStatus } from '../../../types/trick-response';
 import { SocketFactory } from '../services/socket-factory';
@@ -27,14 +26,16 @@ import {
   emptyScores,
   emptyTrickResponse,
   emptyStatue,
+  emptyTableCardsResponse,
 } from '../domain/default-objects';
 import { useNavigate } from 'react-router-dom';
+import { TableCardsResponse } from '../../../types/table-cards-respons';
 
 export const Game = () => {
   const game = React.useContext(GameContext);
   const navigate = useNavigate();
 
-  const [tableCards, setTableCards] = React.useState<Card[]>([]);
+  const [tableCards, setTableCards] = React.useState<TableCardsResponse>(emptyTableCardsResponse());
   const [playersHand, setPlayersHand] = React.useState<PlayersHand>(emptyHand);
   const [trickResponse, setTrickResponse] =
     React.useState<TrickResponse>(emptyTrickResponse);
@@ -147,7 +148,7 @@ export const Game = () => {
     <>
       <PanicButton />
       <HandTitle handStatute={statute} trickResponse={trickResponse} />
-      <TableCards cards={tableCards} show={!isHandStarted()} />
+      <TableCards apiResponse={tableCards} show={!isHandStarted()} />
       <GameTypeChooser handStatute={statute} player={game.player} />
       <Trick trickResponse={trickResponse} show={isHandStarted()} />
       <PlayersCards
