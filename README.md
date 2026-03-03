@@ -31,7 +31,7 @@ wrangler login
 
 #### Create `.env` files
 
-**Backend** (in `src/bismarck-server-2`):
+**Backend** (in `src/bismarck-server`):
 
 ```env
 JWT_SECRET=your-secret-key-here
@@ -49,7 +49,7 @@ VITE_API_URL=http://localhost:8787
 
 ```sh
 # Backend
-cd src/bismarck-server-2
+cd src/bismarck-server
 npm install
 
 # Frontend
@@ -62,7 +62,7 @@ npm install
 #### Start the backend (Cloudflare Workers)
 
 ```sh
-cd src/bismarck-server-2
+cd src/bismarck-server
 wrangler dev
 ```
 
@@ -87,7 +87,7 @@ The web app will be available at `http://localhost:5173`
 ### Deployment
 
 ```sh
-cd src/bismarck-server-2
+cd src/bismarck-server
 wrangler deploy
 ```
 
