@@ -218,7 +218,7 @@ export const getTableCards = async (
 
   if (
     deck.length === 0 ||
-    deck.filter((card) => card.isPlayed).length > TABLE_CARDS
+    deck.filter((card) => card.isPlayed).length >= TABLE_CARDS
   ) {
     // Don't return table cards after hand has been started
     return {

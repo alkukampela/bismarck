@@ -163,7 +163,7 @@ export const Game = () => {
         hand={playersHand}
         trickStatus={trickResponse.trickStatus}
       />
-      <ScoreBoard statute={statute} trickTakers={trickTakers} scores={scores} />
+      <ScoreBoard statute={statute} trickTakers={trickTakers} scores={scores} trick={trickResponse} />
       <HandScores
         scores={scores}
         isHandReady={isHandReady(trickResponse, statute)}

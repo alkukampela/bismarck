@@ -5,19 +5,22 @@ import { HandStatute } from '../../../types/hand-statute';
 import { PlayerScore } from '../../../types/player-score';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import * as React from 'react';
+import { TrickResponse } from '../../../types/trick-response';
 
 export const ScoreBoard = ({
   statute,
   trickTakers,
   scores,
+  trick,
 }: {
   statute: HandStatute;
   trickTakers: PlayerScore[];
   scores: GameScoreBoard;
+  trick: TrickResponse;
 }): React.ReactElement => {
   return (
     <div className="score-board">
-      <StatuteSummary statute={statute} />
+      <StatuteSummary statute={statute} trick={trick} />
       <TrickTakers trickTakers={trickTakers} />
       <OnGoingGameScore scores={scores} />
     </div>
