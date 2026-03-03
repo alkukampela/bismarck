@@ -95,6 +95,11 @@ export class GameStorage extends DurableObject<Env> {
     return this.fetchSingleField<Trick>(GameStorage.TABLES.TRICK, 'trick');
   }
 
+  clearTrick() {
+    this.sql.exec(`DELETE FROM ${GameStorage.TABLES.TRICK} WHERE id = 1`);
+    this.log('Cleared trick data');
+  }
+
   private initTable = (tableName: string, createTableSql: string) => {
     const cursor = this.sql.exec(`PRAGMA table_list`);
     if ([...cursor].find((t) => t.name === tableName)) {

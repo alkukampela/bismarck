@@ -40,9 +40,7 @@ export const initHand = async (
   };
 
   stub.storeGameState(updatedGameState);
-
-  // TODO add implementation
-  //clearTrick(gameId);
+  stub.clearTrick();
 
   return handStatute;
 };
