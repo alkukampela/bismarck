@@ -3,6 +3,7 @@ import { GameType } from '../../../types/game-type';
 import { FullGameType, HandStatute } from '../../../types/hand-statute';
 import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
+import { PersistableGameType, Statute } from '../types/game-state';
 import {
   buildHandStatute,
   getStatuteAfterChoice,
@@ -45,6 +46,7 @@ test('Ensure correct statute for first no trump hand', () => {
   expect(actual.isChoice).toBeFalsy();
   expect(actual.gameType).toEqual({
     value: GameType.NO_TRUMP,
+    trumpSuit: null,
   });
   expect(actual.playerOrder).toStrictEqual([PLAYER_1, PLAYER_2, PLAYER_3]);
   expect(actual.tricksInHand).toBe(TRICKS_IN_3_PLAYER_GAME);
@@ -59,6 +61,7 @@ test('Ensure correct statute for third misere hand', () => {
   expect(actual.isChoice).toBeFalsy();
   expect(actual.gameType).toEqual({
     value: GameType.MISERE,
+    trumpSuit: null,
   });
   expect(actual.playerOrder).toStrictEqual([PLAYER_3, PLAYER_1, PLAYER_2]);
   expect(actual.tricksInHand).toBe(TRICKS_IN_3_PLAYER_GAME);
@@ -71,21 +74,21 @@ test('Ensure correct statute for first choice game', () => {
 
   expect(actual.eldestHand).toBe(PLAYER_1);
   expect(actual.isChoice).toBeTruthy();
-  expect(actual.gameType).toBeUndefined();
+  expect(actual.gameType).toBeNull();
   expect(actual.playerOrder).toStrictEqual([PLAYER_1, PLAYER_2, PLAYER_3]);
   expect(actual.tricksInHand).toBe(TRICKS_IN_3_PLAYER_GAME);
 });
 
 test('Ensure correct statute for trump game choice', () => {
-  const inputStatute: HandStatute = {
-    gameType: undefined,
+  const inputStatute: Statute = {
+    gameType: null,
     isChoice: true,
     playerOrder: [PLAYER_1, PLAYER_2, PLAYER_3],
     eldestHand: PLAYER_1,
     tricksInHand: TRICKS_IN_3_PLAYER_GAME,
   };
 
-  const inputChoice: FullGameType = {
+  const inputChoice: PersistableGameType = {
     value: GameType.TRUMP,
     trumpSuit: SuitEnum.HEART,
   };
@@ -101,16 +104,17 @@ test('Ensure correct statute for trump game choice', () => {
 });
 
 test('Ensure correct statute for misere game choice', () => {
-  const inputStatute: HandStatute = {
-    gameType: undefined,
+  const inputStatute: Statute = {
+    gameType: null,
     isChoice: true,
     playerOrder: [PLAYER_2, PLAYER_3, PLAYER_1],
     eldestHand: PLAYER_2,
     tricksInHand: TRICKS_IN_3_PLAYER_GAME,
   };
 
-  const inputChoice: FullGameType = {
+  const inputChoice: PersistableGameType = {
     value: GameType.MISERE,
+    trumpSuit: null,
   };
 
   const actual = getStatuteAfterChoice(inputStatute, inputChoice);
@@ -118,7 +122,7 @@ test('Ensure correct statute for misere game choice', () => {
   expect(actual.eldestHand).toBe(PLAYER_2);
   expect(actual.isChoice).toBeTruthy();
   expect(actual.gameType?.value).toBe(GameType.MISERE);
-  expect(actual.gameType?.trumpSuit).toBeUndefined();
+  expect(actual.gameType?.trumpSuit).toBeNull();
   expect(actual.playerOrder).toStrictEqual([PLAYER_2, PLAYER_3, PLAYER_1]);
   expect(actual.tricksInHand).toBe(TRICKS_IN_3_PLAYER_GAME);
 });

@@ -1,12 +1,11 @@
-import { initialHandStatute } from '../domain/hand-statute-machine';
+import { initialStatute } from '../domain/hand-statute-machine';
 import { sendLoginId } from './email-service';
 import { CreateGameResponse } from '../../../types/create-game-response';
 import { CreateGameRequest } from '../../../types/create-game-request';
-import { v4 as uuid } from 'uuid';
-import { generateLoginId } from './token-service';
 import { storeLoginToken } from './login-token-service';
 import { shuffle } from './shuffle-service';
 import pino from 'pino';
+import { generateGameId, generateLoginId } from './identifier-generator';
 
 const logger = pino();
 
@@ -18,10 +17,6 @@ const checkForDuplicatePlayers = (request: CreateGameRequest): boolean => {
       })
     ).size !== request.players.length
   );
-};
-
-const generateIdentifier = (): string => {
-  return uuid().replace('-', '').substring(0, 11);
 };
 
 export const createGameAndInvitatePlayers = async (
@@ -38,13 +33,13 @@ export const createGameAndInvitatePlayers = async (
     return Promise.reject(new Error('Players must have unique names'));
   }
 
-  const gameId = generateIdentifier();
+  const gameId = generateGameId();
 
   const id = env.GAME_STORAGE.idFromName(gameId);
   const stub = env.GAME_STORAGE.get(id);
 
   for (const createPlayer of request.players) {
-    const loginId = generateLoginId(5);
+    const loginId = generateLoginId();
     await storeLoginToken(
       loginId,
       {
@@ -66,7 +61,7 @@ export const createGameAndInvitatePlayers = async (
     players: shuffle(request.players.map((item) => item.player)),
     handNumber: 0,
   };
-  const handStatute = initialHandStatute(game);
+  const handStatute = initialStatute(game);
 
   logger.info(`About to store game state for gameId: ${gameId}`);
   await stub.storeGameState({

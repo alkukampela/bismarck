@@ -25,6 +25,7 @@ test('Ensure misere trick is initalized correctly', () => {
       isChoice: false,
       gameType: {
         value: GameType.MISERE,
+        trumpSuit: null,
       },
       eldestHand: PLAYER_1,
       tricksInHand: 0,
@@ -50,6 +51,7 @@ test('Ensure no trump trick is initialized correctly', () => {
       isChoice: false,
       gameType: {
         value: GameType.NO_TRUMP,
+        trumpSuit: null,
       },
       eldestHand: PLAYER_1,
       tricksInHand: 0,

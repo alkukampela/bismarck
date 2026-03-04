@@ -3,7 +3,7 @@ import { GameType } from '../../../types/game-type';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
 import { TrickScore } from '../../../types/trick-score';
-import { GameState } from '../types/game-state';
+import { GameState, Statute } from '../types/game-state';
 import { HandStatute } from '../../../types/hand-statute';
 import { SuitEnum } from '../../../types/suit';
 
@@ -14,33 +14,27 @@ const PLAYER_4: Player = { name: 'Dieter' };
 
 const createMockHandStatute = (
   gameType: GameType | null = GameType.TRUMP,
-  isChoice = false,
-  trumpSuit?: SuitEnum
-): HandStatute => ({
+  isChoice = false
+): Statute => ({
   playerOrder: [PLAYER_1, PLAYER_2, PLAYER_3],
   eldestHand: PLAYER_1,
   isChoice,
   gameType: gameType
     ? gameType === GameType.TRUMP
-      ? { value: gameType, trumpSuit: trumpSuit ?? SuitEnum.CLUB }
-      : { value: gameType }
-    : undefined,
+      ? { value: gameType, trumpSuit: SuitEnum.CLUB }
+      : { value: gameType, trumpSuit: null }
+    : null,
   tricksInHand: 12,
 });
 
 const createMockGameState = (
   trickScores: TrickScore[] = [],
-  gameType: GameType | null = GameType.TRUMP,
-  isChoice = false,
-  trumpSuit?: SuitEnum
+  gameType: GameType = GameType.TRUMP,
+  isChoice = false
 ): GameState => ({
   players: [PLAYER_1, PLAYER_2, PLAYER_3],
   handNumber: 0,
-  handStatute: createMockHandStatute(
-    gameType,
-    isChoice,
-    trumpSuit ?? (gameType === GameType.TRUMP ? SuitEnum.CLUB : undefined)
-  ),
+  handStatute: createMockHandStatute(gameType, isChoice),
   trickScores,
 });
 
@@ -145,13 +139,24 @@ describe('calculateTrickPoints', () => {
     expect(result.gameType).toBe(GameType.NO_TRUMP);
   });
 
-  test('should throw error when game type is undefined', () => {
+  test('should throw error when game type is null', () => {
     const trickPoints: PlayerScore[] = [
       { player: PLAYER_1, score: 4 },
       { player: PLAYER_2, score: -1 },
       { player: PLAYER_3, score: -3 },
     ];
-    const gameState = createMockGameState([], null);
+    const gameState: GameState = {
+      players: [PLAYER_1, PLAYER_2, PLAYER_3],
+      handNumber: 0,
+      handStatute: {
+        gameType: null,
+        isChoice: true,
+        playerOrder: [PLAYER_1, PLAYER_2, PLAYER_3],
+        eldestHand: PLAYER_1,
+        tricksInHand: 0,
+      },
+      trickScores: [],
+    };
 
     expect(() => calculateTrickPoints(trickPoints, gameState)).toThrow(
       'Unexpected error'
@@ -169,22 +174,6 @@ describe('calculateTrickPoints', () => {
     const result = calculateTrickPoints(trickPoints, gameState);
 
     expect(result.gameType).toBe(GameType.MISERE);
-  });
-
-  test('should include trump suit only for TRUMP game type', () => {
-    const trumpGameState = createMockGameState(
-      [],
-      GameType.TRUMP,
-      false,
-      SuitEnum.HEART
-    );
-    expect(trumpGameState.handStatute.gameType?.trumpSuit).toBe(SuitEnum.HEART);
-
-    const noTrumpGameState = createMockGameState([], GameType.NO_TRUMP);
-    expect(noTrumpGameState.handStatute.gameType?.trumpSuit).toBeUndefined();
-
-    const misereGameState = createMockGameState([], GameType.MISERE);
-    expect(misereGameState.handStatute.gameType?.trumpSuit).toBeUndefined();
   });
 });
 
@@ -267,7 +256,7 @@ describe('getTotalScores', () => {
       players: threePlayers,
       handNumber: 0,
       handStatute: {
-        ...createMockHandStatute(GameType.TRUMP, false, SuitEnum.CLUB),
+        ...createMockHandStatute(GameType.TRUMP, false),
         playerOrder: threePlayers,
       },
       trickScores,

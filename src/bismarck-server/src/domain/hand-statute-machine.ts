@@ -1,12 +1,13 @@
 import { tricksInHand } from './deck-operations';
 import { Game } from '../../../types/game';
 import { GameType } from '../../../types/game-type';
-import { FullGameType, HandStatute } from '../../../types/hand-statute';
 import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
 import pino from 'pino';
 import { ErrorTypes } from '../types/error-types';
 import { GameError } from '../utils/game-error';
+import { PersistableGameType, Statute } from '../types/game-state';
+import { HandStatute } from '../../../types/hand-statute';
 
 const logger = pino();
 
@@ -14,9 +15,9 @@ const determineNonChoiceGameType = (
   handNumber: number,
   playerCount: number,
   trumpSuit: SuitEnum | null
-): FullGameType | undefined => {
+): PersistableGameType | null => {
   if (isChoiceTurn(handNumber, playerCount)) {
-    return;
+    return null;
   }
 
   let gameType: GameType;
@@ -36,7 +37,7 @@ const determineNonChoiceGameType = (
   }
 
   if (gameType !== GameType.TRUMP) {
-    return { value: gameType };
+    return { value: gameType, trumpSuit: null };
   }
 
   if (!trumpSuit) {
@@ -62,14 +63,14 @@ const switchTurns = (playerOrder: Player[], times: number): Player[] => {
   return playerOrder;
 };
 
-export const initialHandStatute = (game: Game): HandStatute => {
+export const initialStatute = (game: Game): Statute => {
   const playersInGame = game.players.length;
   const playerOrder = switchTurns(game.players, game.handNumber);
 
   return {
     eldestHand: playerOrder[0],
     isChoice: isChoiceTurn(game.handNumber, playersInGame),
-    gameType: undefined,
+    gameType: null,
     playerOrder,
     tricksInHand: tricksInHand(playersInGame),
   };
@@ -78,8 +79,8 @@ export const initialHandStatute = (game: Game): HandStatute => {
 export const buildHandStatute = (
   game: Game,
   trumpSuit: SuitEnum | null
-): HandStatute => {
-  const handStatute = initialHandStatute(game);
+): Statute => {
+  const handStatute = initialStatute(game);
 
   const gameType = determineNonChoiceGameType(
     game.handNumber,
@@ -91,11 +92,25 @@ export const buildHandStatute = (
 };
 
 export const getStatuteAfterChoice = (
-  handStatute: HandStatute,
-  gameTypeChoice: FullGameType
-): HandStatute => {
+  statute: Statute,
+  gameTypeChoice: PersistableGameType
+): Statute => {
   return {
-    ...handStatute,
+    ...statute,
     gameType: gameTypeChoice,
+  };
+};
+
+export const toHandStatute = (statute: Statute): HandStatute => {
+  return {
+    isChoice: statute.isChoice,
+    playerOrder: statute.playerOrder,
+    eldestHand: statute.eldestHand,
+    tricksInHand: statute.tricksInHand,
+    gameType: statute.gameType
+      ? statute.gameType.value === GameType.TRUMP
+        ? statute.gameType
+        : { value: statute.gameType.value }
+      : undefined,
   };
 };

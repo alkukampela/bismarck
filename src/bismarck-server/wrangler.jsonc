@@ -32,9 +32,22 @@
 	"kv_namespaces": [
 		{
 			"binding": "LOGIN_TOKENS",
-			"id": "e6b0e91381e34ecba69b8424b6feeaf1"
+			"id": "e6b0e91381e34ecba69b8424b6feeaf1",
+			"preview_id": "e6b0e91381e34ecba69b8424b6feeaf1"
 		}
-	]
+	],
+	/**
+	 * Production environment configuration
+	 */
+	"env": {
+		"production": {
+			"name": "bismarck-server-production",
+			"vars": {
+				"ENVIRONMENT": "production",
+        "DISABLE_EMAIL_SENDING": "true"
+			}
+		}
+	},
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

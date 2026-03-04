@@ -7,12 +7,6 @@ import { loadGamePlayerByLoginId } from './login-token-service';
 
 const logger = pino();
 
-const randomInt = (max: number): number => {
-  const array = new Uint32Array(1);
-  crypto.getRandomValues(array);
-  return array[0] % max;
-};
-
 export const generateTokenForPlayer = async (
   gamePlayer: GamePlayer,
   secret: string
@@ -61,52 +55,4 @@ export const tokenForLoginId = async (
 ): Promise<TokenResponse> => {
   const gamePlayer = await loadGamePlayerByLoginId(loginId, env);
   return generateTokenForPlayer(gamePlayer, secret);
-};
-
-export const generateLoginId = (loginIdLength: number): string => {
-  const idChars: string[] = [
-    '0',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-  ];
-
-  const randomChar = () => {
-    return idChars[randomInt(idChars.length)];
-  };
-
-  return [...Array(loginIdLength).keys()].reduce(
-    (previous) => previous + randomChar(),
-    ''
-  );
 };

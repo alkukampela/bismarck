@@ -6,18 +6,18 @@ import { TrickScore } from '../../../types/trick-score';
 export interface GameState {
   players: Player[];
   handNumber: number;
-  handStatute: HandStatute;
+  handStatute: Statute;
   trickScores: TrickScore[];
 }
 
-export type FullGameType =
-  | { value: GameType.TRUMP; trumpSuit: SuitEnum }
-  | { value: Exclude<GameType, GameType.TRUMP>; trumpSuit?: undefined };
-
-export interface HandStatute {
-  gameType: FullGameType | undefined;
+export interface Statute {
+  gameType: PersistableGameType | null;
   isChoice: boolean;
   playerOrder: Player[];
   eldestHand: Player;
   tricksInHand: number;
 }
+
+export type PersistableGameType =
+  | { value: GameType.TRUMP; trumpSuit: SuitEnum }
+  | { value: Exclude<GameType, GameType.TRUMP>; trumpSuit: null };

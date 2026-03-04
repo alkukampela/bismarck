@@ -5,6 +5,7 @@ import { getHandsPoints, updatedTrickScore } from './hand-score-calculator';
 import {
   buildHandStatute,
   getStatuteAfterChoice,
+  toHandStatute,
 } from './hand-statute-machine';
 import { Trick } from '../types/trick';
 import { Card } from '../../../types/card';
@@ -44,11 +45,12 @@ import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { CardContainer } from '../types/card-container';
 import { TABLE_CARDS } from '../types/cards-of-deck';
+import { PersistableGameType, Statute } from '../types/game-state';
 
 const logger = pino();
 
-const getPlayersIndex = (player: Player, handStatute: HandStatute): number => {
-  return handStatute.playerOrder.findIndex((x) => player.name === x.name);
+const getPlayersIndex = (player: Player, statute: Statute): number => {
+  return statute.playerOrder.findIndex((x) => player.name === x.name);
 };
 
 const defaultTrick = async (
@@ -68,8 +70,8 @@ const getLeadPlayerForTrick = async (
   return trick ? getTaker(trick) : eldestHand;
 };
 
-const isEldestHand = (player: Player, handStatute: HandStatute): boolean => {
-  return player.name === handStatute.eldestHand.name;
+const isEldestHand = (player: Player, statute: Statute): boolean => {
+  return player.name === statute.eldestHand.name;
 };
 
 const checkCardsLegality = async (
@@ -120,7 +122,7 @@ const playerHasCardsOfSuit = (
 export const setUpHand = (
   game: Game,
   stub: DurableObjectStub<GameStorage>
-): HandStatute => {
+): Statute => {
   const deck = initDeck();
   stub.storeDeck(deck);
 
@@ -204,11 +206,10 @@ export const getStatute = async (
   stub: DurableObjectStub<GameStorage>
 ): Promise<HandStatute> => {
   const gameState = await stub.fetchGameState();
-  logger.info(`Game state found: ${!!gameState}`);
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
-  return gameState.handStatute;
+  return toHandStatute(gameState.handStatute);
 };
 
 export const getTableCards = async (
@@ -251,7 +252,7 @@ export const chooseGameType = async (
     throw new GameError(ErrorTypes.GAME_TYPE_CHOSEN);
   }
 
-  let validatedChoice: FullGameType;
+  let validatedChoice: PersistableGameType;
 
   if (gameTypeChoice.gameType === GameType.TRUMP) {
     if (!gameTypeChoice.trumpSuit) {
@@ -262,7 +263,7 @@ export const chooseGameType = async (
       trumpSuit: gameTypeChoice.trumpSuit,
     };
   } else {
-    validatedChoice = { value: gameTypeChoice.gameType };
+    validatedChoice = { value: gameTypeChoice.gameType, trumpSuit: null };
   }
 
   const chosenStatute = getStatuteAfterChoice(
@@ -275,7 +276,7 @@ export const chooseGameType = async (
     handStatute: chosenStatute,
   };
   stub.storeGameState(updatedGameState);
-  return chosenStatute;
+  return toHandStatute(chosenStatute);
 };
 
 export const getCurrentTrick = async (

@@ -11,6 +11,8 @@ import { TrickResponse } from '../../../types/trick-response';
 const logger = pino();
 
 export class GameStorage extends DurableObject<Env> {
+  timeToLiveMs = 86_400_000; // 24 hours
+
   sql = this.ctx.storage.sql;
 
   static readonly TABLES = {
@@ -105,6 +107,11 @@ export class GameStorage extends DurableObject<Env> {
     this.ctx.getWebSockets().forEach((ws) => ws.send(JSON.stringify(trick)));
   }
 
+  async alarm() {
+    this.log('Alarm triggered, clearing storage');
+    await this.ctx.storage.deleteAll();
+  }
+
   private handleWebSocket() {
     logger.info('WebSocket connection requested');
     const [client, server] = Object.values(new WebSocketPair());
@@ -166,6 +173,7 @@ export class GameStorage extends DurableObject<Env> {
       throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
     this.log(`Successfully upserted ${field} in ${table}`);
+    void this.ctx.storage.setAlarm(Date.now() + this.timeToLiveMs);
   }
 
   private log(

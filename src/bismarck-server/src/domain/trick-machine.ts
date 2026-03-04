@@ -9,6 +9,7 @@ import { TrickResponse } from '../../../types/trick-response';
 import pino from 'pino';
 import { ErrorTypes } from '../types/error-types';
 import { GameError } from '../utils/game-error';
+import { Statute } from '../types/game-state';
 
 const logger = pino();
 
@@ -39,12 +40,12 @@ const initTrickCards = (
 export const initTrick = (
   firstCard: Card,
   trickLead: Player,
-  handStatute: HandStatute,
+  statue: Statute,
   trickNumber: number
 ): Trick => {
   return {
-    trickCards: initTrickCards(trickLead, handStatute.playerOrder, firstCard),
-    trumpSuit: handStatute.gameType?.trumpSuit || getSuit(firstCard),
+    trickCards: initTrickCards(trickLead, statue.playerOrder, firstCard),
+    trumpSuit: statue.gameType?.trumpSuit || getSuit(firstCard),
     trickSuit: getSuit(firstCard),
     trickNumber,
   };
