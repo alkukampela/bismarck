@@ -1,9 +1,8 @@
 import { Game } from '../../../types/game';
 import { GameType } from '../../../types/game-type';
-import { FullGameType, HandStatute } from '../../../types/hand-statute';
 import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
-import { PersistableGameType, Statute } from '../types/game-state';
+import { GameTypeData, HandStatuteData } from '../types/game-state';
 import {
   buildHandStatute,
   getStatuteAfterChoice,
@@ -80,7 +79,7 @@ test('Ensure correct statute for first choice game', () => {
 });
 
 test('Ensure correct statute for trump game choice', () => {
-  const inputStatute: Statute = {
+  const inputStatute: HandStatuteData = {
     gameType: null,
     isChoice: true,
     playerOrder: [PLAYER_1, PLAYER_2, PLAYER_3],
@@ -88,7 +87,7 @@ test('Ensure correct statute for trump game choice', () => {
     tricksInHand: TRICKS_IN_3_PLAYER_GAME,
   };
 
-  const inputChoice: PersistableGameType = {
+  const inputChoice: GameTypeData = {
     value: GameType.TRUMP,
     trumpSuit: SuitEnum.HEART,
   };
@@ -104,7 +103,7 @@ test('Ensure correct statute for trump game choice', () => {
 });
 
 test('Ensure correct statute for misere game choice', () => {
-  const inputStatute: Statute = {
+  const inputStatute: HandStatuteData = {
     gameType: null,
     isChoice: true,
     playerOrder: [PLAYER_2, PLAYER_3, PLAYER_1],
@@ -112,7 +111,7 @@ test('Ensure correct statute for misere game choice', () => {
     tricksInHand: TRICKS_IN_3_PLAYER_GAME,
   };
 
-  const inputChoice: PersistableGameType = {
+  const inputChoice: GameTypeData = {
     value: GameType.MISERE,
     trumpSuit: null,
   };

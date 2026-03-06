@@ -6,7 +6,7 @@ export type FullGameType =
   | { value: GameType.TRUMP; trumpSuit: SuitEnum }
   | { value: Exclude<GameType, GameType.TRUMP>; trumpSuit?: undefined };
 
-export interface HandStatute {
+export interface HandStatuteResponse {
   gameType: FullGameType | undefined;
   isChoice: boolean;
   playerOrder: Player[];

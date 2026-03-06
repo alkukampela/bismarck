@@ -1,10 +1,10 @@
 import { GameType } from '../../../types/game-type';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
 import { TrickResponse } from '../../../types/trick-response';
 
-export const StatuteSummary = ({ statute, trick }: { statute: HandStatute; trick: TrickResponse }) => {
+export const StatuteSummary = ({ statute, trick }: { statute: HandStatuteResponse; trick: TrickResponse }) => {
   const gameTypeName = (type: GameType): string => {
     switch (type) {
       case GameType.TRUMP:

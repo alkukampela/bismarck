@@ -2,13 +2,13 @@ import { ChoiceButton } from './ChoiceButton';
 import { GameType } from '../../../types/game-type';
 import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 
 export const GameTypeChooser = ({
   handStatute,
   player,
 }: {
-  handStatute: HandStatute;
+  handStatute: HandStatuteResponse;
   player: string;
 }) => {
   const shouldShowGameChooseType = (): boolean => {

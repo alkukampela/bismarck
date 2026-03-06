@@ -12,7 +12,7 @@ import { Card } from '../../../types/card';
 import { Game } from '../../../types/game';
 import { GameType } from '../../../types/game-type';
 import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
-import { FullGameType, HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
@@ -45,11 +45,11 @@ import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { CardContainer } from '../types/card-container';
 import { TABLE_CARDS } from '../types/cards-of-deck';
-import { PersistableGameType, Statute } from '../types/game-state';
+import { GameTypeData, HandStatuteData } from '../types/game-state';
 
 const logger = pino();
 
-const getPlayersIndex = (player: Player, statute: Statute): number => {
+const getPlayersIndex = (player: Player, statute: HandStatuteData): number => {
   return statute.playerOrder.findIndex((x) => player.name === x.name);
 };
 
@@ -70,7 +70,7 @@ const getLeadPlayerForTrick = async (
   return trick ? getTaker(trick) : eldestHand;
 };
 
-const isEldestHand = (player: Player, statute: Statute): boolean => {
+const isEldestHand = (player: Player, statute: HandStatuteData): boolean => {
   return player.name === statute.eldestHand.name;
 };
 
@@ -122,7 +122,7 @@ const playerHasCardsOfSuit = (
 export const setUpHand = (
   game: Game,
   stub: DurableObjectStub<GameStorage>
-): Statute => {
+): HandStatuteData => {
   const deck = initDeck();
   stub.storeDeck(deck);
 
@@ -204,7 +204,7 @@ export const removePlayersCard = async (
 
 export const getStatute = async (
   stub: DurableObjectStub<GameStorage>
-): Promise<HandStatute> => {
+): Promise<HandStatuteResponse> => {
   const gameState = await stub.fetchGameState();
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
@@ -238,7 +238,7 @@ export const chooseGameType = async (
   player: Player,
   gameTypeChoice: GameTypeChoiceRequest,
   stub: DurableObjectStub<GameStorage>
-): Promise<HandStatute> => {
+): Promise<HandStatuteResponse> => {
   const gameState = await stub.fetchGameState();
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
@@ -252,7 +252,7 @@ export const chooseGameType = async (
     throw new GameError(ErrorTypes.GAME_TYPE_CHOSEN);
   }
 
-  let validatedChoice: PersistableGameType;
+  let validatedChoice: GameTypeData;
 
   if (gameTypeChoice.gameType === GameType.TRUMP) {
     if (!gameTypeChoice.trumpSuit) {

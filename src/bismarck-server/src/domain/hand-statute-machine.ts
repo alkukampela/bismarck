@@ -6,8 +6,8 @@ import { SuitEnum } from '../../../types/suit';
 import pino from 'pino';
 import { ErrorTypes } from '../types/error-types';
 import { GameError } from '../utils/game-error';
-import { PersistableGameType, Statute } from '../types/game-state';
-import { HandStatute } from '../../../types/hand-statute';
+import { GameTypeData, HandStatuteData } from '../types/game-state';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 
 const logger = pino();
 
@@ -15,7 +15,7 @@ const determineNonChoiceGameType = (
   handNumber: number,
   playerCount: number,
   trumpSuit: SuitEnum | null
-): PersistableGameType | null => {
+): GameTypeData | null => {
   if (isChoiceTurn(handNumber, playerCount)) {
     return null;
   }
@@ -63,7 +63,7 @@ const switchTurns = (playerOrder: Player[], times: number): Player[] => {
   return playerOrder;
 };
 
-export const initialStatute = (game: Game): Statute => {
+export const initialStatute = (game: Game): HandStatuteData => {
   const playersInGame = game.players.length;
   const playerOrder = switchTurns(game.players, game.handNumber);
 
@@ -79,7 +79,7 @@ export const initialStatute = (game: Game): Statute => {
 export const buildHandStatute = (
   game: Game,
   trumpSuit: SuitEnum | null
-): Statute => {
+): HandStatuteData => {
   const handStatute = initialStatute(game);
 
   const gameType = determineNonChoiceGameType(
@@ -92,16 +92,18 @@ export const buildHandStatute = (
 };
 
 export const getStatuteAfterChoice = (
-  statute: Statute,
-  gameTypeChoice: PersistableGameType
-): Statute => {
+  statute: HandStatuteData,
+  gameTypeChoice: GameTypeData
+): HandStatuteData => {
   return {
     ...statute,
     gameType: gameTypeChoice,
   };
 };
 
-export const toHandStatute = (statute: Statute): HandStatute => {
+export const toHandStatute = (
+  statute: HandStatuteData
+): HandStatuteResponse => {
   return {
     isChoice: statute.isChoice,
     playerOrder: statute.playerOrder,

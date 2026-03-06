@@ -1,6 +1,6 @@
 import { ErrorTypes } from '../types/error-types';
 import { setUpHand } from './hand-service';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { GameStorage } from '../persistence/game-storage';
 import { noCardsLeft } from './deck-operations';
 import { GameError } from '../utils/game-error';
@@ -9,7 +9,7 @@ import { toHandStatute } from './hand-statute-machine';
 
 export const initHand = async (
   stub: DurableObjectStub<GameStorage>
-): Promise<HandStatute> => {
+): Promise<HandStatuteResponse> => {
   const deck = await stub.fetchDeck();
   const isHandFinished = noCardsLeft(deck);
 

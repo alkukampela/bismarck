@@ -3,8 +3,7 @@ import { GameType } from '../../../types/game-type';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
 import { TrickScore } from '../../../types/trick-score';
-import { GameState, Statute } from '../types/game-state';
-import { HandStatute } from '../../../types/hand-statute';
+import { GameState, HandStatuteData } from '../types/game-state';
 import { SuitEnum } from '../../../types/suit';
 
 const PLAYER_1: Player = { name: 'Aimo' };
@@ -15,7 +14,7 @@ const PLAYER_4: Player = { name: 'Dieter' };
 const createMockHandStatute = (
   gameType: GameType | null = GameType.TRUMP,
   isChoice = false
-): Statute => ({
+): HandStatuteData => ({
   playerOrder: [PLAYER_1, PLAYER_2, PLAYER_3],
   eldestHand: PLAYER_1,
   isChoice,

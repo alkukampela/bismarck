@@ -1,5 +1,5 @@
 import { GameType } from '../../../types/game-type';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { TrickResponse } from '../../../types/trick-response';
 import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
@@ -8,7 +8,7 @@ export const HandTitle = ({
   handStatute,
   trickResponse,
 }: {
-  handStatute: HandStatute;
+  handStatute: HandStatuteResponse;
   trickResponse: TrickResponse;
 }): React.ReactElement => {
   const trumpGameTypeName = (trumpSuit: SuitEnum | undefined) => {

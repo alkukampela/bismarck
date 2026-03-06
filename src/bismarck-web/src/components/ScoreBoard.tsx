@@ -1,7 +1,7 @@
 import { OnGoingGameScore } from './OnGoingGameScore';
 import { StatuteSummary } from './StatuteSummary';
 import { TrickTakers } from './TrickTakers';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { PlayerScore } from '../../../types/player-score';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import * as React from 'react';
@@ -13,7 +13,7 @@ export const ScoreBoard = ({
   scores,
   trick,
 }: {
-  statute: HandStatute;
+  statute: HandStatuteResponse;
   trickTakers: PlayerScore[];
   scores: GameScoreBoard;
   trick: TrickResponse;

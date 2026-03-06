@@ -1,7 +1,7 @@
 import { Card } from '../../../types/card';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
 import { TokenResponse } from '../../../types/token-response';
@@ -122,9 +122,12 @@ export const fetchScores = async (
 
 export const fetchStatute = async (
   gameId: string,
-  fallbackValue: HandStatute
-): Promise<HandStatute> =>
-  performGet<HandStatute>(`games/${gameId}/hand/statute`, fallbackValue);
+  fallbackValue: HandStatuteResponse
+): Promise<HandStatuteResponse> =>
+  performGet<HandStatuteResponse>(
+    `games/${gameId}/hand/statute`,
+    fallbackValue
+  );
 
 export const startTrick = async (
   authToken: string,

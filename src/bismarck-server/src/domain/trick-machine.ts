@@ -1,7 +1,7 @@
 import { getRank, getSuit } from './card-mapper';
 import { Trick } from '../types/trick';
 import { Card } from '../../../types/card';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
 import { TrickCard } from '../../../types/trick-card';
@@ -9,7 +9,7 @@ import { TrickResponse } from '../../../types/trick-response';
 import pino from 'pino';
 import { ErrorTypes } from '../types/error-types';
 import { GameError } from '../utils/game-error';
-import { Statute } from '../types/game-state';
+import { HandStatuteData } from '../types/game-state';
 
 const logger = pino();
 
@@ -40,7 +40,7 @@ const initTrickCards = (
 export const initTrick = (
   firstCard: Card,
   trickLead: Player,
-  statue: Statute,
+  statue: HandStatuteData,
   trickNumber: number
 ): Trick => {
   return {

@@ -10,7 +10,7 @@ import { PlayersHand } from '../../../types/players-hand';
 import { ScoreBoard } from './ScoreBoard';
 import { TableCards } from './TableCards';
 import { Trick } from './Trick';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { TrickResponse } from '../../../types/trick-response';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
@@ -42,7 +42,7 @@ export const Game = () => {
     React.useState<TrickResponse>(emptyTrickResponse);
   const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
-  const [statute, setStatute] = React.useState<HandStatute>(emptyStatue);
+  const [statute, setStatute] = React.useState<HandStatuteResponse>(emptyStatue);
 
   const socketRef = React.useRef(SocketFactory.getSocket(game.gameId));
 
@@ -55,7 +55,7 @@ export const Game = () => {
 
   const isHandReady = (
     trick: TrickResponse,
-    handStatute: HandStatute
+    handStatute: HandStatuteResponse
   ): boolean =>
     isTrickReady(trick) &&
     !!trick.trickNumber &&

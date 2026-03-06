@@ -1,5 +1,5 @@
 import { GameScoreBoard } from '../../../types/game-score-board';
-import { HandStatute } from '../../../types/hand-statute';
+import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { PlayersHand } from '../../../types/players-hand';
 import { TableCardsResponse } from '../../../types/table-cards-respons';
 import { TrickResponse } from '../../../types/trick-response';
@@ -19,7 +19,7 @@ export const emptyTrickResponse = (): TrickResponse => ({
   cards: [],
 });
 
-export const emptyStatue: HandStatute = {
+export const emptyStatue: HandStatuteResponse = {
   eldestHand: { name: '' },
   gameType: undefined,
   isChoice: false,
