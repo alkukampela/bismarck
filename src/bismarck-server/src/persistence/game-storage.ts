@@ -104,10 +104,20 @@ export class GameStorage extends DurableObject<Env> {
   }
 
   broadcastTrick(trick: TrickResponse) {
-    this.log(
-      `Broadcasting trick to ${this.ctx.getWebSockets().length} clients`
-    );
-    this.ctx.getWebSockets().forEach((ws) => ws.send(JSON.stringify(trick)));
+    const sockets = this.ctx.getWebSockets();
+    this.log(`Broadcasting trick to ${sockets.length} clients`);
+    
+    if (sockets.length === 0) {
+      this.log('No WebSocket connections to broadcast to', 'warn');
+    }
+    
+    sockets.forEach((ws) => {
+      try {
+        ws.send(JSON.stringify(trick));
+      } catch (err) {
+        this.log(`Failed to send to WebSocket: ${err}`, 'error');
+      }
+    });
   }
 
   async alarm() {
@@ -201,7 +211,7 @@ export class GameStorage extends DurableObject<Env> {
       this.log(`Expected to affect 1 row in ${table}.${field}`, 'error');
       throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
-    this.log(`Successfully upserted ${field} in ${table}`);
+    this.log(`Successfully upserted ${table}`);
     void this.ctx.storage.setAlarm(Date.now() + this.timeToLiveMs);
   }
 

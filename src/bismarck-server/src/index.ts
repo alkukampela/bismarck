@@ -87,7 +87,7 @@ router
           stub
         );
         // TODO: check if this is correct response
-        stub.broadcastTrick(await getCurrentTrick(stub));
+        await stub.broadcastTrick(await getCurrentTrick(stub));
         return jsonResponse(statute);
       } catch (err) {
         return handleError(err);
@@ -144,7 +144,7 @@ router
         const stub = getStub(request.params.id, env);
         const card = getTypedContent<CardRequest>(request);
         const trick = await startTrick(request.player, card, stub);
-        stub.broadcastTrick(trick);
+        await stub.broadcastTrick(trick);
         return jsonResponse(trick);
       } catch (err) {
         return handleError(err);
@@ -159,7 +159,7 @@ router
         const stub = getStub(request.params.id, env);
         const card = getTypedContent<CardRequest>(request);
         const trick = await addCardToTrick(request.player, card, stub);
-        stub.broadcastTrick(trick);
+        await stub.broadcastTrick(trick);
         return jsonResponse(trick);
       } catch (err) {
         return handleError(err);
@@ -215,7 +215,7 @@ router
       try {
         const stub = getStub(request.params.id, env);
         const statute = await initHand(stub);
-        stub.broadcastTrick(await getCurrentTrick(stub));
+        await stub.broadcastTrick(await getCurrentTrick(stub));
         return jsonResponse(statute);
       } catch (err) {
         return handleError(err);

@@ -4,7 +4,6 @@ import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { GameStorage } from '../persistence/game-storage';
 import { noCardsLeft } from './deck-operations';
 import { GameError } from '../utils/game-error';
-import { GameType } from '../../../types/game-type';
 import { toHandStatute } from './hand-statute-machine';
 
 export const initHand = async (
