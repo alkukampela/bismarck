@@ -113,14 +113,40 @@ export class GameStorage extends DurableObject<Env> {
   }
 
   private handleWebSocket() {
-    logger.info('WebSocket connection requested');
+    const connectionId = crypto.randomUUID().substring(0, 5);
+
+    this.log(
+      `WebSocket connection requested with id ${connectionId}, total connections: ${
+        this.ctx.getWebSockets().length
+      }`
+    );
+
     const [client, server] = Object.values(new WebSocketPair());
 
     this.ctx.acceptWebSocket(server);
-    logger.info('WebSocket connection established');
+
+    this.log(
+      `WebSocket connection accepted with id ${connectionId}, total connections: ${
+        this.ctx.getWebSockets().length
+      }`
+    );
 
     return new Response(null, { status: 101, webSocket: client });
   }
+
+  webSocketClose(
+    ws: WebSocket,
+    code: number,
+    reason: string,
+    wasClean: boolean
+  ) {
+    this.log(
+      `WebSocket connection closed with code ${code}, reason: ${reason}, wasClean: ${wasClean}, total connections: ${
+        this.ctx.getWebSockets().length
+      }`
+    );
+  }
+
   async fetch() {
     return this.handleWebSocket();
   }
