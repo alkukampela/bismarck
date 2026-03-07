@@ -104,6 +104,9 @@ export class GameStorage extends DurableObject<Env> {
   }
 
   broadcastTrick(trick: TrickResponse) {
+    this.log(
+      `Broadcasting trick to ${this.ctx.getWebSockets().length} clients`
+    );
     this.ctx.getWebSockets().forEach((ws) => ws.send(JSON.stringify(trick)));
   }
 
