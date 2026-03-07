@@ -71,6 +71,23 @@ export const Game = () => {
     );
   };
 
+  const isMyTurn = (): boolean => {
+    if (!game.player) {
+      return false;
+    }
+
+    if (trickResponse.trickStatus === 'FINISHED') {
+      return trickResponse.taker?.name === game.player;
+    }
+
+    if (trickResponse.cards.length === 0) {
+      return statute.eldestHand.name === game.player;
+    }
+
+    const nextPlayer = trickResponse.cards.find((tc) => !tc.card);
+    return nextPlayer?.player.name === game.player;
+  };
+
   const updateTrick = () => {
     fetchTrick(game.gameId).then((trick) => {
       setTrickResponse(trick);
@@ -162,6 +179,7 @@ export const Game = () => {
       <PlayersCards
         hand={playersHand}
         trickStatus={trickResponse.trickStatus}
+        isMyTurn={isMyTurn()}
       />
       <ScoreBoard statute={statute} trickTakers={trickTakers} scores={scores} trick={trickResponse} />
       <HandScores

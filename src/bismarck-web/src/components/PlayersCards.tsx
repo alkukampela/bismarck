@@ -10,9 +10,11 @@ import { TrickStatus } from '../../../types/trick-response';
 export const PlayersCards = ({
   hand,
   trickStatus,
+  isMyTurn,
 }: {
   hand: PlayersHand;
   trickStatus: TrickStatus;
+  isMyTurn: boolean;
 }): React.ReactElement => {
   const game = React.useContext(GameContext);
 
@@ -68,6 +70,7 @@ export const PlayersCards = ({
               trickStatus={trickStatus}
               isInRemovalStage={!!numberOfExtraCards}
               isSelectedForRemoval={cardsToBeRemoved.includes(card)}
+              isMyTurn={isMyTurn}
               onPlay={playCard}
               onRemovalToggle={toggleCardToBeRemoved}
             />

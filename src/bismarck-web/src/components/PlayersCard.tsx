@@ -10,6 +10,7 @@ export const PlayersCard = ({
   trickStatus,
   isInRemovalStage,
   isSelectedForRemoval,
+  isMyTurn,
   onPlay: onPlay,
   onRemovalToggle: onRemovalToggle,
 }: {
@@ -17,6 +18,7 @@ export const PlayersCard = ({
   trickStatus: TrickStatus;
   isInRemovalStage: boolean;
   isSelectedForRemoval: boolean;
+  isMyTurn: boolean;
   onPlay: (card: CardType) => void;
   onRemovalToggle: (card: CardType) => void;
 }) => {
@@ -25,6 +27,10 @@ export const PlayersCard = ({
   const handleClick = async () => {
     if (isInRemovalStage) {
       onRemovalToggle(card);
+      return;
+    }
+
+    if (!isMyTurn) {
       return;
     }
 
