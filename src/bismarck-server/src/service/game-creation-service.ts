@@ -64,10 +64,12 @@ export const createGameAndInvitatePlayers = async (
   const handStatute = initialStatute(game);
 
   logger.info(`About to store game state for gameId: ${gameId}`);
-  await stub.storeGameState({
-    ...game,
-    handStatute,
-    trickScores: [],
+  await stub.store({
+    state: {
+      ...game,
+      handStatute,
+      trickScores: [],
+    },
   });
   logger.info(`Successfully stored game state for gameId: ${gameId}`);
 

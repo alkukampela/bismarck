@@ -15,7 +15,7 @@ export class GameStorage extends DurableObject<Env> {
 
   sql = this.ctx.storage.sql;
 
-  static readonly TABLES = {
+  private readonly TABLES = {
     GAME_STATE: 'game_state',
     CARDS: 'cards',
     TRICK_POINTS: 'trick_points',
@@ -25,82 +25,85 @@ export class GameStorage extends DurableObject<Env> {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
 
-    this.initTable(
-      GameStorage.TABLES.GAME_STATE,
-      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.GAME_STATE} (
-          id      INTEGER PRIMARY KEY,
-          state   TEXT NOT NULL
-        )`
-    );
-    this.initTable(
-      GameStorage.TABLES.CARDS,
-      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.CARDS} (
-          id    INTEGER PRIMARY KEY,
-          cards TEXT NOT NULL
-        )`
-    );
-    this.initTable(
-      GameStorage.TABLES.TRICK_POINTS,
-      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.TRICK_POINTS} (
-          id    INTEGER PRIMARY KEY,
-          points TEXT NOT NULL
-        )`
-    );
-    this.initTable(
-      GameStorage.TABLES.TRICK,
-      `CREATE TABLE IF NOT EXISTS ${GameStorage.TABLES.TRICK} (
-          id    INTEGER PRIMARY KEY,
-          trick TEXT NOT NULL
-        )`
-    );
+    this.initTable(this.TABLES.GAME_STATE);
+    this.initTable(this.TABLES.CARDS);
+    this.initTable(this.TABLES.TRICK_POINTS);
+    this.initTable(this.TABLES.TRICK);
   }
 
-  storeGameState(state: GameState) {
-    this.upsertSingleField(GameStorage.TABLES.GAME_STATE, 'state', state);
+  async store(
+    entitites: {
+      state?: GameState;
+      deck?: CardContainer[];
+      trickPoints?: PlayerScore[];
+    } & (
+      | { clearTrick: true; trick?: never }
+      | { trick: Trick; clearTrick?: never }
+      | { trick?: never; clearTrick?: never }
+    )
+  ) {
+    const statements: string[] = [];
+
+    if (entitites.state) {
+      statements.push(
+        this.createUpsertStatement(this.TABLES.GAME_STATE, entitites.state)
+      );
+    }
+
+    if (entitites.deck) {
+      statements.push(
+        this.createUpsertStatement(this.TABLES.CARDS, entitites.deck)
+      );
+    }
+
+    if (entitites.trickPoints) {
+      statements.push(
+        this.createUpsertStatement(
+          this.TABLES.TRICK_POINTS,
+          entitites.trickPoints
+        )
+      );
+    }
+
+    if (entitites.clearTrick) {
+      statements.push(`DELETE FROM ${this.TABLES.TRICK} WHERE id = 1;`);
+    } else if (entitites.trick) {
+      statements.push(
+        this.createUpsertStatement(this.TABLES.TRICK, entitites.trick)
+      );
+    }
+
+    if (statements.length === 0) {
+      this.log('No entities provided to store', 'warn');
+      return;
+    }
+
+    this.sql.exec(statements.join(''));
+    this.log(
+      `Successfully stored entities: ${Object.keys(entitites).join(', ')}`
+    );
+    await this.ctx.storage.setAlarm(Date.now() + this.timeToLiveMs);
   }
 
   fetchGameState(): GameState | undefined {
-    return this.fetchSingleField<GameState>(
-      GameStorage.TABLES.GAME_STATE,
-      'state'
-    );
-  }
-
-  storeDeck(cards: CardContainer[]) {
-    this.upsertSingleField(GameStorage.TABLES.CARDS, 'cards', cards);
+    return this.fetchSingleField<GameState>(this.TABLES.GAME_STATE, 'value');
   }
 
   fetchDeck(): CardContainer[] {
     return (
-      this.fetchSingleField<CardContainer[]>(
-        GameStorage.TABLES.CARDS,
-        'cards'
-      ) ?? []
+      this.fetchSingleField<CardContainer[]>(this.TABLES.CARDS, 'value') ?? []
     );
-  }
-
-  storeTrickPoints(points: PlayerScore[]) {
-    this.upsertSingleField(GameStorage.TABLES.TRICK_POINTS, 'points', points);
   }
 
   fetchTrickPoints(): PlayerScore[] | undefined {
     return this.fetchSingleField<PlayerScore[]>(
-      GameStorage.TABLES.TRICK_POINTS,
-      'points'
+      this.TABLES.TRICK_POINTS,
+      'value'
     );
   }
 
-  storeTrick(trick: Trick) {
-    this.upsertSingleField(GameStorage.TABLES.TRICK, 'trick', trick);
-  }
-
   fetchTrick(): Trick | undefined {
-    return this.fetchSingleField<Trick>(GameStorage.TABLES.TRICK, 'trick');
-  }
-
-  clearTrick() {
-    this.sql.exec(`DELETE FROM ${GameStorage.TABLES.TRICK} WHERE id = 1`);
-    this.log('Cleared trick data');
+    return this.fetchSingleField<Trick>(this.TABLES.TRICK, 'value');
   }
 
   broadcastTrick(trick: TrickResponse) {
@@ -165,15 +168,27 @@ export class GameStorage extends DurableObject<Env> {
     return this.handleWebSocket();
   }
 
-  private initTable = (tableName: string, createTableSql: string) => {
+  private initTable = (tableName: string) => {
     const cursor = this.sql.exec(`PRAGMA table_list`);
     if ([...cursor].find((t) => t.name === tableName)) {
       this.log(`${tableName} table already exists`);
       return;
     }
-    this.sql.exec(createTableSql);
+    this.sql.exec(
+      `CREATE TABLE IF NOT EXISTS ${tableName} (
+        id    INTEGER PRIMARY KEY,
+        value TEXT NOT NULL
+      )`
+    );
     this.log(`Created ${tableName} table`);
   };
+
+  private createUpsertStatement<T>(table: string, data: T): string {
+    return `INSERT INTO ${table} (id, value)
+      VALUES (1, '${JSON.stringify(data)}')
+      ON CONFLICT(id)
+      DO UPDATE SET value=excluded.value;`;
+  }
 
   private fetchSingleField<T>(table: string, field: string): T | undefined {
     this.log(`Fetching ${field} from table ${table}`);
@@ -196,24 +211,6 @@ export class GameStorage extends DurableObject<Env> {
     }
 
     return JSON.parse(result[field]) as T;
-  }
-
-  private upsertSingleField<T>(table: string, field: string, data: T): void {
-    this.log(`Upserting ${field} in ${table}`);
-    const result = this.sql.exec(
-      `INSERT INTO ${table} (id, ${field})
-       VALUES (1, ?)
-       ON CONFLICT(id)
-       DO UPDATE SET ${field}=excluded.${field};`,
-      JSON.stringify(data)
-    );
-
-    if (result.rowsWritten !== 1) {
-      this.log(`Expected to affect 1 row in ${table}.${field}`, 'error');
-      throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
-    }
-    this.log(`Successfully upserted ${table}`);
-    void this.ctx.storage.setAlarm(Date.now() + this.timeToLiveMs);
   }
 
   private log(

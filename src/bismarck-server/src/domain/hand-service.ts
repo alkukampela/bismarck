@@ -9,7 +9,6 @@ import {
 } from './hand-statute-machine';
 import { Trick } from '../types/trick';
 import { Card } from '../../../types/card';
-import { Game } from '../../../types/game';
 import { GameType } from '../../../types/game-type';
 import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
 import { HandStatuteResponse } from '../../../types/hand-statute-response';
@@ -45,7 +44,7 @@ import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { CardContainer } from '../types/card-container';
 import { TABLE_CARDS } from '../types/cards-of-deck';
-import { GameTypeData, HandStatuteData } from '../types/game-state';
+import { GameState, GameTypeData, HandStatuteData } from '../types/game-state';
 
 const logger = pino();
 
@@ -119,16 +118,6 @@ const playerHasCardsOfSuit = (
   return playersCards.some((card) => getSuit(card) === trickSuit);
 };
 
-export const setUpHand = async (
-  game: Game,
-  stub: DurableObjectStub<GameStorage>
-): Promise<HandStatuteData> => {
-  const deck = initDeck();
-  await stub.storeDeck(deck);
-
-  return buildHandStatute(game, getTrumpSuit(deck));
-};
-
 export const getPlayersHand = async (
   player: Player,
   stub: DurableObjectStub<GameStorage>
@@ -198,7 +187,9 @@ export const removePlayersCard = async (
   }
 
   const updatedDeck = removeCard(card, deck);
-  await stub.storeDeck(updatedDeck);
+  await stub.store({
+    deck: updatedDeck,
+  });
   return card;
 };
 
@@ -275,7 +266,8 @@ export const chooseGameType = async (
     ...gameState,
     handStatute: chosenStatute,
   };
-  await stub.storeGameState(updatedGameState);
+
+  await stub.store({ state: updatedGameState });
 
   await stub.broadcastTrick(
     emptyTrickResponse(gameState.handStatute.playerOrder)
@@ -346,11 +338,14 @@ export const startTrick = async (
   }
 
   const updatedDeck = removeCard(card, deck);
-  await stub.storeDeck(updatedDeck);
 
   const trickNumber = roundNumber(playerIndex, gameState.players.length, deck);
   const trick = initTrick(card, player, gameState.handStatute, trickNumber);
-  await stub.storeTrick(trick);
+
+  await stub.store({
+    trick,
+    deck: updatedDeck,
+  });
 
   const trickResponse = convertToTrickResponse(trick);
   await stub.broadcastTrick(trickResponse);
@@ -404,7 +399,8 @@ export const addCardToTrick = async (
 
   const updatedTrick = playCard(trick, player, card);
   const updatedDeck = removeCard(card, deck);
-  await stub.storeDeck(updatedDeck);
+  let playerScoresAfter: PlayerScore[] | undefined;
+  let updatedState: GameState | undefined;
 
   if (isTrickReady(updatedTrick)) {
     const playerScoresBefore = await stub.fetchTrickPoints();
@@ -414,11 +410,10 @@ export const addCardToTrick = async (
       );
       throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
-    const playerScoresAfter = updatedTrickScore(
+    playerScoresAfter = updatedTrickScore(
       getTaker(updatedTrick),
       playerScoresBefore
     );
-    await stub.storeTrickPoints(playerScoresAfter);
 
     if (noCardsLeft(updatedDeck)) {
       if (!gameState.handStatute.gameType?.value) {
@@ -431,17 +426,20 @@ export const addCardToTrick = async (
         gameState.handStatute.gameType.value
       );
 
-      const curremtTrickPoints = calculateTrickPoints(handScore, gameState);
-      const updatedState = {
+      const currentTrickPoints = calculateTrickPoints(handScore, gameState);
+      updatedState = {
         ...gameState,
-        trickScores: [...gameState.trickScores, curremtTrickPoints],
+        trickScores: [...gameState.trickScores, currentTrickPoints],
       };
-
-      await stub.storeGameState(updatedState);
     }
   }
 
-  await stub.storeTrick(updatedTrick);
+  await stub.store({
+    trickPoints: playerScoresAfter,
+    state: updatedState,
+    deck: updatedDeck,
+    trick: updatedTrick,
+  });
 
   const trickResponse = convertToTrickResponse(updatedTrick);
   await stub.broadcastTrick(trickResponse);
@@ -456,4 +454,48 @@ export const getHandsTrickCounts = async (
     return [];
   }
   return trickPoints;
+};
+
+export const initHand = async (
+  stub: DurableObjectStub<GameStorage>
+): Promise<HandStatuteResponse> => {
+  const currentDeck = await stub.fetchDeck();
+  const isHandFinished = noCardsLeft(currentDeck);
+
+  if (!isHandFinished) {
+    return Promise.reject(new GameError(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
+  }
+
+  const gameState = await stub.fetchGameState();
+
+  if (!gameState) {
+    return Promise.reject(new GameError(ErrorTypes.GAME_NOT_FOUND));
+  }
+
+  if (gameState.handNumber >= gameState.players.length * 4) {
+    return Promise.reject(new GameError(ErrorTypes.GAME_ENDED));
+  }
+
+  const newDeck = initDeck();
+  const statute = buildHandStatute(gameState, getTrumpSuit(newDeck));
+
+  const updatedGameState = {
+    ...gameState,
+    handNumber: gameState.handNumber + 1,
+    handStatute: statute,
+  };
+
+  const trickPoints = statute.playerOrder.map((player) => {
+    return { player, score: 0 };
+  });
+
+  await stub.store({
+    state: updatedGameState,
+    trickPoints,
+    deck: newDeck,
+    clearTrick: true,
+  });
+  await stub.broadcastTrick(emptyTrickResponse(updatedGameState.players));
+
+  return toHandStatute(statute);
 };

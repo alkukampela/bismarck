@@ -7,6 +7,7 @@ import {
   getPlayersHand,
   getStatute,
   getTableCards,
+  initHand,
   removePlayersCard,
   startTrick,
 } from './domain/hand-service';
@@ -29,7 +30,6 @@ import { getTotalScores } from './domain/game-scoring';
 import { loadGamePlayerByLoginId } from './service/login-token-service';
 import { authenticatedRoute } from './utils/auth-middleware';
 import { GameTypeChoiceRequest } from '../../types/game-type-choice-request';
-import { initHand } from './domain/game-service';
 import { GameError } from './utils/game-error';
 import { ErrorTypes } from './types/error-types';
 import { Card, Rank, Suit } from '../../types/card';
