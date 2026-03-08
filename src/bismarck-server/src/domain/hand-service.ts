@@ -455,7 +455,7 @@ export const addCardToTrick = (
   }
 
   const trickResponse = convertToTrickResponse(updatedTrick);
-  
+
   return {
     updates: {
       trickPoints: playerScoresAfter,
@@ -496,11 +496,15 @@ export const initHand = (
   }
 
   const newDeck = initDeck();
-  const statute = buildHandStatute(gameState, getTrumpSuit(newDeck));
+  const updatedHandNumber = gameState.handNumber + 1;
+  const statute = buildHandStatute(
+    { ...gameState, handNumber: updatedHandNumber },
+    getTrumpSuit(newDeck)
+  );
 
   const updatedGameState = {
     ...gameState,
-    handNumber: gameState.handNumber + 1,
+    handNumber: updatedHandNumber,
     handStatute: statute,
   };
 
