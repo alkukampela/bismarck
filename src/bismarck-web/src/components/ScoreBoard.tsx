@@ -12,15 +12,17 @@ export const ScoreBoard = ({
   trickTakers,
   scores,
   trick,
+  isMyTurn,
 }: {
   statute: HandStatuteResponse;
   trickTakers: PlayerScore[];
   scores: GameScoreBoard;
   trick: TrickResponse;
+  isMyTurn: boolean;
 }): React.ReactElement => {
   return (
     <div className="score-board">
-      <StatuteSummary statute={statute} trick={trick} />
+      <StatuteSummary statute={statute} trick={trick} isMyTurn={isMyTurn} />
       <TrickTakers trickTakers={trickTakers} />
       <OnGoingGameScore scores={scores} />
     </div>

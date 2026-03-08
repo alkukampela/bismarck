@@ -36,13 +36,16 @@ export const Game = () => {
   const game = React.useContext(GameContext);
   const navigate = useNavigate();
 
-  const [tableCards, setTableCards] = React.useState<TableCardsResponse>(emptyTableCardsResponse());
+  const [tableCards, setTableCards] = React.useState<TableCardsResponse>(
+    emptyTableCardsResponse()
+  );
   const [playersHand, setPlayersHand] = React.useState<PlayersHand>(emptyHand);
   const [trickResponse, setTrickResponse] =
     React.useState<TrickResponse>(emptyTrickResponse);
   const [trickTakers, setTrickTakers] = React.useState<PlayerScore[]>([]);
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
-  const [statute, setStatute] = React.useState<HandStatuteResponse>(emptyStatue);
+  const [statute, setStatute] =
+    React.useState<HandStatuteResponse>(emptyStatue);
 
   const socketRef = React.useRef(SocketFactory.getSocket(game.gameId));
 
@@ -165,9 +168,12 @@ export const Game = () => {
     };
   }, []);
 
-  React.useEffect(() => () => {
-    SocketFactory.reset();
-  }, []);
+  React.useEffect(
+    () => () => {
+      SocketFactory.reset();
+    },
+    []
+  );
 
   return (
     <>
@@ -181,7 +187,13 @@ export const Game = () => {
         trickStatus={trickResponse.trickStatus}
         isMyTurn={isMyTurn()}
       />
-      <ScoreBoard statute={statute} trickTakers={trickTakers} scores={scores} trick={trickResponse} />
+      <ScoreBoard
+        statute={statute}
+        trickTakers={trickTakers}
+        scores={scores}
+        trick={trickResponse}
+        isMyTurn={isMyTurn()}
+      />
       <HandScores
         scores={scores}
         isHandReady={isHandReady(trickResponse, statute)}

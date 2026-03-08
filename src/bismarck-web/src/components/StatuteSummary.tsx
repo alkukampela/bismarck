@@ -4,7 +4,15 @@ import { SuitEnum } from '../../../types/suit';
 import * as React from 'react';
 import { TrickResponse } from '../../../types/trick-response';
 
-export const StatuteSummary = ({ statute, trick }: { statute: HandStatuteResponse; trick: TrickResponse }) => {
+export const StatuteSummary = ({
+  statute,
+  trick,
+  isMyTurn,
+}: {
+  statute: HandStatuteResponse;
+  trick: TrickResponse;
+  isMyTurn: boolean;
+}) => {
   const gameTypeName = (type: GameType): string => {
     switch (type) {
       case GameType.TRUMP:
@@ -35,7 +43,7 @@ export const StatuteSummary = ({ statute, trick }: { statute: HandStatuteRespons
 
   const nextPlayer = (trick: TrickResponse): string => {
     const nextInTurn = trick.cards.find((trickCard) => !trickCard.card);
-    return nextInTurn ? nextInTurn.player.name : trick.taker?.name || "-";
+    return nextInTurn ? nextInTurn.player.name : trick.taker?.name || '-';
   };
 
   return (
@@ -45,15 +53,14 @@ export const StatuteSummary = ({ statute, trick }: { statute: HandStatuteRespons
       <div>
         Pelimuoto:&nbsp;
         {statute.isChoice && 'valinta/'}
-        {statute.gameType &&
-          gameTypeName(statute.gameType.value)}
+        {statute.gameType && gameTypeName(statute.gameType.value)}
       </div>
       {typeof statute.gameType?.trumpSuit !== 'undefined' && (
-        <div>
-          Valttimaa: {trumpSuitName(statute.gameType.trumpSuit)}
-        </div>
+        <div>Valttimaa: {trumpSuitName(statute.gameType.trumpSuit)}</div>
       )}
-      <div>Vuorossa: {nextPlayer(trick)}</div>
+      <div className={isMyTurn ? 'my-turn' : ''}>
+        Vuorossa: {nextPlayer(trick)}
+      </div>
     </div>
   );
 };

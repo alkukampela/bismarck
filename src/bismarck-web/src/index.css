@@ -476,6 +476,10 @@ tr.odd-gametype {
   text-decoration: underline;
 }
 
+.my-turn {
+  font-weight: bold;
+}
+
 .delayedError {
   visibility: hidden;
   animation: 0.75s linear 0.5s forwards delayedShow;

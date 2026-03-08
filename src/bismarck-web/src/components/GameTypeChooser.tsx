@@ -31,19 +31,31 @@ export const GameTypeChooser = ({
       <div className="choice-buttons">
         <ChoiceButton
           text="Ruutuvaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.DIAMOND }}
+          gameTypeChoice={{
+            gameType: GameType.TRUMP,
+            trumpSuit: SuitEnum.DIAMOND,
+          }}
         />
         <ChoiceButton
           text="Ristivaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.CLUB }}
+          gameTypeChoice={{
+            gameType: GameType.TRUMP,
+            trumpSuit: SuitEnum.CLUB,
+          }}
         />
         <ChoiceButton
           text="Herttavaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.HEART }}
+          gameTypeChoice={{
+            gameType: GameType.TRUMP,
+            trumpSuit: SuitEnum.HEART,
+          }}
         />
         <ChoiceButton
           text="Patavaltti"
-          gameTypeChoice={{ gameType: GameType.TRUMP, trumpSuit: SuitEnum.SPADE }}
+          gameTypeChoice={{
+            gameType: GameType.TRUMP,
+            trumpSuit: SuitEnum.SPADE,
+          }}
         />
         <ChoiceButton
           text="Grandi"

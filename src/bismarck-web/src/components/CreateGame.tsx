@@ -12,7 +12,6 @@ export const CreateGame = (): JSX.Element => {
   const MIN_PLAYERS = 3;
   const MAX_PLAYERS = 4;
 
-
   type PlayerInput = { player: { name: string }; email: string };
   const emptyPlayer: PlayerInput = { player: { name: '' }, email: '' };
 
@@ -61,7 +60,6 @@ export const CreateGame = (): JSX.Element => {
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
     setSent(true);
-
 
     const request = {
       players: players.map((input) => ({

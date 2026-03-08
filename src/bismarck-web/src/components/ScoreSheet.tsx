@@ -3,7 +3,11 @@ import { PlayerCumulativeScore } from '../domain/player-cumulative-score';
 import { trickScoresToCumulativeScores } from '../domain/score-calculators';
 import * as React from 'react';
 
-export const ScoreSheet = ({ scores }: { scores: GameScoreBoard }): React.ReactElement => {
+export const ScoreSheet = ({
+  scores,
+}: {
+  scores: GameScoreBoard;
+}): React.ReactElement => {
   const [cumulativeScores, setCumulativeScores] = React.useState<
     PlayerCumulativeScore[]
   >([]);

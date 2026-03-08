@@ -4,13 +4,14 @@ import * as React from 'react';
 
 export const GameTitle = (): React.ReactElement => {
   const wordToCards = (word: string): CardType[] => {
-    const suits: Suit[] = ["♥️", "♣️", "♦️", "♠️"];
+    const suits: Suit[] = ['♥️', '♣️', '♦️', '♠️'];
     return [...word].map((letter, index) => {
       return {
         // Faking type is fine here becacuse it will
         // used purely for display purposes.
         rank: letter.toUpperCase() as Rank,
-        suit: suits[index % suits.length] };
+        suit: suits[index % suits.length],
+      };
     });
   };
 
