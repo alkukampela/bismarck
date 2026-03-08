@@ -1,7 +1,6 @@
 import { ChoiceButton } from './ChoiceButton';
 import { GameType } from '../../../types/game-type';
 import { SuitEnum } from '../../../types/suit';
-import * as React from 'react';
 import { HandStatuteResponse } from '../../../types/hand-statute-response';
 
 export const GameTypeChooser = ({

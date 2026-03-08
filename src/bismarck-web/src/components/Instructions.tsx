@@ -1,5 +1,4 @@
 import InstuctionsContent from '../static/instructions.mdx';
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const Instructions = () => {

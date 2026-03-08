@@ -1,7 +1,6 @@
 import { GameType } from '../../../types/game-type';
 import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { SuitEnum } from '../../../types/suit';
-import * as React from 'react';
 import { TrickResponse } from '../../../types/trick-response';
 
 export const StatuteSummary = ({

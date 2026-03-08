@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export const ExtraCardDisplay = ({ amount }: { amount: number }) => {
   return (
     <div
