@@ -7,6 +7,7 @@ import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { ErrorTypes } from '../types/error-types';
 import { TrickResponse } from '../../../types/trick-response';
+import { StateUpdates } from '../types/state-updates';
 
 const logger = pino();
 
@@ -31,17 +32,7 @@ export class GameStorage extends DurableObject<Env> {
     this.initTable(this.TABLES.TRICK);
   }
 
-  async store(
-    entitites: {
-      state?: GameState;
-      deck?: CardContainer[];
-      trickPoints?: PlayerScore[];
-    } & (
-      | { clearTrick: true; trick?: never }
-      | { trick: Trick; clearTrick?: never }
-      | { trick?: never; clearTrick?: never }
-    )
-  ) {
+  async store(entitites: StateUpdates) {
     const statements: string[] = [];
 
     if (entitites.state) {

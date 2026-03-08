@@ -46,6 +46,7 @@ import { CardContainer } from '../types/card-container';
 import { TABLE_CARDS } from '../types/cards-of-deck';
 import { GameState, GameTypeData, HandStatuteData } from '../types/game-state';
 import { GameScoreBoard } from '../../../types/game-score-board';
+import { ServiceResult } from '../types/service-result';
 
 const logger = pino();
 
@@ -53,13 +54,7 @@ const getPlayersIndex = (player: Player, statute: HandStatuteData): number => {
   return statute.playerOrder.findIndex((x) => player.name === x.name);
 };
 
-const defaultTrick = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<TrickResponse> => {
-  const { gameState } = await stub.fetchGameData();
-  if (!gameState) {
-    throw new GameError(ErrorTypes.GAME_NOT_FOUND);
-  }
+const buildDefaultTrick = (gameState: GameState): TrickResponse => {
   return emptyTrickResponse(gameState.handStatute.playerOrder);
 };
 
@@ -119,16 +114,19 @@ const playerHasCardsOfSuit = (
   return playersCards.some((card) => getSuit(card) === trickSuit);
 };
 
-export const getPlayersHand = async (
+export const getPlayersHand = (
   player: Player,
-  stub: DurableObjectStub<GameStorage>
-): Promise<PlayersHand> => {
-  const { gameState, deck } = await stub.fetchGameData();
+  gameState: GameState | undefined,
+  deck: CardContainer[]
+): ServiceResult<PlayersHand> => {
   if (
     !gameState ||
     (gameState.handStatute.isChoice && !gameState.handStatute.gameType)
   ) {
-    return { cards: [], extraCards: 0 };
+    return {
+      updates: {},
+      retval: { cards: [], extraCards: 0 },
+    };
   }
   const cards = getPlayersCards(
     getPlayersIndex(player, gameState.handStatute),
@@ -136,18 +134,20 @@ export const getPlayersHand = async (
     deck
   );
   return {
-    cards,
-    extraCards: extraCardsAmount(cards.length, gameState.players.length),
+    updates: {},
+    retval: {
+      cards,
+      extraCards: extraCardsAmount(cards.length, gameState.players.length),
+    },
   };
 };
 
-export const removePlayersCard = async (
+export const removePlayersCard = (
   player: Player,
   card: Card,
-  stub: DurableObjectStub<GameStorage>
-): Promise<Card> => {
-  const { gameState, deck } = await stub.fetchGameData();
-
+  gameState: GameState | undefined,
+  deck: CardContainer[]
+): ServiceResult<Card> => {
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
@@ -187,51 +187,58 @@ export const removePlayersCard = async (
   }
 
   const updatedDeck = removeCard(card, deck);
-  await stub.store({
-    deck: updatedDeck,
-  });
-  return card;
+
+  return {
+    updates: {
+      deck: updatedDeck,
+    },
+    retval: card,
+  };
 };
 
-export const getStatute = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<HandStatuteResponse> => {
-  const { gameState } = await stub.fetchGameData();
+export const getStatute = (
+  gameState: GameState | undefined
+): ServiceResult<HandStatuteResponse> => {
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
-  return toHandStatute(gameState.handStatute);
+  return {
+    updates: {},
+    retval: toHandStatute(gameState.handStatute),
+  };
 };
 
-export const getTableCards = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<TableCardsResponse> => {
-  const { deck } = await stub.fetchGameData();
-
+export const getTableCards = (
+  deck: CardContainer[]
+): ServiceResult<TableCardsResponse> => {
   if (
     deck.length === 0 ||
     deck.filter((card) => card.isPlayed).length >= TABLE_CARDS
   ) {
     // Don't return table cards after hand has been started
     return {
-      cards: [],
-      areCardsOnTheTable: false,
+      updates: {},
+      retval: {
+        cards: [],
+        areCardsOnTheTable: false,
+      },
     };
   }
 
   return {
-    cards: tableCardsFromDeck(deck),
-    areCardsOnTheTable: true,
+    updates: {},
+    retval: {
+      cards: tableCardsFromDeck(deck),
+      areCardsOnTheTable: true,
+    },
   };
 };
 
-export const chooseGameType = async (
+export const chooseGameType = (
   player: Player,
   gameTypeChoice: GameTypeChoiceRequest,
-  stub: DurableObjectStub<GameStorage>
-): Promise<HandStatuteResponse> => {
-  const { gameState } = await stub.fetchGameData();
-
+  gameState: GameState | undefined
+): ServiceResult<HandStatuteResponse> => {
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
@@ -268,28 +275,40 @@ export const chooseGameType = async (
     handStatute: chosenStatute,
   };
 
-  await stub.store({ state: updatedGameState });
-
-  await stub.broadcastTrick(
-    emptyTrickResponse(gameState.handStatute.playerOrder)
-  );
-  return toHandStatute(chosenStatute);
+  return {
+    updates: {
+      state: updatedGameState,
+    },
+    retval: toHandStatute(chosenStatute),
+    broadcastValue: emptyTrickResponse(gameState.handStatute.playerOrder),
+  };
 };
 
-export const getCurrentTrick = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<TrickResponse> => {
-  const { trick } = await stub.fetchGameData();
-  return trick ? convertToTrickResponse(trick) : await defaultTrick(stub);
+export const getCurrentTrick = (
+  trick: Trick | undefined,
+  gameState: GameState | undefined
+): ServiceResult<TrickResponse> => {
+  if (!gameState) {
+    throw new GameError(ErrorTypes.GAME_NOT_FOUND);
+  }
+
+  const trickResponse = trick
+    ? convertToTrickResponse(trick)
+    : buildDefaultTrick(gameState);
+
+  return {
+    updates: {},
+    retval: trickResponse,
+  };
 };
 
-export const startTrick = async (
+export const startTrick = (
   player: Player,
   card: Card,
-  stub: DurableObjectStub<GameStorage>
-): Promise<TrickResponse> => {
-  const { gameState, trick: previousTrick, deck } = await stub.fetchGameData();
-
+  gameState: GameState | undefined,
+  previousTrick: Trick | undefined,
+  deck: CardContainer[]
+): ServiceResult<TrickResponse> => {
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
@@ -342,28 +361,26 @@ export const startTrick = async (
   const trickNumber = roundNumber(playerIndex, gameState.players.length, deck);
   const trick = initTrick(card, player, gameState.handStatute, trickNumber);
 
-  await stub.store({
-    trick,
-    deck: updatedDeck,
-  });
-
   const trickResponse = convertToTrickResponse(trick);
-  await stub.broadcastTrick(trickResponse);
-  return trickResponse;
+
+  return {
+    updates: {
+      trick,
+      deck: updatedDeck,
+    },
+    retval: trickResponse,
+    broadcastValue: trickResponse,
+  };
 };
 
-export const addCardToTrick = async (
+export const addCardToTrick = (
   player: Player,
   card: Card,
-  stub: DurableObjectStub<GameStorage>
-): Promise<TrickResponse> => {
-  const {
-    trick,
-    gameState,
-    deck,
-    trickPoints: playerScoresBefore,
-  } = await stub.fetchGameData();
-
+  gameState: GameState | undefined,
+  trick: Trick | undefined,
+  deck: CardContainer[],
+  playerScoresBefore: PlayerScore[] | undefined
+): ServiceResult<TrickResponse> => {
   if (!trick) {
     throw new GameError(ErrorTypes.TRICK_NOT_FOUND);
   }
@@ -437,45 +454,45 @@ export const addCardToTrick = async (
     }
   }
 
-  await stub.store({
-    trickPoints: playerScoresAfter,
-    state: updatedState,
-    deck: updatedDeck,
-    trick: updatedTrick,
-  });
-
   const trickResponse = convertToTrickResponse(updatedTrick);
-  await stub.broadcastTrick(trickResponse);
-  return trickResponse;
+  
+  return {
+    updates: {
+      trickPoints: playerScoresAfter,
+      state: updatedState,
+      deck: updatedDeck,
+      trick: updatedTrick,
+    },
+    retval: trickResponse,
+    broadcastValue: trickResponse,
+  };
 };
 
-export const getHandsTrickCounts = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<PlayerScore[]> => {
-  const { trickPoints } = await stub.fetchGameData();
-  if (!trickPoints) {
-    return [];
-  }
-  return trickPoints;
+export const getHandsTrickCounts = (
+  trickPoints: PlayerScore[] | undefined
+): ServiceResult<PlayerScore[]> => {
+  return {
+    updates: {},
+    retval: trickPoints ?? [],
+  };
 };
 
-export const initHand = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<HandStatuteResponse> => {
-  const { gameState, deck: currentDeck } = await stub.fetchGameData();
-
+export const initHand = (
+  gameState: GameState | undefined,
+  currentDeck: CardContainer[]
+): ServiceResult<HandStatuteResponse> => {
   const isHandFinished = noCardsLeft(currentDeck);
 
   if (!isHandFinished) {
-    return Promise.reject(new GameError(ErrorTypes.CURRENT_HAND_NOT_FINISHED));
+    throw new GameError(ErrorTypes.CURRENT_HAND_NOT_FINISHED);
   }
 
   if (!gameState) {
-    return Promise.reject(new GameError(ErrorTypes.GAME_NOT_FOUND));
+    throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
 
   if (gameState.handNumber >= gameState.players.length * 4) {
-    return Promise.reject(new GameError(ErrorTypes.GAME_ENDED));
+    throw new GameError(ErrorTypes.GAME_ENDED);
   }
 
   const newDeck = initDeck();
@@ -491,23 +508,26 @@ export const initHand = async (
     return { player, score: 0 };
   });
 
-  await stub.store({
-    state: updatedGameState,
-    trickPoints,
-    deck: newDeck,
-    clearTrick: true,
-  });
-  await stub.broadcastTrick(emptyTrickResponse(updatedGameState.players));
-
-  return toHandStatute(statute);
+  return {
+    updates: {
+      state: updatedGameState,
+      trickPoints,
+      deck: newDeck,
+      clearTrick: true,
+    },
+    retval: toHandStatute(statute),
+    broadcastValue: emptyTrickResponse(updatedGameState.players),
+  };
 };
 
-export const getGameScores = async (
-  stub: DurableObjectStub<GameStorage>
-): Promise<GameScoreBoard> => {
-  const { gameState } = await stub.fetchGameData();
+export const getGameScores = (
+  gameState: GameState | undefined
+): ServiceResult<GameScoreBoard> => {
   if (!gameState) {
     throw new GameError(ErrorTypes.GAME_NOT_FOUND);
   }
-  return getTotalScores(gameState);
+  return {
+    updates: {},
+    retval: getTotalScores(gameState),
+  };
 };
