@@ -6,40 +6,53 @@ import { SuitEnum } from '../../../types/suit';
 import { CardRequest } from '../../../types/card-request';
 import { Rank, Suit, ALL_RANKS, ALL_SUITS } from '../../../types/card';
 
-const isCreateGameRequest = (obj: any): obj is CreateGameRequest => {
+const isCreateGameRequest = (obj: unknown): obj is CreateGameRequest => {
+  if (!obj || typeof obj !== 'object') {
+    return false;
+  }
+  const record = obj as Record<string, unknown>;
   return (
-    obj &&
-    Array.isArray(obj.players) &&
-    obj.players.every(
-      (p: any) =>
+    Array.isArray(record.players) &&
+    record.players.every(
+      (p: unknown) =>
         typeof p === 'object' &&
+        p !== null &&
+        'email' in p &&
         typeof p.email === 'string' &&
+        'player' in p &&
         typeof p.player === 'object' &&
-        typeof p.player.name === 'string'
+        p.player !== null &&
+        'name' in p.player &&
+        typeof (p.player as Record<string, unknown>).name === 'string'
     )
   );
 };
 
-const isFetchTokenRequest = (obj: any): obj is FetchTokenRequest => {
-  return obj && typeof obj.loginId === 'string';
+const isFetchTokenRequest = (obj: unknown): obj is FetchTokenRequest => {
+  if (!obj || typeof obj !== 'object') {
+    return false;
+  }
+  const record = obj as Record<string, unknown>;
+  return typeof record.loginId === 'string';
 };
 
-const isGameTypeChoice = (obj: any): obj is GameTypeChoiceRequest => {
+const isGameTypeChoice = (obj: unknown): obj is GameTypeChoiceRequest => {
   if (!obj || typeof obj !== 'object') {
     return false;
   }
 
+  const record = obj as Record<string, unknown>;
   const validGameTypes = Object.values(GameType);
-  if (!validGameTypes.includes(obj.gameType)) {
+  if (!validGameTypes.includes(record.gameType as GameType)) {
     return false;
   }
 
   // trumpSuit is optional
-  if (obj.trumpSuit !== undefined) {
+  if (record.trumpSuit !== undefined) {
     const validSuits = Object.values(SuitEnum).filter(
       (v) => typeof v === 'number'
     );
-    if (!validSuits.includes(obj.trumpSuit)) {
+    if (!validSuits.includes(record.trumpSuit as number)) {
       return false;
     }
   }
@@ -47,24 +60,25 @@ const isGameTypeChoice = (obj: any): obj is GameTypeChoiceRequest => {
   return true;
 };
 
-const isCardRequest = (obj: any): obj is CardRequest => {
+const isCardRequest = (obj: unknown): obj is CardRequest => {
   if (!obj || typeof obj !== 'object') {
     return false;
   }
 
+  const record = obj as Record<string, unknown>;
   return (
-    typeof obj.rank === 'string' &&
-    ALL_RANKS.includes(obj.rank as Rank) &&
-    typeof obj.suit === 'string' &&
-    ALL_SUITS.includes(obj.suit as Suit)
+    typeof record.rank === 'string' &&
+    ALL_RANKS.includes(record.rank as Rank) &&
+    typeof record.suit === 'string' &&
+    ALL_SUITS.includes(record.suit as Suit)
   );
 };
 
-type TypeGuard<T> = (obj: any) => obj is T;
+type TypeGuard<T> = (obj: unknown) => obj is T;
 
 const withTypedContent =
   <T>(typeGuard: TypeGuard<T>) =>
-  async (request: Request, env?: Env, ctx?: unknown) => {
+  async (request: Request, _env?: Env, _ctx?: unknown) => {
     const content = await request.json().catch(() => undefined);
     if (!typeGuard(content)) {
       return new Response(JSON.stringify({ error: 'Invalid request body' }), {
@@ -72,7 +86,8 @@ const withTypedContent =
         headers: { 'Content-Type': 'application/json' },
       });
     }
-    (request as any).content = content as T;
+    // eslint-disable-next-line
+    (request as any).content = content;
   };
 
 export const withFetchTokenRequest =
@@ -84,5 +99,6 @@ export const withGameTypeChoiceRequest =
 export const withCardRequest = withTypedContent<CardRequest>(isCardRequest);
 
 export const getTypedContent = <T>(request: Request): T => {
+  // eslint-disable-next-line
   return (request as any).content;
 };

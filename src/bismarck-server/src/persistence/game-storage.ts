@@ -106,16 +106,17 @@ export class GameStorage extends DurableObject<Env> {
   broadcastTrick(trick: TrickResponse) {
     const sockets = this.ctx.getWebSockets();
     this.log(`Broadcasting trick to ${sockets.length} clients`);
-    
+
     if (sockets.length === 0) {
       this.log('No WebSocket connections to broadcast to', 'warn');
     }
-    
+
     sockets.forEach((ws) => {
       try {
         ws.send(JSON.stringify(trick));
       } catch (err) {
-        this.log(`Failed to send to WebSocket: ${err}`, 'error');
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        this.log(`Failed to send to WebSocket: ${errorMessage}`, 'error');
       }
     });
   }
@@ -148,7 +149,7 @@ export class GameStorage extends DurableObject<Env> {
   }
 
   webSocketClose(
-    ws: WebSocket,
+    _ws: WebSocket,
     code: number,
     reason: string,
     wasClean: boolean
@@ -160,7 +161,7 @@ export class GameStorage extends DurableObject<Env> {
     );
   }
 
-  async fetch() {
+  fetch() {
     return this.handleWebSocket();
   }
 
@@ -219,6 +220,7 @@ export class GameStorage extends DurableObject<Env> {
     message: string,
     level: 'info' | 'warn' | 'error' = 'info'
   ): void {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     const logMessage = `[DO: ${this.ctx.id.toString()}] ${message}`;
     switch (level) {
       case 'info':

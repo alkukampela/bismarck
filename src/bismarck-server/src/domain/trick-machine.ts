@@ -1,7 +1,6 @@
 import { getRank, getSuit } from './card-mapper';
 import { Trick } from '../types/trick';
 import { Card } from '../../../types/card';
-import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { Player } from '../../../types/player';
 import { SuitEnum } from '../../../types/suit';
 import { TrickCard } from '../../../types/trick-card';

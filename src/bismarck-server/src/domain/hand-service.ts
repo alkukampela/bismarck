@@ -63,10 +63,10 @@ const defaultTrick = async (
   return emptyTrickResponse(gameState.handStatute.playerOrder);
 };
 
-const getLeadPlayerForTrick = async (
+const getLeadPlayerForTrick = (
   trick: Trick | undefined,
   eldestHand: Player
-): Promise<Player> => {
+): Player => {
   return trick ? getTaker(trick) : eldestHand;
 };
 
@@ -74,12 +74,12 @@ const isEldestHand = (player: Player, statute: HandStatuteData): boolean => {
   return player.name === statute.eldestHand.name;
 };
 
-const checkCardsLegality = async (
+const checkCardsLegality = (
   playerIndex: number,
   card: Card,
   trick: Trick,
   deck: CardContainer[]
-): Promise<boolean> => {
+): boolean => {
   const cardSuit = getSuit(card);
 
   // Card matches trick suit - always legal
@@ -119,12 +119,12 @@ const playerHasCardsOfSuit = (
   return playersCards.some((card) => getSuit(card) === trickSuit);
 };
 
-export const setUpHand = (
+export const setUpHand = async (
   game: Game,
   stub: DurableObjectStub<GameStorage>
-): HandStatuteData => {
+): Promise<HandStatuteData> => {
   const deck = initDeck();
-  stub.storeDeck(deck);
+  await stub.storeDeck(deck);
 
   return buildHandStatute(game, getTrumpSuit(deck));
 };
@@ -275,7 +275,11 @@ export const chooseGameType = async (
     ...gameState,
     handStatute: chosenStatute,
   };
-  stub.storeGameState(updatedGameState);
+  await stub.storeGameState(updatedGameState);
+
+  await stub.broadcastTrick(
+    emptyTrickResponse(gameState.handStatute.playerOrder)
+  );
   return toHandStatute(chosenStatute);
 };
 
@@ -305,7 +309,7 @@ export const startTrick = async (
     throw new GameError(ErrorTypes.TRICK_ALREADY_STARTED);
   }
 
-  const trickLead = await getLeadPlayerForTrick(
+  const trickLead = getLeadPlayerForTrick(
     previousTrick,
     gameState.handStatute.eldestHand
   );
@@ -342,13 +346,15 @@ export const startTrick = async (
   }
 
   const updatedDeck = removeCard(card, deck);
-  stub.storeDeck(updatedDeck);
+  await stub.storeDeck(updatedDeck);
 
   const trickNumber = roundNumber(playerIndex, gameState.players.length, deck);
   const trick = initTrick(card, player, gameState.handStatute, trickNumber);
-  stub.storeTrick(trick);
+  await stub.storeTrick(trick);
 
-  return convertToTrickResponse(trick);
+  const trickResponse = convertToTrickResponse(trick);
+  await stub.broadcastTrick(trickResponse);
+  return trickResponse;
 };
 
 export const addCardToTrick = async (
@@ -391,14 +397,14 @@ export const addCardToTrick = async (
     throw new GameError(ErrorTypes.CARD_NOT_FOUND);
   }
 
-  const isMoveLegal = await checkCardsLegality(playerIndex, card, trick, deck);
+  const isMoveLegal = checkCardsLegality(playerIndex, card, trick, deck);
   if (!isMoveLegal) {
     throw new GameError(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
   }
 
   const updatedTrick = playCard(trick, player, card);
   const updatedDeck = removeCard(card, deck);
-  stub.storeDeck(updatedDeck);
+  await stub.storeDeck(updatedDeck);
 
   if (isTrickReady(updatedTrick)) {
     const playerScoresBefore = await stub.fetchTrickPoints();
@@ -412,7 +418,7 @@ export const addCardToTrick = async (
       getTaker(updatedTrick),
       playerScoresBefore
     );
-    stub.storeTrickPoints(playerScoresAfter);
+    await stub.storeTrickPoints(playerScoresAfter);
 
     if (noCardsLeft(updatedDeck)) {
       if (!gameState.handStatute.gameType?.value) {
@@ -431,13 +437,15 @@ export const addCardToTrick = async (
         trickScores: [...gameState.trickScores, curremtTrickPoints],
       };
 
-      stub.storeGameState(updatedState);
+      await stub.storeGameState(updatedState);
     }
   }
 
-  stub.storeTrick(updatedTrick);
+  await stub.storeTrick(updatedTrick);
 
-  return convertToTrickResponse(updatedTrick);
+  const trickResponse = convertToTrickResponse(updatedTrick);
+  await stub.broadcastTrick(trickResponse);
+  return trickResponse;
 };
 
 export const getHandsTrickCounts = async (

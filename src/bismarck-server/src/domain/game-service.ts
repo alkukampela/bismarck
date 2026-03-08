@@ -5,6 +5,7 @@ import { GameStorage } from '../persistence/game-storage';
 import { noCardsLeft } from './deck-operations';
 import { GameError } from '../utils/game-error';
 import { toHandStatute } from './hand-statute-machine';
+import { emptyTrickResponse } from './trick-machine';
 
 export const initHand = async (
   stub: DurableObjectStub<GameStorage>
@@ -26,9 +27,9 @@ export const initHand = async (
     return Promise.reject(new GameError(ErrorTypes.GAME_ENDED));
   }
 
-  const statute = setUpHand(gameState, stub);
+  const statute = await setUpHand(gameState, stub);
 
-  stub.storeTrickPoints(
+  await stub.storeTrickPoints(
     statute.playerOrder.map((player) => {
       return { player, score: 0 };
     })
@@ -40,8 +41,9 @@ export const initHand = async (
     handStatute: statute,
   };
 
-  stub.storeGameState(updatedGameState);
-  stub.clearTrick();
+  await stub.storeGameState(updatedGameState);
+  await stub.clearTrick();
+  await stub.broadcastTrick(emptyTrickResponse(updatedGameState.players));
 
   return toHandStatute(statute);
 };

@@ -13,7 +13,7 @@ import {
 } from './deck-operations';
 import { fromNumber, getSuit, getRank } from './card-mapper';
 import { CardContainer } from '../types/card-container';
-import { Card, Rank, Suit } from '../../../types/card';
+import { Card } from '../../../types/card';
 import { SuitEnum } from '../../../types/suit';
 import * as shuffleService from '../service/shuffle-service';
 import { CardsOfDeck } from '../types/cards-of-deck';

@@ -52,7 +52,7 @@ const authenticateRequest = async (
     const authReq = request as AuthenticatedRequest;
     authReq.player = payload.player;
     authReq.validatedGameId = payload.gameId;
-  } catch (err) {
+  } catch {
     return new Response('Token verification failed', {
       status: StatusCodes.FORBIDDEN,
     });

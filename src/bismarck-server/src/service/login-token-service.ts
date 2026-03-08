@@ -46,8 +46,8 @@ export const loadGamePlayerByLoginId = async (
     }
 
     return gamePlayer;
-  } catch (error) {
-    logger.error(`Error parsing game player data: ${error}`);
+  } catch {
+    logger.error(`Error parsing game player data`);
     throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
 };

@@ -1,6 +1,6 @@
 {
-  "name": "bismarck-server-2",
-  "version": "0.0.0",
+  "name": "bismarck-server",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "deploy": "wrangler deploy",

@@ -5,7 +5,7 @@ import pino from 'pino';
 const logger = pino();
 
 export const handleError = (err: unknown): Response => {
-  let status = StatusCodes.INTERNAL_SERVER_ERROR;
+  let status;
   let errorResponse: { error: string; errorCode?: string } = {
     error: 'Unexpected error',
   };
@@ -34,7 +34,7 @@ export const handleError = (err: unknown): Response => {
   }
 
   return new Response(JSON.stringify(errorResponse), {
-    status,
+    status: status ?? StatusCodes.INTERNAL_SERVER_ERROR,
     headers: { 'Content-Type': 'application/json' },
   });
 };
