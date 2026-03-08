@@ -85,25 +85,23 @@ export class GameStorage extends DurableObject<Env> {
     await this.ctx.storage.setAlarm(Date.now() + this.timeToLiveMs);
   }
 
-  fetchGameState(): GameState | undefined {
-    return this.fetchSingleField<GameState>(this.TABLES.GAME_STATE, 'value');
-  }
+  fetchGameData(): {
+    gameState?: GameState;
+    deck: CardContainer[];
+    trickPoints?: PlayerScore[];
+    trick?: Trick;
+  } {
+    const gameState = this.fetchSingleField<GameState>(this.TABLES.GAME_STATE);
+    const deck =
+      this.fetchSingleField<CardContainer[]>(this.TABLES.CARDS) ?? [];
 
-  fetchDeck(): CardContainer[] {
-    return (
-      this.fetchSingleField<CardContainer[]>(this.TABLES.CARDS, 'value') ?? []
+    const trickPoints = this.fetchSingleField<PlayerScore[]>(
+      this.TABLES.TRICK_POINTS
     );
-  }
 
-  fetchTrickPoints(): PlayerScore[] | undefined {
-    return this.fetchSingleField<PlayerScore[]>(
-      this.TABLES.TRICK_POINTS,
-      'value'
-    );
-  }
+    const trick = this.fetchSingleField<Trick>(this.TABLES.TRICK);
 
-  fetchTrick(): Trick | undefined {
-    return this.fetchSingleField<Trick>(this.TABLES.TRICK, 'value');
+    return { gameState, deck, trickPoints, trick };
   }
 
   broadcastTrick(trick: TrickResponse) {
@@ -190,9 +188,9 @@ export class GameStorage extends DurableObject<Env> {
       DO UPDATE SET value=excluded.value;`;
   }
 
-  private fetchSingleField<T>(table: string, field: string): T | undefined {
-    this.log(`Fetching ${field} from table ${table}`);
-    const cursor = this.sql.exec(`SELECT ${field} FROM ${table} WHERE id = 1`);
+  private fetchSingleField<T>(table: string): T | undefined {
+    this.log(`Fetching value from table ${table}`);
+    const cursor = this.sql.exec(`SELECT value FROM ${table} WHERE id = 1`);
     const result = cursor.toArray()[0];
 
     if (!result) {
@@ -200,17 +198,17 @@ export class GameStorage extends DurableObject<Env> {
       return undefined;
     }
 
-    if (typeof result[field] !== 'string') {
+    if (typeof result['value'] !== 'string') {
       this.log(
-        `Invalid data format for ${field} in table ${table}: expected string, got ${typeof result[
-          field
+        `Invalid data format for value in table ${table}: expected string, got ${typeof result[
+          'value'
         ]}`,
         'error'
       );
       throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
     }
 
-    return JSON.parse(result[field]) as T;
+    return JSON.parse(result['value']) as T;
   }
 
   private log(

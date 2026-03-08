@@ -3,6 +3,7 @@ import {
   addCardToTrick,
   chooseGameType,
   getCurrentTrick,
+  getGameScores,
   getHandsTrickCounts,
   getPlayersHand,
   getStatute,
@@ -26,7 +27,6 @@ import { CreateGameRequest } from '../../types/create-game-request';
 import { CardRequest } from '../../types/card-request';
 import { handleError, jsonResponse } from './utils/api-helper';
 import { GameStorage } from './persistence/game-storage';
-import { getTotalScores } from './domain/game-scoring';
 import { loadGamePlayerByLoginId } from './service/login-token-service';
 import { authenticatedRoute } from './utils/auth-middleware';
 import { GameTypeChoiceRequest } from '../../types/game-type-choice-request';
@@ -183,11 +183,7 @@ router
   .get('/games/:id/score', async (request, env: Env) => {
     const stub = getStub(request.params.id, env);
     try {
-      const gameState = await stub.fetchGameState();
-      if (!gameState) {
-        throw new GameError(ErrorTypes.GAME_NOT_FOUND);
-      }
-      const scores = getTotalScores(gameState);
+      const scores = await getGameScores(stub);
       return jsonResponse(scores);
     } catch (err) {
       return handleError(err);
