@@ -14,7 +14,9 @@ import {
 } from '../domain/default-objects';
 import { TrickResponse } from '../../../types/trick-response';
 
-const baseUrl = `${import.meta.env.VITE_API_URL}/api`;
+const baseUrl = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
 
 interface HeaderValue {
   key: string;
