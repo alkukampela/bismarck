@@ -7,6 +7,20 @@ import { removeCard } from '../services/api-service';
 import * as React from 'react';
 import { TrickStatus } from '../../../types/trick-response';
 
+const isRedSuit = (card: CardType): boolean => {
+  return ['♦️', '♥️'].includes(card.suit);
+};
+
+const shouldSeparateSuits = (
+  currentCard: CardType,
+  nextCard: CardType | undefined
+): boolean => {
+  if (!nextCard) {
+    return false;
+  }
+  return isRedSuit(currentCard) === isRedSuit(nextCard);
+};
+
 export const PlayersCards = ({
   hand,
   trickStatus,
@@ -64,16 +78,24 @@ export const PlayersCards = ({
       <div className="players-cards">
         {cards.length ? (
           cards.map((card: CardType, index: number) => (
-            <PlayersCard
-              card={card}
+            <div
               key={index}
-              trickStatus={trickStatus}
-              isInRemovalStage={!!numberOfExtraCards}
-              isSelectedForRemoval={cardsToBeRemoved.includes(card)}
-              isMyTurn={isMyTurn}
-              onPlay={playCard}
-              onRemovalToggle={toggleCardToBeRemoved}
-            />
+              style={{
+                marginRight: shouldSeparateSuits(card, cards[index + 1])
+                  ? '1.0rem'
+                  : undefined,
+              }}
+            >
+              <PlayersCard
+                card={card}
+                trickStatus={trickStatus}
+                isInRemovalStage={!!numberOfExtraCards}
+                isSelectedForRemoval={cardsToBeRemoved.includes(card)}
+                isMyTurn={isMyTurn}
+                onPlay={playCard}
+                onRemovalToggle={toggleCardToBeRemoved}
+              />
+            </div>
           ))
         ) : (
           <div className="card" style={{ visibility: 'hidden' }} />
