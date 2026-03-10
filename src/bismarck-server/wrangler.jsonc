@@ -52,6 +52,7 @@
 			"name": "bismarck-server-production",
 			"vars": {
 				"ENVIRONMENT": "production",
+        "DISABLE_EMAIL_SENDING": "false",
         "SMTP_HOST": "email-smtp.eu-west-1.amazonaws.com",
         "SMTP_USERNAME": "AKIA2W5WH2HO3PW4ANPY"
 			}

@@ -57,7 +57,7 @@ export const sendLoginId = async (
   const { email, name, loginId } = sendRequest;
   const options = mailOptions(loginId, email, name);
 
-  if (env.DISABLE_EMAIL_SENDING) {
+  if (env.DISABLE_EMAIL_SENDING.toLowerCase() === 'true') {
     logger.info(
       `Email sending is disabled, name: ${name}, loginId: ${loginId}`
     );
