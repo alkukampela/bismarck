@@ -36,6 +36,14 @@
 			"preview_id": "e6b0e91381e34ecba69b8424b6feeaf1"
 		}
 	],
+	"vars": {
+		"ENVIRONMENT": "development",
+		"DISABLE_EMAIL_SENDING": "true",
+		"JWT_SECRET": "Koo5bTsAafGuYLFdPAyl",
+		"SMTP_HOST": "",
+		"SMTP_USERNAME": "",
+		"SMTP_PASSWORD": ""
+	},
 	/**
 	 * Production environment configuration
 	 */
@@ -44,7 +52,9 @@
 			"name": "bismarck-server-production",
 			"vars": {
 				"ENVIRONMENT": "production",
-        "DISABLE_EMAIL_SENDING": "false"
+        "DISABLE_EMAIL_SENDING": "false",
+        "SMTP_HOST": "email-smtp.eu-west-1.amazonaws.com",
+        "SMTP_USERNAME": "AKIA2W5WH2HO3PW4ANPY"
 			}
 		}
 	},

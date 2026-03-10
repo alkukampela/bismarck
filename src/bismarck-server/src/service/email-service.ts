@@ -46,30 +46,33 @@ const mailOptions = (
   };
 };
 
-export const sendLoginId = async (sendRequest: {
-  email: string;
-  name: string;
-  loginId: string;
-}): Promise<void> => {
+export const sendLoginId = async (
+  sendRequest: {
+    email: string;
+    name: string;
+    loginId: string;
+  },
+  env: Env
+): Promise<void> => {
   const { email, name, loginId } = sendRequest;
   const options = mailOptions(loginId, email, name);
 
-  if (process.env.DISABLE_EMAIL_SENDING) {
+  if (env.DISABLE_EMAIL_SENDING) {
     logger.info(options.text);
     return;
   }
 
   const transport = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
+    host: env.SMTP_HOST,
     port: 465,
     secure: true,
     auth: {
-      user: process.env.SMTP_USERNAME,
-      pass: process.env.SMTP_PASSWORD,
+      user: env.SMTP_USERNAME,
+      pass: env.SMTP_PASSWORD,
     },
   });
 
-  logger.info(`Using SMTP host: ${process.env.SMTP_HOST}:465 to send email`);
+  logger.info(`Using SMTP host: ${env.SMTP_HOST}:465 to send email`);
 
   try {
     await transport.sendMail(options);

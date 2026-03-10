@@ -35,6 +35,13 @@ export const createGameAndInvitatePlayers = async (
 
   const gameId = generateGameId();
 
+  if (!env.GAME_STORAGE) {
+    logger.error(
+      'GAME_STORAGE Durable Object is not defined in the environment'
+    );
+    throw new Error('Internal server error');
+  }
+
   const id = env.GAME_STORAGE.idFromName(gameId);
   const stub = env.GAME_STORAGE.get(id);
 
@@ -49,11 +56,14 @@ export const createGameAndInvitatePlayers = async (
       env
     );
     logger.info(`Generated login ID for player: ${createPlayer.player.name}`);
-    await sendLoginId({
-      email: createPlayer.email,
-      name: createPlayer.player.name,
-      loginId,
-    });
+    await sendLoginId(
+      {
+        email: createPlayer.email,
+        name: createPlayer.player.name,
+        loginId,
+      },
+      env
+    );
     logger.info(`Sent login ID to player: ${createPlayer.player.name}`);
   }
 

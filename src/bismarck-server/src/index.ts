@@ -60,6 +60,9 @@ const { preflight, corsify } = cors({
 const router = AutoRouter({ base: '/api' });
 
 const getStub = (gameId: string, env: Env): DurableObjectStub<GameStorage> => {
+  if (!env.GAME_STORAGE) {
+    throw new Error('Internal server error');
+  }
   const id = env.GAME_STORAGE.idFromName(gameId);
   return env.GAME_STORAGE.get(id);
 };
