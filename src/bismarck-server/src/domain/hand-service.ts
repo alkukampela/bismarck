@@ -39,7 +39,6 @@ import {
   emptyTrickResponse,
   convertToTrickResponse,
 } from './trick-machine';
-import { GameStorage } from '../persistence/game-storage';
 import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { CardContainer } from '../types/card-container';

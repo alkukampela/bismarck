@@ -33,7 +33,7 @@ export const LoginHandler: React.FunctionComponent = () => {
         setGameId(tokenResponse.gameId);
       }
     });
-  }, []);
+  });
 
   return (
     <>

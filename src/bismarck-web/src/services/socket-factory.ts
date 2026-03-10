@@ -37,7 +37,7 @@ export class SocketFactory {
   public static reset(): void {
     if (this._instance) {
       this._instance.close();
-      // @ts-ignore
+      // @ts-expect-error - force reset of the instance
       this._instance = undefined;
     }
   }

@@ -1,5 +1,8 @@
 import nodemailer from 'nodemailer';
 import { MailOptions } from 'nodemailer/lib/json-transport';
+import pino from 'pino';
+
+const logger = pino();
 
 const htmlMailMessage = (name: string, loginId: string): string => {
   return `Hei <b>${name}</b>,<br/>
@@ -43,16 +46,16 @@ const mailOptions = (
   };
 };
 
-export const sendLoginId = (sendRequest: {
+export const sendLoginId = async (sendRequest: {
   email: string;
   name: string;
   loginId: string;
-}): void => {
+}): Promise<void> => {
   const { email, name, loginId } = sendRequest;
   const options = mailOptions(loginId, email, name);
-  console.log(options.text);
 
   if (process.env.DISABLE_EMAIL_SENDING) {
+    logger.info(options.text);
     return;
   }
 
@@ -66,13 +69,14 @@ export const sendLoginId = (sendRequest: {
     },
   });
 
-  transporter
-    .sendMail(options)
-    .then((data) => {
-      console.log(`Sent email to ${email}`);
-      console.log(data.messageId);
-    })
-    .catch((err: Error) => {
-      console.error(err, err.stack);
-    });
+  try {
+    await transporter.sendMail(options);
+    logger.info(`Sent email to ${email}`);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      logger.error(`Failed to send email to ${email}: ${err.message}`);
+    } else {
+      logger.error(`Failed to send email to ${email}: ${String(err)}`);
+    }
+  }
 };

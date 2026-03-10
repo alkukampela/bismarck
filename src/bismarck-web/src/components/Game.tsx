@@ -166,7 +166,7 @@ export const Game = () => {
         updateTrickTakers();
       }
     };
-  }, []);
+  });
 
   React.useEffect(
     () => () => {

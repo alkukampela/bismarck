@@ -49,7 +49,7 @@ export const createGameAndInvitatePlayers = async (
       env
     );
     logger.info(`Generated login ID for player: ${createPlayer.player.name}`);
-    sendLoginId({
+    await sendLoginId({
       email: createPlayer.email,
       name: createPlayer.player.name,
       loginId,
