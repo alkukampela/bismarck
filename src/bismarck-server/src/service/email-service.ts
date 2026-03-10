@@ -59,7 +59,7 @@ export const sendLoginId = async (sendRequest: {
     return;
   }
 
-  const transporter = nodemailer.createTransport({
+  const transport = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: 465,
     secure: true,
@@ -69,8 +69,10 @@ export const sendLoginId = async (sendRequest: {
     },
   });
 
+  logger.info(`Using SMTP host: ${process.env.SMTP_HOST}:465 to send email`);
+
   try {
-    await transporter.sendMail(options);
+    await transport.sendMail(options);
     logger.info(`Sent email to ${email}`);
   } catch (err: unknown) {
     if (err instanceof Error) {
