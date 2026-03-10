@@ -44,7 +44,7 @@
 			"name": "bismarck-server-production",
 			"vars": {
 				"ENVIRONMENT": "production",
-        "DISABLE_EMAIL_SENDING": "true"
+        "DISABLE_EMAIL_SENDING": "false"
 			}
 		}
 	},
