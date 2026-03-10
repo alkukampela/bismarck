@@ -15,10 +15,10 @@ jest.mock('./deck-operations', () => ({
 }));
 
 // Test Fixtures
-const PLAYER_ALICE: Player = { name: 'Alice' };
-const PLAYER_BOB: Player = { name: 'Bob' };
-const PLAYER_CHARLIE: Player = { name: 'Charlie' };
-const PLAYER_DIANA: Player = { name: 'Diana' };
+const PLAYER_0: Player = { name: 'Arnold' };
+const PLAYER_1: Player = { name: 'Betsie' };
+const PLAYER_2: Player = { name: 'Cordelia' };
+const PLAYER_3: Player = { name: 'Derward' };
 
 const createGameState = (
   players: Player[],
@@ -76,7 +76,7 @@ describe('getPlayersHand', () => {
 
   describe('Edge Cases - Early Returns', () => {
     test('returns empty hand when gameState is undefined', () => {
-      const player = PLAYER_ALICE;
+      const player = PLAYER_0;
       const deck = createMockDeck();
 
       const result = getPlayersHand(player, undefined, deck);
@@ -90,9 +90,9 @@ describe('getPlayersHand', () => {
     });
 
     test('returns empty hand when isChoice=true and gameType is null', () => {
-      const player = PLAYER_ALICE;
+      const player = PLAYER_0;
       const gameState = createGameState(
-        [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA],
+        [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3],
         true,
         null
       );
@@ -109,9 +109,9 @@ describe('getPlayersHand', () => {
     });
 
     test('returns empty hand when isChoice=true and gameType is undefined', () => {
-      const player = PLAYER_ALICE;
+      const player = PLAYER_0;
       const gameState = createGameState(
-        [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA],
+        [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3],
         true,
         undefined
       );
@@ -130,7 +130,7 @@ describe('getPlayersHand', () => {
 
   describe('Happy Path - Correct Delegation to Dependencies', () => {
     test('calls dependencies with correct parameters for 4-player game', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, false, {
         value: GameType.NO_TRUMP,
         trumpSuit: null,
@@ -141,9 +141,8 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_BOB, gameState, deck);
+      const result = getPlayersHand(PLAYER_1, gameState, deck);
 
-      // Bob is at index 1 in playerOrder
       expect(mockGetPlayersCards).toHaveBeenCalledWith(1, 4, deck);
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(12, 4);
       expect(result).toEqual({
@@ -153,7 +152,7 @@ describe('getPlayersHand', () => {
     });
 
     test('returns mocked values correctly for 3-player game with extra cards', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2];
       const gameState = createGameState(players, false, {
         value: GameType.TRUMP,
         trumpSuit: SuitEnum.HEART,
@@ -164,9 +163,8 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(2);
 
-      const result = getPlayersHand(PLAYER_ALICE, gameState, deck);
+      const result = getPlayersHand(PLAYER_0, gameState, deck);
 
-      // Alice is at index 0 in playerOrder
       expect(mockGetPlayersCards).toHaveBeenCalledWith(0, 3, deck);
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(18, 3);
       expect(result).toEqual({
@@ -176,7 +174,7 @@ describe('getPlayersHand', () => {
     });
 
     test('works when isChoice=false and gameType is null', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, false, null);
       const deck = createMockDeck();
       const mockCards = createMockCards(12);
@@ -184,10 +182,8 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_CHARLIE, gameState, deck);
+      const result = getPlayersHand(PLAYER_2, gameState, deck);
 
-      // Should NOT trigger early return
-      // Charlie is at index 2 in playerOrder
       expect(mockGetPlayersCards).toHaveBeenCalledWith(2, 4, deck);
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(12, 4);
       expect(result).toEqual({
@@ -197,7 +193,7 @@ describe('getPlayersHand', () => {
     });
 
     test('works when isChoice=true but gameType is defined', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, true, {
         value: GameType.TRUMP,
         trumpSuit: SuitEnum.HEART,
@@ -208,10 +204,8 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_DIANA, gameState, deck);
+      const result = getPlayersHand(PLAYER_3, gameState, deck);
 
-      // Should NOT trigger early return
-      // Diana is at index 3 in playerOrder
       expect(mockGetPlayersCards).toHaveBeenCalledWith(3, 4, deck);
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(12, 4);
       expect(result).toEqual({
@@ -221,7 +215,7 @@ describe('getPlayersHand', () => {
     });
 
     test('correctly identifies player index in playerOrder', () => {
-      const players = [PLAYER_CHARLIE, PLAYER_ALICE, PLAYER_BOB, PLAYER_DIANA];
+      const players = [PLAYER_2, PLAYER_0, PLAYER_1, PLAYER_3];
       const gameState = createGameState(players, false, {
         value: GameType.NO_TRUMP,
         trumpSuit: null,
@@ -232,8 +226,7 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      // Get hand for Alice, who is at index 1 in this playerOrder
-      const result = getPlayersHand(PLAYER_ALICE, gameState, deck);
+      const result = getPlayersHand(PLAYER_0, gameState, deck);
 
       expect(mockGetPlayersCards).toHaveBeenCalledWith(1, 4, deck);
       expect(result.updates).toEqual({});
@@ -243,7 +236,7 @@ describe('getPlayersHand', () => {
 
   describe('Various Player Counts', () => {
     test('handles 3-player game correctly', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2];
       const gameState = createGameState(players, false, {
         value: GameType.TRUMP,
         trumpSuit: SuitEnum.SPADE,
@@ -254,9 +247,8 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_BOB, gameState, deck);
+      const result = getPlayersHand(PLAYER_1, gameState, deck);
 
-      // Bob is at index 1, player count is 3
       expect(mockGetPlayersCards).toHaveBeenCalledWith(1, 3, deck);
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(16, 3);
       expect(result.updates).toEqual({});
@@ -264,7 +256,7 @@ describe('getPlayersHand', () => {
     });
 
     test('handles first player (index 0) correctly', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, false, {
         value: GameType.NO_TRUMP,
         trumpSuit: null,
@@ -275,7 +267,7 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_ALICE, gameState, deck);
+      const result = getPlayersHand(PLAYER_0, gameState, deck);
 
       expect(mockGetPlayersCards).toHaveBeenCalledWith(0, 4, deck);
       expect(result.updates).toEqual({});
@@ -283,7 +275,7 @@ describe('getPlayersHand', () => {
     });
 
     test('handles last player (index 3) correctly', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, false, {
         value: GameType.NO_TRUMP,
         trumpSuit: null,
@@ -294,7 +286,7 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_DIANA, gameState, deck);
+      const result = getPlayersHand(PLAYER_3, gameState, deck);
 
       expect(mockGetPlayersCards).toHaveBeenCalledWith(3, 4, deck);
       expect(result.updates).toEqual({});
@@ -304,7 +296,7 @@ describe('getPlayersHand', () => {
 
   describe('Extra Cards Calculation', () => {
     test('returns correct extraCards value when player has extra cards', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, false, {
         value: GameType.TRUMP,
         trumpSuit: SuitEnum.CLUB,
@@ -315,7 +307,7 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(2);
 
-      const result = getPlayersHand(PLAYER_ALICE, gameState, deck);
+      const result = getPlayersHand(PLAYER_0, gameState, deck);
 
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(14, 4);
       expect(result.updates).toEqual({});
@@ -323,7 +315,7 @@ describe('getPlayersHand', () => {
     });
 
     test('returns 0 extraCards when player has normal card count', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE, PLAYER_DIANA];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2, PLAYER_3];
       const gameState = createGameState(players, false, {
         value: GameType.NO_TRUMP,
         trumpSuit: null,
@@ -334,7 +326,7 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(0);
 
-      const result = getPlayersHand(PLAYER_ALICE, gameState, deck);
+      const result = getPlayersHand(PLAYER_0, gameState, deck);
 
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(12, 4);
       expect(result.updates).toEqual({});
@@ -342,7 +334,7 @@ describe('getPlayersHand', () => {
     });
 
     test('passes cards.length to extraCardsAmount', () => {
-      const players = [PLAYER_ALICE, PLAYER_BOB, PLAYER_CHARLIE];
+      const players = [PLAYER_0, PLAYER_1, PLAYER_2];
       const gameState = createGameState(players, false, {
         value: GameType.TRUMP,
         trumpSuit: SuitEnum.DIAMOND,
@@ -353,9 +345,8 @@ describe('getPlayersHand', () => {
       mockGetPlayersCards.mockReturnValue(mockCards);
       mockExtraCardsAmount.mockReturnValue(2);
 
-      const result = getPlayersHand(PLAYER_ALICE, gameState, deck);
+      const result = getPlayersHand(PLAYER_0, gameState, deck);
 
-      // Verify it's called with the length of the returned cards array
       expect(mockExtraCardsAmount).toHaveBeenCalledWith(18, 3);
       expect(result.updates).toEqual({});
     });
