@@ -58,7 +58,9 @@ export const sendLoginId = async (
   const options = mailOptions(loginId, email, name);
 
   if (env.DISABLE_EMAIL_SENDING) {
-    logger.info(options.text);
+    logger.info(
+      `Email sending is disabled, name: ${name}, loginId: ${loginId}`
+    );
     return;
   }
 
