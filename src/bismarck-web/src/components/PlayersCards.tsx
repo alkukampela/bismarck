@@ -15,7 +15,7 @@ const shouldSeparateSuits = (
   currentCard: CardType,
   nextCard: CardType | undefined
 ): boolean => {
-  if (!nextCard) {
+  if (!nextCard || currentCard.suit === nextCard.suit) {
     return false;
   }
   return isRedSuit(currentCard) === isRedSuit(nextCard);
