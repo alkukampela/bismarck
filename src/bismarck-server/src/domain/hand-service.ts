@@ -15,7 +15,6 @@ import { HandStatuteResponse } from '../../../types/hand-statute-response';
 import { Player } from '../../../types/player';
 import { PlayerScore } from '../../../types/player-score';
 import { PlayersHand } from '../../../types/players-hand';
-import { SuitEnum } from '../../../types/suit';
 import { TrickResponse } from '../../../types/trick-response';
 import { TableCardsResponse } from '../../../types/table-cards-respons';
 import {
@@ -29,6 +28,7 @@ import {
   removeCard,
   hasPlayerCard,
   noCardsLeft,
+  hasPlayerCardOfSuit,
 } from './deck-operations';
 import {
   initTrick,
@@ -81,14 +81,15 @@ const checkCardsLegality = (
     return true;
   }
 
-  const playersCards = getPlayersCards(
-    playerIndex,
-    trick.trickCards.length,
-    deck
-  );
-
   // Player must follow suit if they have it
-  if (playerHasCardsOfSuit(trick.trickSuit, playersCards)) {
+  if (
+    hasPlayerCardOfSuit(
+      trick.trickSuit,
+      playerIndex,
+      trick.trickCards.length,
+      deck
+    )
+  ) {
     return false;
   }
 
@@ -98,19 +99,19 @@ const checkCardsLegality = (
     return true;
   }
 
-  if (playerHasCardsOfSuit(trick.trumpSuit, playersCards)) {
+  if (
+    hasPlayerCardOfSuit(
+      trick.trumpSuit,
+      playerIndex,
+      trick.trickCards.length,
+      deck
+    )
+  ) {
     return false;
   }
 
   // Can play any card if can't follow suit and has no trump
   return true;
-};
-
-const playerHasCardsOfSuit = (
-  trickSuit: SuitEnum,
-  playersCards: Card[]
-): boolean => {
-  return playersCards.some((card) => getSuit(card) === trickSuit);
 };
 
 export const getPlayersHand = (
@@ -401,19 +402,11 @@ export const addCardToTrick = (
     throw new GameError(ErrorTypes.UNEXPECTED_ERROR);
   }
 
-  const hasPlayerGivenCard = hasPlayerCard(
-    playerIndex,
-    gameState.players.length,
-    card,
-    deck
-  );
-
-  if (!hasPlayerGivenCard) {
+  if (!hasPlayerCard(playerIndex, gameState.players.length, card, deck)) {
     throw new GameError(ErrorTypes.CARD_NOT_FOUND);
   }
 
-  const isMoveLegal = checkCardsLegality(playerIndex, card, trick, deck);
-  if (!isMoveLegal) {
+  if (!checkCardsLegality(playerIndex, card, trick, deck)) {
     throw new GameError(ErrorTypes.MUST_FOLLOW_SUIT_AND_TRUMP);
   }
 

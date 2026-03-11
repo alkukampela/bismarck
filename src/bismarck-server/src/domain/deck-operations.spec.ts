@@ -10,6 +10,7 @@ import {
   hasTooManyCards,
   removeCard,
   hasPlayerCard,
+  hasPlayerCardOfSuit,
 } from './deck-operations';
 import { fromNumber, getSuit, getRank } from './card-mapper';
 import { CardContainer } from '../types/card-container';
@@ -476,6 +477,142 @@ describe('deck-operations', () => {
 
     it('should return false for empty deck', () => {
       expect(hasPlayerCard(0, 3, TEST_CARDS.ACE_OF_SPADES, [])).toBe(false);
+    });
+  });
+
+  describe('hasPlayerCardOfSuit', () => {
+    it('should return true when player has at least one unplayed card of the suit', () => {
+      const deck = createFullDeck();
+      const player0Card = deck[0].card;
+      const suitToCheck = getSuit(player0Card);
+
+      expect(hasPlayerCardOfSuit(suitToCheck, 0, 3, deck)).toBe(true);
+    });
+
+    it('should return true when player has multiple cards of the suit', () => {
+      const deck = createFullDeck();
+      // Player 0 gets cards at indices 0, 3, 6, 9, etc. (every 3rd card)
+      // So they'll have multiple cards of various suits
+      const player0Cards = getPlayersCards(0, 3, deck);
+      const firstCardSuit = getSuit(player0Cards[0]);
+
+      // Find how many cards of this suit player 0 has
+      const cardsOfSuit = player0Cards.filter(
+        (card) => getSuit(card) === firstCardSuit
+      );
+
+      if (cardsOfSuit.length > 1) {
+        expect(hasPlayerCardOfSuit(firstCardSuit, 0, 3, deck)).toBe(true);
+      }
+    });
+
+    it('should return false when player has no cards of the suit', () => {
+      const deck = createFullDeck();
+      const player0Cards = getPlayersCards(0, 3, deck);
+
+      // Find a suit that player 0 doesn't have
+      const allSuits = [
+        SuitEnum.DIAMOND,
+        SuitEnum.CLUB,
+        SuitEnum.HEART,
+        SuitEnum.SPADE,
+      ];
+      const player0Suits = new Set(player0Cards.map((card) => getSuit(card)));
+      const missingSuit = allSuits.find((suit) => !player0Suits.has(suit));
+
+      if (missingSuit !== undefined) {
+        expect(hasPlayerCardOfSuit(missingSuit, 0, 3, deck)).toBe(false);
+      }
+    });
+
+    it('should return false when all cards of the suit are already played', () => {
+      const deck = createFullDeck();
+      const player0Cards = getPlayersCards(0, 3, deck);
+      const firstCardSuit = getSuit(player0Cards[0]);
+
+      // Find all indices of player 0's cards that match the suit
+      const indicesToPlay: number[] = [];
+      deck.forEach((container, index) => {
+        const belongsToPlayer0 = getPlayersCards(0, 3, deck).includes(
+          container.card
+        );
+        if (belongsToPlayer0 && getSuit(container.card) === firstCardSuit) {
+          indicesToPlay.push(index);
+        }
+      });
+
+      const deckWithPlayedCards = createDeckWithPlayedCards(indicesToPlay);
+      expect(
+        hasPlayerCardOfSuit(firstCardSuit, 0, 3, deckWithPlayedCards)
+      ).toBe(false);
+    });
+
+    it('should only check specific player, not other players', () => {
+      const deck = createFullDeck();
+      // Get a card that belongs to player 1 (indices 1, 4, 7, etc.)
+      const player1Card = deck[1].card;
+      const player1CardSuit = getSuit(player1Card);
+
+      // Player 0 should not have access to player 1's cards
+      const player0Cards = getPlayersCards(0, 3, deck);
+      const player0HasThisSuit = player0Cards.some(
+        (card) => getSuit(card) === player1CardSuit
+      );
+
+      // If player 0 doesn't have this suit, the function should return false
+      if (!player0HasThisSuit) {
+        expect(hasPlayerCardOfSuit(player1CardSuit, 0, 3, deck)).toBe(false);
+      }
+    });
+
+    it('should return false for empty deck', () => {
+      expect(hasPlayerCardOfSuit(SuitEnum.SPADE, 0, 3, [])).toBe(false);
+    });
+
+    it('should handle 4-player game correctly', () => {
+      const deck = createFullDeck();
+      const player0Cards = getPlayersCards(0, 4, deck);
+      const firstCardSuit = getSuit(player0Cards[0]);
+
+      expect(hasPlayerCardOfSuit(firstCardSuit, 0, 4, deck)).toBe(true);
+    });
+
+    it('should work with all four suits', () => {
+      const deck = createFullDeck();
+      const player0Cards = getPlayersCards(0, 3, deck);
+      const player0Suits = new Set(player0Cards.map((card) => getSuit(card)));
+
+      [SuitEnum.DIAMOND, SuitEnum.CLUB, SuitEnum.HEART, SuitEnum.SPADE].forEach(
+        (suit) => {
+          const expected = player0Suits.has(suit);
+          expect(hasPlayerCardOfSuit(suit, 0, 3, deck)).toBe(expected);
+        }
+      );
+    });
+
+    it('should return false when player has card of suit but it is played', () => {
+      const deck = createFullDeck();
+      // Player 0's first card
+      const player0FirstCardSuit = getSuit(deck[0].card);
+
+      // Mark all player 0's cards of this suit as played
+      const indicesToPlay: number[] = [];
+      deck.forEach((container, index) => {
+        const belongsToPlayer0 = getPlayersCards(0, 3, deck).includes(
+          container.card
+        );
+        if (
+          belongsToPlayer0 &&
+          getSuit(container.card) === player0FirstCardSuit
+        ) {
+          indicesToPlay.push(index);
+        }
+      });
+
+      const deckWithPlayedCards = createDeckWithPlayedCards(indicesToPlay);
+      expect(
+        hasPlayerCardOfSuit(player0FirstCardSuit, 0, 3, deckWithPlayedCards)
+      ).toBe(false);
     });
   });
 });

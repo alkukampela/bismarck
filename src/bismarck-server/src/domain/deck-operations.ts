@@ -91,6 +91,17 @@ export const getPlayersCards = (
     .map((container) => container.card);
 };
 
+export const hasPlayerCardOfSuit = (
+  suit: SuitEnum,
+  player: number,
+  playersInGame: number,
+  deck: CardContainer[]
+): boolean => {
+  return getPlayersCards(player, playersInGame, deck).some(
+    (card) => getSuit(card) === suit
+  );
+};
+
 export const hasTooManyCards = (
   player: number,
   playersInGame: number,

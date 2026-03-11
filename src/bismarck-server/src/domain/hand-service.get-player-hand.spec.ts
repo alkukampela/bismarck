@@ -7,7 +7,6 @@ import { GameType } from '../../../types/game-type';
 import { SuitEnum } from '../../../types/suit';
 import * as deckOperations from './deck-operations';
 
-// Mock deck-operations module
 jest.mock('./deck-operations', () => ({
   ...jest.requireActual('./deck-operations'),
   getPlayersCards: jest.fn(),
