@@ -118,4 +118,7 @@ dist
 .DS_Store
 .certs
 .wrangler
+.dev.vars
 
+*storybook.log
+storybook-static
