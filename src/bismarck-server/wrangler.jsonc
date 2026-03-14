@@ -40,6 +40,8 @@
 		"ENVIRONMENT": "production",
 		"DISABLE_EMAIL_SENDING": "false",
 		"SMTP_HOST": "email-smtp.eu-west-1.amazonaws.com",
+    "SES_URL": "https://email.eu-west-1.amazonaws.com/v2/email/outbound-emails",
+    "SES_REGION": "eu-west-1",
 		"SMTP_USERNAME": "AKIA2W5WH2HO3PW4ANPY"
 	}
 	/**

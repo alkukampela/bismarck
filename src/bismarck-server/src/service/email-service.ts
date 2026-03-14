@@ -1,5 +1,4 @@
-import nodemailer from 'nodemailer';
-import { MailOptions } from 'nodemailer/lib/json-transport';
+import { AwsClient } from 'aws4fetch';
 import pino from 'pino';
 
 const logger = pino();
@@ -28,21 +27,30 @@ Pelin löydät osoitteesta bismarck piste monster.
 Onnea peliin!`;
 };
 
-const subject = `Kutsu Bismarck-kierrokselle`;
-
-const from = '"Bismarck-korttipeli" <info@bismarck.monster>';
-
-const mailOptions = (
-  loginId: string,
-  email: string,
-  name: string
-): MailOptions => {
+const emailPayload = (name: string, loginId: string, email: string) => {
   return {
-    from,
-    subject,
-    to: email,
-    text: textMailMessage(name, loginId),
-    html: htmlMailMessage(name, loginId),
+    FromEmailAddress: '"Bismarck-korttipeli" <info@bismarck.monster>',
+    Destination: {
+      ToAddresses: [email],
+    },
+    Content: {
+      Simple: {
+        Subject: {
+          Data: 'Kutsu Bismarck-kierrokselle',
+          Charset: 'UTF-8',
+        },
+        Body: {
+          Text: {
+            Data: textMailMessage(name, loginId),
+            Charset: 'UTF-8',
+          },
+          Html: {
+            Data: htmlMailMessage(name, loginId),
+            Charset: 'UTF-8',
+          },
+        },
+      },
+    },
   };
 };
 
@@ -55,7 +63,6 @@ export const sendLoginId = async (
   env: Env
 ): Promise<void> => {
   const { email, name, loginId } = sendRequest;
-  const options = mailOptions(loginId, email, name);
 
   if (env.DISABLE_EMAIL_SENDING.toLowerCase() === 'true') {
     logger.info(
@@ -64,21 +71,27 @@ export const sendLoginId = async (
     return;
   }
 
-  const transport = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: 465,
-    secure: true,
-    auth: {
-      user: env.SMTP_USERNAME,
-      pass: env.SMTP_PASSWORD,
-    },
+  const aws = new AwsClient({
+    accessKeyId: env.SMTP_USERNAME,
+    secretAccessKey: env.SMTP_PASSWORD,
+    region: env.SES_REGION,
   });
 
-  logger.info(`Using SMTP host: ${env.SMTP_HOST}:465 to send email`);
-
   try {
-    await transport.sendMail(options);
-    logger.info(`Sent email to ${email}`);
+    const response = await aws.fetch(env.SES_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailPayload(name, loginId, email)),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`SES API error: ${response.status} - ${errorText}`);
+    }
+
+    logger.info(`Sent email to ${email} via AWS SES`);
   } catch (err: unknown) {
     if (err instanceof Error) {
       logger.error(`Failed to send email to ${email}: ${err.message}`);

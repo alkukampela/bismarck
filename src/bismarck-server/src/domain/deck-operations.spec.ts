@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import {
   tricksInHand,
   getTrumpSuit,
@@ -18,6 +19,9 @@ import { Card } from '../../../types/card';
 import { SuitEnum } from '../../../types/suit';
 import * as shuffleService from '../service/shuffle-service';
 import { CardsOfDeck } from '../types/cards-of-deck';
+
+// Increase max listeners to prevent warning when running many tests
+EventEmitter.defaultMaxListeners = 20;
 
 // Test Fixtures
 const createFullDeck = (): CardContainer[] => {

@@ -9,12 +9,19 @@ import { ErrorTypes } from '../types/error-types';
 import { TrickResponse } from '../../../types/trick-response';
 import { StateUpdates } from '../types/state-updates';
 
-const logger = pino();
-
 export class GameStorage extends DurableObject<Env> {
   timeToLiveMs = 86_400_000; // 24 hours
 
   sql = this.ctx.storage.sql;
+
+  private logger = (() => {
+    const log = pino();
+    // Increase max listeners to prevent warning in Workers with multiple connections
+    if (log.setMaxListeners) {
+      log.setMaxListeners(50);
+    }
+    return log;
+  })();
 
   private readonly TABLES = {
     GAME_STATE: 'game_state',
@@ -210,13 +217,13 @@ export class GameStorage extends DurableObject<Env> {
     const logMessage = `[DO: ${this.ctx.id.toString()}] ${message}`;
     switch (level) {
       case 'info':
-        logger.info(logMessage);
+        this.logger.info(logMessage);
         break;
       case 'warn':
-        logger.warn(logMessage);
+        this.logger.warn(logMessage);
         break;
       case 'error':
-        logger.error(logMessage);
+        this.logger.error(logMessage);
         break;
     }
   }
