@@ -1,12 +1,13 @@
+import { ApiContext } from '../ApiContext';
 import { GameContext } from '../GameContext';
-import { initHand } from '../services/api-service';
 import * as React from 'react';
 
 export const PanicButton = () => {
   const game = React.useContext(GameContext);
+  const api = React.useContext(ApiContext).api;
 
   const gottaGetSomeAction = () => {
-    initHand(game.token, game.gameId).finally(() => location.reload());
+    api.initHand(game.token, game.gameId).finally(() => location.reload());
   };
 
   const showButton = (): boolean => {

@@ -3,9 +3,9 @@ import { PlayersCard } from './PlayersCard';
 import { GameContext } from '../GameContext';
 import { Card as CardType } from '../../../types/card';
 import { PlayersHand } from '../../../types/players-hand';
-import { removeCard } from '../services/api-service';
 import * as React from 'react';
 import { TrickStatus } from '../../../types/trick-response';
+import { ApiContext } from '../ApiContext';
 
 const isRedSuit = (card: CardType): boolean => {
   return ['♦️', '♥️'].includes(card.suit);
@@ -31,6 +31,7 @@ export const PlayersCards = ({
   isMyTurn: boolean;
 }): React.ReactElement => {
   const game = React.useContext(GameContext);
+  const api = React.useContext(ApiContext).api;
 
   const [numberOfExtraCards, setNumberOfExtraCards] = React.useState<number>(0);
   const [cards, setCards] = React.useState<CardType[]>([]);
@@ -60,7 +61,7 @@ export const PlayersCards = ({
   const removeCards = async () => {
     const removed: CardType[] = [];
     for (const card of cardsToBeRemoved) {
-      if (await removeCard(game.token, game.gameId, card)) {
+      if (await api.removeCard(game.token, game.gameId, card)) {
         removed.push(card);
       }
     }

@@ -15,14 +15,6 @@ import { TrickResponse } from '../../../types/trick-response';
 import { SocketFactory } from '../services/socket-factory';
 import * as React from 'react';
 import {
-  fetchTrickTakers,
-  fetchScores,
-  fetchTableCards,
-  fetchPlayersHand,
-  fetchStatute,
-  fetchTrick,
-} from '../services/api-service';
-import {
   emptyHand,
   emptyScores,
   emptyTrickResponse,
@@ -31,9 +23,11 @@ import {
 } from '../domain/default-objects';
 import { useNavigate } from 'react-router-dom';
 import { TableCardsResponse } from '../../../types/table-cards-respons';
+import { ApiContext } from '../ApiContext';
 
 export const Game = () => {
   const game = React.useContext(GameContext);
+  const api = React.useContext(ApiContext).api;
   const navigate = useNavigate();
 
   const [tableCards, setTableCards] = React.useState<TableCardsResponse>(
@@ -56,25 +50,30 @@ export const Game = () => {
     );
   };
 
-  const isHandReady = (
-    trick: TrickResponse,
-    handStatute: HandStatuteResponse
-  ): boolean =>
-    isTrickReady(trick) &&
-    !!trick.trickNumber &&
-    trick.trickNumber + 1 >= handStatute.tricksInHand;
+  const isTrickReady = React.useCallback(
+    (trick: TrickResponse): boolean => trick.trickStatus === 'FINISHED',
+    []
+  );
 
-  const isTrickReady = (trick: TrickResponse): boolean =>
-    trick.trickStatus === 'FINISHED';
+  const isHandReady = React.useCallback(
+    (trick: TrickResponse, handStatute: HandStatuteResponse): boolean =>
+      isTrickReady(trick) &&
+      !!trick.trickNumber &&
+      trick.trickNumber + 1 >= handStatute.tricksInHand,
+    [isTrickReady]
+  );
 
-  const isFirstCardAfterChoice = (trick: TrickResponse): boolean => {
-    return (
-      trick.trickNumber === 0 &&
-      trick.cards.filter((tc) => !!tc.card).length === 1
-    );
-  };
+  const isFirstCardAfterChoice = React.useCallback(
+    (trick: TrickResponse): boolean => {
+      return (
+        trick.trickNumber === 0 &&
+        trick.cards.filter((tc) => !!tc.card).length === 1
+      );
+    },
+    []
+  );
 
-  const isMyTurn = (): boolean => {
+  const isMyTurn = React.useCallback((): boolean => {
     if (!game.player) {
       return false;
     }
@@ -89,36 +88,36 @@ export const Game = () => {
 
     const nextPlayer = trickResponse.cards.find((tc) => !tc.card);
     return nextPlayer?.player.name === game.player;
-  };
+  }, [game.player, statute.eldestHand.name, trickResponse]);
 
-  const updateTrick = () => {
-    fetchTrick(game.gameId).then((trick) => {
+  const updateTrick = React.useCallback(() => {
+    api.fetchTrick(game.gameId).then((trick) => {
       setTrickResponse(trick);
     });
-  };
+  }, [api, game.gameId]);
 
-  const updateTableCards = () => {
-    fetchTableCards(game.gameId).then((cards) => {
+  const updateTableCards = React.useCallback(() => {
+    api.fetchTableCards(game.gameId).then((cards) => {
       setTableCards(cards);
     });
-  };
+  }, [api, game.gameId]);
 
-  const updateHand = () => {
+  const updateHand = React.useCallback(() => {
     if (game.token) {
-      fetchPlayersHand(game.token, game.gameId, emptyHand).then((hand) => {
+      api.fetchPlayersHand(game.token, game.gameId, emptyHand).then((hand) => {
         setPlayersHand(hand);
       });
     }
-  };
+  }, [api, game.gameId, game.token]);
 
-  const updateTrickTakers = () => {
-    fetchTrickTakers(game.gameId).then((takers) => {
+  const updateTrickTakers = React.useCallback(() => {
+    api.fetchTrickTakers(game.gameId).then((takers) => {
       setTrickTakers(takers);
     });
-  };
+  }, [api, game.gameId]);
 
-  const updateTotalScores = () => {
-    fetchScores(game.gameId, emptyScores).then((fetchedScores) => {
+  const updateTotalScores = React.useCallback(() => {
+    api.fetchScores(game.gameId, emptyScores).then((fetchedScores) => {
       setScores(fetchedScores);
       if (fetchedScores.isFinished) {
         setTimeout(() => {
@@ -126,14 +125,15 @@ export const Game = () => {
         }, 3000);
       }
     });
-  };
+  }, [api, game.gameId, navigate]);
 
-  const updateStatute = () => {
-    fetchStatute(game.gameId, emptyStatue).then((fetchedStatute) => {
+  const updateStatute = React.useCallback(() => {
+    api.fetchStatute(game.gameId, emptyStatue).then((fetchedStatute) => {
       setStatute(fetchedStatute);
     });
-  };
+  }, [api, game.gameId]);
 
+  // Initial backend fetches on mount
   React.useEffect(() => {
     updateTrickTakers();
     updateTableCards();
@@ -141,8 +141,13 @@ export const Game = () => {
     updateHand();
     updateTotalScores();
     updateStatute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  // Socket event handling in its own effect
+  React.useEffect(() => {
     const socket = socketRef.current;
+    if (!socket) return;
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickResponse;
       setTrickResponse(trick);
@@ -166,7 +171,21 @@ export const Game = () => {
         updateTrickTakers();
       }
     };
-  });
+    // Clean up on unmount
+    return () => {
+      socket.onmessage = null;
+    };
+  }, [
+    isFirstCardAfterChoice,
+    isHandReady,
+    isTrickReady,
+    statute,
+    updateHand,
+    updateStatute,
+    updateTableCards,
+    updateTotalScores,
+    updateTrickTakers,
+  ]);
 
   React.useEffect(
     () => () => {

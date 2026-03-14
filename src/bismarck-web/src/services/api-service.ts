@@ -14,6 +14,50 @@ import {
 } from '../domain/default-objects';
 import { TrickResponse } from '../../../types/trick-response';
 
+export interface ApiService {
+  fetchTrick: (gameId: string) => Promise<TrickResponse>;
+  fetchTableCards: (gameId: string) => Promise<TableCardsResponse>;
+  fetchPlayersHand: (
+    authToken: string,
+    gameId: string,
+    fallbackValue: PlayersHand
+  ) => Promise<PlayersHand>;
+  fetchTrickTakers: (gameId: string) => Promise<PlayerScore[]>;
+  fetchScores: (
+    gameId: string,
+    fallbackValue: GameScoreBoard
+  ) => Promise<GameScoreBoard>;
+  fetchStatute: (
+    gameId: string,
+    fallbackValue: HandStatuteResponse
+  ) => Promise<HandStatuteResponse>;
+  startTrick: (
+    authToken: string,
+    gameId: string,
+    card: Card
+  ) => Promise<boolean>;
+  addToTrick: (
+    authToken: string,
+    gameId: string,
+    card: Card
+  ) => Promise<boolean>;
+  removeCard: (
+    authToken: string,
+    gameId: string,
+    card: Card
+  ) => Promise<boolean>;
+  initHand: (authToken: string, gameId: string) => Promise<boolean>;
+  postChoice: (
+    authToken: string,
+    gameId: string,
+    gameTypeChoice: GameTypeChoiceRequest
+  ) => Promise<boolean>;
+  createGame: (
+    createGameRequest: CreateGameRequest
+  ) => Promise<CreateGameResponse>;
+  fetchToken: (loginId: string) => Promise<TokenResponse>;
+}
+
 const baseUrl = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
   : '/api';
@@ -187,4 +231,20 @@ export const createGame = async (
 export const fetchToken = async (loginId: string): Promise<TokenResponse> => {
   const response = await performPost('fetch-token', { loginId });
   return ((await response.json()) as TokenResponse) || Promise.reject;
+};
+
+export const defaultApiService: ApiService = {
+  fetchTrick,
+  fetchTableCards,
+  fetchPlayersHand,
+  fetchTrickTakers,
+  fetchScores,
+  fetchStatute,
+  startTrick,
+  addToTrick,
+  removeCard,
+  initHand,
+  postChoice,
+  createGame,
+  fetchToken,
 };

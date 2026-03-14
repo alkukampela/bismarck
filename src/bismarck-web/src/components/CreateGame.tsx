@@ -1,6 +1,6 @@
-import { createGame } from '../services/api-service';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ApiContext } from '../ApiContext';
 
 export const CreateGame = (): JSX.Element => {
   const [isSent, setSent] = React.useState<boolean>(false);
@@ -8,6 +8,7 @@ export const CreateGame = (): JSX.Element => {
     React.useState<boolean>(false);
 
   const navigate = useNavigate();
+  const api = React.useContext(ApiContext).api;
 
   const MIN_PLAYERS = 3;
   const MAX_PLAYERS = 4;
@@ -70,7 +71,7 @@ export const CreateGame = (): JSX.Element => {
       })),
     };
 
-    createGame(request).then(() => {
+    api.createGame(request).then(() => {
       setTimeout(() => {
         navigate('/');
       }, 1000);

@@ -1,9 +1,9 @@
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { PlayerScore } from '../../../types/player-score';
 import { TrickScore } from '../../../types/trick-score';
+import { ApiContext } from '../ApiContext';
 import { calculatePointsForFinishedHand } from '../domain/score-calculators';
 import { GameContext } from '../GameContext';
-import { initHand } from '../services/api-service';
 import * as React from 'react';
 
 export const HandScores = ({
@@ -14,9 +14,10 @@ export const HandScores = ({
   isHandReady: boolean;
 }): React.ReactElement => {
   const game = React.useContext(GameContext);
+  const api = React.useContext(ApiContext).api;
 
   const moveToNextHand = () => {
-    initHand(game.token, game.gameId).finally(() => location.reload());
+    api.initHand(game.token, game.gameId).finally(() => location.reload());
   };
 
   const handScores = (trickScores: TrickScore[]): PlayerScore[] => {

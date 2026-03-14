@@ -1,21 +1,22 @@
 import { calculateFinalResults } from '../domain/score-calculators';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { emptyScores } from '../domain/default-objects';
-import { fetchScores } from '../services/api-service';
 import { extractGameId } from '../services/game-id-extractor';
 import { ScoreSheet } from './ScoreSheet';
 import * as React from 'react';
+import { ApiContext } from '../ApiContext';
 
 export const Results = () => {
   const [scores, setScores] = React.useState<GameScoreBoard>(emptyScores);
+  const api = React.useContext(ApiContext).api;
 
   React.useEffect(() => {
     const gameId = extractGameId(document);
 
-    fetchScores(gameId, emptyScores).then((fetchedScores) => {
+    api.fetchScores(gameId, emptyScores).then((fetchedScores) => {
       setScores(fetchedScores);
     });
-  }, []);
+  }, [api]);
 
   return (
     <div className="results-container">

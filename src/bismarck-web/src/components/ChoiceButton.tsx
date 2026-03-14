@@ -1,6 +1,6 @@
 import { GameTypeChoiceRequest } from '../../../types/game-type-choice-request';
+import { ApiContext } from '../ApiContext';
 import { GameContext } from '../GameContext';
-import { postChoice } from '../services/api-service';
 import * as React from 'react';
 
 export const ChoiceButton = ({
@@ -11,9 +11,10 @@ export const ChoiceButton = ({
   gameTypeChoice: GameTypeChoiceRequest;
 }): React.ReactElement => {
   const game = React.useContext(GameContext);
+  const api = React.useContext(ApiContext).api;
 
   const chooseGameType = () => {
-    postChoice(game.token, game.gameId, gameTypeChoice);
+    api.postChoice(game.token, game.gameId, gameTypeChoice);
   };
 
   return (

@@ -2,8 +2,8 @@ import { Card } from './Card';
 import { Card as CardType } from '../../../types/card';
 import { TrickStatus } from '../../../types/trick-response';
 import { GameContext } from '../GameContext';
-import { addToTrick, startTrick } from '../services/api-service';
 import * as React from 'react';
+import { ApiContext } from '../ApiContext';
 
 export const PlayersCard = ({
   card,
@@ -23,6 +23,7 @@ export const PlayersCard = ({
   onRemovalToggle: (card: CardType) => void;
 }) => {
   const game = React.useContext(GameContext);
+  const api = React.useContext(ApiContext).api;
 
   const handleClick = async () => {
     if (isInRemovalStage) {
@@ -35,11 +36,11 @@ export const PlayersCard = ({
     }
 
     if (trickStatus === 'UNFINISHED') {
-      if (await addToTrick(game.token, game.gameId, card)) {
+      if (await api.addToTrick(game.token, game.gameId, card)) {
         onPlay(card);
       }
     } else {
-      if (await startTrick(game.token, game.gameId, card)) {
+      if (await api.startTrick(game.token, game.gameId, card)) {
         onPlay(card);
       }
     }
