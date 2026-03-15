@@ -526,13 +526,29 @@ tr.odd-gametype {
   min-width: 1.5em;
 }
 
+.hand-scores-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  opacity: 0.4;
+  z-index: 199;
+}
+
 .hand-scores-container {
-  background-color: var(--final-results-area);
-  padding: 0 2rem 1rem 2rem;
-  z-index: 200;
-  position: absolute;
-  top: 6rem;
+  position: fixed;
+  top: 50%;
   left: 50%;
-  margin-top: -3.125rem;
-  margin-left: -3.125rem;
+  transform: translate(-50%, -50%);
+  background-image: linear-gradient(
+    -90deg,
+    var(--background-from) 0%,
+    var(--background-to) 100%
+  );
+  opacity: 1;
+  padding: 0rem 2rem 1rem 2rem;
+  z-index: 200;
+
 }
