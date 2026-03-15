@@ -1,13 +1,12 @@
 import { TokenResponse } from '../../../types/token-response';
-import { ApiService, defaultApiService } from '../services/api-service';
 import * as React from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import { LoginIdState } from '../domain/login-id-state';
+import { ApiContext } from '../ApiContext';
 
-export const LoginHandler: React.FunctionComponent<{
-  api?: Pick<ApiService, 'fetchToken'>;
-}> = ({ api = defaultApiService }) => {
+export const LoginHandler: React.FunctionComponent = () => {
   const [gameId, setGameId] = React.useState<string>('');
+  const api = React.useContext(ApiContext).api;
 
   const getTokenResponse = async (identifier: string): Promise<TokenResponse> =>
     api.fetchToken(identifier);

@@ -27,8 +27,10 @@ export const Results = () => {
           {calculateFinalResults(scores.trickScores).map(
             (playerScore, index) => (
               <li key={index}>
-                {playerScore.position} {playerScore.player} {playerScore.points}
-                {playerScore.position === 'I' && ' 🏆'}
+                <span className="position">{playerScore.position}</span>
+                <span className="player">{playerScore.player}</span>
+                <span className="points">{playerScore.points}</span>
+                <span className="trophy">{playerScore.isWinner && '🏆'}</span>
               </li>
             )
           )}

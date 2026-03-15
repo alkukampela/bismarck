@@ -68,6 +68,7 @@ export const calculateFinalResults = (
   player: string;
   points: number;
   position: string;
+  isWinner: boolean;
 }[] => {
   if (trickScores.length === 0) {
     return [];
@@ -82,6 +83,7 @@ export const calculateFinalResults = (
         player: score.player.name,
         points: score.totalPoints,
         position: convertToRoman(playersPosition(score.totalPoints, lastTrick)),
+        isWinner: playersPosition(score.totalPoints, lastTrick) === 1,
       };
     });
 };

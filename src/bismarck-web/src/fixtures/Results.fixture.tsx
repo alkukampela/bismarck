@@ -8,9 +8,17 @@ const PLAYER_0 = { name: 'Alfons' };
 const PLAYER_1 = { name: 'Bill' };
 const PLAYER_2 = { name: 'Cedric' };
 
-const mockApiService: Partial<ApiService> = {
-  fetchScores: () => Promise.resolve(mockScores),
+type MockApiServiceOptions = {
+  scores?: GameScoreBoard;
 };
+
+function createMockApiService(
+  options: MockApiServiceOptions = {}
+): Partial<ApiService> {
+  return {
+    fetchScores: () => Promise.resolve(options.scores ?? mockScores),
+  };
+}
 
 const mockScores: GameScoreBoard = {
   trickScores: [
@@ -126,10 +134,12 @@ const mockScores: GameScoreBoard = {
   isFinished: true,
 };
 
-export default {
+const defaultExport = {
   component: (
-    <ApiContext.Provider value={{ api: mockApiService as ApiService }}>
+    <ApiContext.Provider value={{ api: createMockApiService() as ApiService }}>
       <Results />
     </ApiContext.Provider>
   ),
 };
+
+export default defaultExport;

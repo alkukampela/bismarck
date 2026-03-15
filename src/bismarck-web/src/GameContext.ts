@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-interface GameContextInterface {
+export interface GameContextInterface {
   gameId: string;
   player: string;
   token: string;
