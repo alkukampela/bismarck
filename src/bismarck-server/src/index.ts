@@ -53,8 +53,7 @@ const handleWebSocketUpgrade = async (
 };
 
 const { preflight, corsify } = cors({
-  // TODO: for production, restrict to actual domain
-  origin: '*',
+  origin: process.env.CORS_ORIGIN || '*',
 });
 
 const router = AutoRouter({ base: '/api' });
