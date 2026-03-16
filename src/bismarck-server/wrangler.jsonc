@@ -43,7 +43,7 @@
     "SES_URL": "https://email.eu-west-1.amazonaws.com/v2/email/outbound-emails",
     "SES_REGION": "eu-west-1",
 		"SMTP_USERNAME": "AKIA2W5WH2HO3PW4ANPY",
-    "CORS_ORIGIN": "https://bismarck-game.com"
+    "CORS_ORIGIN": "https://bismarck.monster"
 	}
 	/**
 	 * Smart Placement
