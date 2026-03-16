@@ -16,7 +16,8 @@ export class GameStorage extends DurableObject<Env> {
 
   private logger = (() => {
     const log = pino();
-    // Increase max listeners to prevent warning in Workers with multiple connections
+    // Increase max listeners to prevent
+    // warning in Workers with multiple connections
     if (log.setMaxListeners) {
       log.setMaxListeners(50);
     }

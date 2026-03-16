@@ -1,10 +1,9 @@
-import { EventEmitter } from 'events';
 import {
   tricksInHand,
   getTrumpSuit,
   initDeck,
   extraCardsAmount,
-  getTableCards,
+  getTableCardsIfVisible,
   noCardsLeft,
   roundNumber,
   getPlayersCards,
@@ -19,9 +18,6 @@ import { Card } from '../../../types/card';
 import { SuitEnum } from '../../../types/suit';
 import * as shuffleService from '../service/shuffle-service';
 import { CardsOfDeck } from '../types/cards-of-deck';
-
-// Increase max listeners to prevent warning when running many tests
-EventEmitter.defaultMaxListeners = 20;
 
 // Test Fixtures
 const createFullDeck = (): CardContainer[] => {
@@ -157,20 +153,30 @@ describe('deck-operations', () => {
   describe('getTableCards', () => {
     it('should return last 4 cards from deck as Card objects', () => {
       const deck = createFullDeck();
-      const result = getTableCards(deck);
+      const result = getTableCardsIfVisible(deck);
 
-      expect(result).toHaveLength(4);
-      expect(result).toEqual([
+      expect(result.cards).toHaveLength(4);
+      expect(result.cards).toEqual([
         deck[48].card,
         deck[49].card,
         deck[50].card,
         deck[51].card,
       ]);
-      expect(result[0]).not.toHaveProperty('isPlayed');
+      expect(result.areCardsOnTheTable).toBe(true);
     });
 
     it('should return empty array for empty deck', () => {
-      expect(getTableCards([])).toEqual([]);
+      const deck: CardContainer[] = [];
+      const result = getTableCardsIfVisible(deck);
+      expect(result.cards).toEqual([]);
+      expect(result.areCardsOnTheTable).toBe(false);
+    });
+
+    it('should return empty array when more than 4 cards are played', () => {
+      const deck = createDeckWithPlayedCards([48, 49, 50, 51, 0]);
+      const result = getTableCardsIfVisible(deck);
+      expect(result.cards).toEqual([]);
+      expect(result.areCardsOnTheTable).toBe(false);
     });
   });
 

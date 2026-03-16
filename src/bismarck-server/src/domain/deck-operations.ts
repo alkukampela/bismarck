@@ -55,8 +55,23 @@ export const extraCardsAmount = (
   playersInGame: number
 ): number => Math.max(cards - cardsInHand(playersInGame), 0);
 
-export const getTableCards = (deck: CardContainer[]): Card[] => {
-  return deck.slice(-1 * TABLE_CARDS).map((container) => container.card);
+export const getTableCardsIfVisible = (
+  deck: CardContainer[]
+): {
+  cards: Card[];
+  areCardsOnTheTable: boolean;
+} => {
+  if (
+    deck.length === 0 ||
+    deck.filter((container) => container.isPlayed).length >= TABLE_CARDS
+  ) {
+    return { cards: [], areCardsOnTheTable: false };
+  }
+
+  return {
+    cards: deck.slice(-1 * TABLE_CARDS).map((container) => container.card),
+    areCardsOnTheTable: true,
+  };
 };
 
 export const noCardsLeft = (deck: CardContainer[]): boolean => {

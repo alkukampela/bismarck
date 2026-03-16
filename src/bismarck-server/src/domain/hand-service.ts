@@ -22,13 +22,13 @@ import {
   initDeck,
   extraCardsAmount,
   hasTooManyCards,
-  getTableCards as tableCardsFromDeck,
   roundNumber,
   getPlayersCards,
   removeCard,
   hasPlayerCard,
   noCardsLeft,
   hasPlayerCardOfSuit,
+  getTableCardsIfVisible,
 } from './deck-operations';
 import {
   initTrick,
@@ -42,7 +42,6 @@ import {
 import pino from 'pino';
 import { GameError } from '../utils/game-error';
 import { CardContainer } from '../types/card-container';
-import { TABLE_CARDS } from '../types/cards-of-deck';
 import { GameState, GameTypeData, HandStatuteData } from '../types/game-state';
 import { GameScoreBoard } from '../../../types/game-score-board';
 import { ServiceResult } from '../types/service-result';
@@ -211,26 +210,9 @@ export const getStatute = (
 export const getTableCards = (
   deck: CardContainer[]
 ): ServiceResult<TableCardsResponse> => {
-  if (
-    deck.length === 0 ||
-    deck.filter((card) => card.isPlayed).length >= TABLE_CARDS
-  ) {
-    // Don't return table cards after hand has been started
-    return {
-      updates: {},
-      retval: {
-        cards: [],
-        areCardsOnTheTable: false,
-      },
-    };
-  }
-
   return {
     updates: {},
-    retval: {
-      cards: tableCardsFromDeck(deck),
-      areCardsOnTheTable: true,
-    },
+    retval: getTableCardsIfVisible(deck),
   };
 };
 
