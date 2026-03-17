@@ -4,25 +4,23 @@ export class SocketFactory {
   private static _instance: ReconnectingWebSocket;
 
   private static initSocket(gameId: string) {
-    const buildWsUrl = (host: string, protocol: string | null) => {
-      const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
-      return `${wsProtocol}//${host}`;
-    };
-
-    const wsUrlFromHttpUrl = (url: string): string => {
+    const buildLocalWsUrl = (url: string, gameId: string) => {
       const urlObj = new URL(url);
-      return buildWsUrl(urlObj.host || '', urlObj.protocol);
+      const wsProtocol = urlObj.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${wsProtocol}//${urlObj.host}?gameId=${gameId}`;
     };
 
-    const isLocal = (wsUrl: string) => {
-      return wsUrl.includes('localhost') || wsUrl.includes('127.0.0.1');
+    const buildCloudflareWsUrl = (loc: Location, gameId: string) => {
+      const wsProtocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${wsProtocol}//${loc.host}/api?gameId=${gameId}`;
     };
 
     const API_URL = import.meta.env.VITE_API_URL;
-    const wsUrl = wsUrlFromHttpUrl(API_URL);
-    const wsPath = isLocal(API_URL) ? '' : '/api';
+    const wsFullUrl = API_URL
+      ? buildLocalWsUrl(API_URL, gameId)
+      : buildCloudflareWsUrl(window.location, gameId);
 
-    return new ReconnectingWebSocket(`${wsUrl}${wsPath}?gameId=${gameId}`, [], {
+    return new ReconnectingWebSocket(wsFullUrl, [], {
       maxRetries: 20,
       reconnectionDelayGrowFactor: 1.6,
     });
