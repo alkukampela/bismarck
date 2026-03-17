@@ -19,9 +19,10 @@ export class SocketFactory {
     };
 
     const API_URL = import.meta.env.VITE_API_URL;
-    const wsUrl = wsUrlFromHttpUrl(API_URL) + (isLocal(API_URL) ? '' : '/api');
+    const wsUrl = wsUrlFromHttpUrl(API_URL);
+    const wsPath = isLocal(API_URL) ? '' : '/api';
 
-    return new ReconnectingWebSocket(`${wsUrl}?gameId=${gameId}`, [], {
+    return new ReconnectingWebSocket(`${wsUrl}${wsPath}?gameId=${gameId}`, [], {
       maxRetries: 20,
       reconnectionDelayGrowFactor: 1.6,
     });
