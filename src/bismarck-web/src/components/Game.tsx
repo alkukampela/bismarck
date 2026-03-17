@@ -147,7 +147,10 @@ export const Game = () => {
   // Socket event handling in its own effect
   React.useEffect(() => {
     const socket = socketRef.current;
-    if (!socket) return;
+    if (!socket) {
+      return;
+    }
+
     socket.onmessage = (msg) => {
       const trick = JSON.parse(msg.data) as TrickResponse;
       setTrickResponse(trick);

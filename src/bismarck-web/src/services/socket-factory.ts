@@ -24,7 +24,10 @@ export class SocketFactory {
       ? wsUrlFromHttpUrl(API_URL)
       : wsUrlFromLocation(window.location);
 
-    return new ReconnectingWebSocket(`${wsUrl}?gameId=${gameId}`);
+    return new ReconnectingWebSocket(`${wsUrl}?gameId=${gameId}`, [], {
+      maxRetries: 20,
+      reconnectionDelayGrowFactor: 1.6,
+    });
   }
 
   public static getSocket(gameId: string): ReconnectingWebSocket {
