@@ -14,15 +14,12 @@ export class SocketFactory {
       return buildWsUrl(urlObj.host || '', urlObj.protocol);
     };
 
-    const wsUrlFromLocation = (url: Location): string => {
-      return buildWsUrl(url.host, url.protocol);
+    const isLocal = (wsUrl: string) => {
+      return wsUrl.includes('localhost') || wsUrl.includes('127.0.0.1');
     };
 
     const API_URL = import.meta.env.VITE_API_URL;
-
-    const wsUrl = API_URL
-      ? wsUrlFromHttpUrl(API_URL)
-      : wsUrlFromLocation(window.location);
+    const wsUrl = wsUrlFromHttpUrl(API_URL) + (isLocal(API_URL) ? '' : '/api');
 
     return new ReconnectingWebSocket(`${wsUrl}?gameId=${gameId}`, [], {
       maxRetries: 20,
