@@ -2,6 +2,10 @@
 
 This is a multiplayer (3 or 4 players) card game.
 
+## Introduction
+
+Bismarck is a Finnish trick-taking card game for 3–4 players, played with a standard 52-card deck. Players compete in four game modes—Trump, No-Trump, Misere, and Choice—taking turns as the dealer. The goal is to win the most points by collecting or avoiding tricks, depending on the mode. After all rounds, the player with the highest score wins.
+
 ## Local dev environment
 
 ### Prerequisites
@@ -29,15 +33,33 @@ npm install -g wrangler
 wrangler login
 ```
 
-#### Create `.env` files
+#### Configure environment variables
 
 **Backend** (in `src/bismarck-server`):
 
-```env
-JWT_SECRET=your-secret-key-here
-ENVIRONMENT=development
-DISABLE_EMAIL_SENDING=TRUE
-```
+Environment variables are now managed using a `.dev.vars` file.
+
+1. Create a new `.dev.vars` file in `src/bismarck-server/`.
+
+2. Edit `.dev.vars` to set your environment variables:
+
+   ```
+   ENVIRONMENT=development
+   DISABLE_EMAIL_SENDING=true
+   JWT_SECRET=your-secret
+   SMTP_HOST=
+   SMTP_USERNAME=
+   SMTP_PASSWORD=
+   CORS_ORIGIN=*
+   ```
+
+   - `ENVIRONMENT`: Set to `development` or `production`.
+   - `DISABLE_EMAIL_SENDING`: Set to `true` to disable email sending in development.
+   - `JWT_SECRET`: Secret key for JWT tokens.
+   - `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`: Email server configuration. Can be empty in developmet environment.
+   - `CORS_ORIGIN`: Allowed CORS origins (e.g., `*` for all).
+
+3. The application will automatically load variables from `.dev.vars` when running locally.
 
 **Frontend** (in `src/bismarck-web`):
 
@@ -96,3 +118,26 @@ Note: Make sure to configure production secrets:
 ```sh
 wrangler secret put JWT_SECRET
 ```
+
+### Component Development with Cosmos React
+
+This project uses [Cosmos React](https://reactcosmos.org/) for interactive component development and testing.
+
+#### Running Cosmos
+
+1. Go to the frontend directory:
+   ```sh
+   cd src/bismarck-web
+   ```
+2. Start Cosmos:
+
+   ```sh
+   npx cosmos
+   ```
+
+3. Open the Cosmos UI in your browser (usually at http://localhost:5000) to browse and interact with React components in isolation.
+
+#### Adding Fixtures
+
+- Add fixture files in `src/bismarck-web/components/__fixtures__` or alongside your components.
+- See the [Cosmos documentation](https://reactcosmos.org/docs/fixtures) for details on writing and organizing fixtures.
