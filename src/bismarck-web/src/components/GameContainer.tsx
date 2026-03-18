@@ -14,8 +14,7 @@ export const GameContainer = (): React.ReactElement => {
   return (
     <>
       <Provider value={game}>
-        {!!gameId && <Game />}
-        {!gameId && <StartScreen />}
+        {gameId ? <Game /> : <StartScreen />}
       </Provider>
       <HelpButton />
     </>
