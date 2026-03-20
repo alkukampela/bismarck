@@ -38,7 +38,7 @@ export const LoginForm = (): React.ReactElement => {
           ref={loginIdFieldRef}
           format={(input) => input.toUpperCase()}
         />
-        <input type="submit" value="Pelaamaan" disabled={submitDisabled} />
+        <input type="submit" value="Pelaamaan ⇒" disabled={submitDisabled} />
       </form>
     </div>
   );
