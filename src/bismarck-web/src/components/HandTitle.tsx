@@ -50,7 +50,7 @@ export const HandTitle = ({
 
   return (
     <>
-      <h1>
+      <h1 className="main-title">
         {gameModeName()} {trickCounter()}
       </h1>
     </>

@@ -15,10 +15,10 @@ const api: Partial<ApiService> = {
     cards: [
       { card: { suit: '♥️', rank: 'A' }, player: PLAYER_0 },
       { card: { suit: '♣️', rank: 'K' }, player: PLAYER_1 },
-      { card: { suit: '♦️', rank: 'Q' }, player: PLAYER_2 },
+      { player: PLAYER_2 },
     ],
-    trickStatus: 'FINISHED',
-    trickNumber: 11, // last trick (trickNumber + 1 >= tricksInHand)
+    trickStatus: 'UNFINISHED',
+    trickNumber: 10,
     taker: PLAYER_0,
   }),
   fetchTableCards: async () => ({
@@ -32,7 +32,7 @@ const api: Partial<ApiService> = {
     };
   },
   fetchTrickTakers: async () => [
-    { player: PLAYER_0, score: 8 },
+    { player: PLAYER_0, score: 7 },
     { player: PLAYER_1, score: 3 },
     { player: PLAYER_2, score: 1 },
   ],

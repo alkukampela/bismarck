@@ -4,7 +4,7 @@
   --superdark: #000020;
   --tab-hover: rgba(0, 0, 20, 0.5);
   --shadow-color: rgba(168, 167, 167, 0.25);
-  --background-from: hsl(197, 66%, 62%);
+  --background-from: hsl(146, 66%, 45%);
   --background-to: hsl(from var(--background-from) h s calc(l * 0.7));
   --button: hsl(from var(--background-from) h s calc(l * 0.4));
   --info-area: rgba(3, 3, 3, 0.2);
@@ -39,14 +39,14 @@ h6 {
   font-weight: 400;
 }
 
-h1 {
-  margin-bottom: 0.5rem;
-  margin-top: 0rem;
-}
-
 h2 {
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
+}
+
+h1.main-title {
+  margin-bottom: 0.5rem;
+  margin-top: 0rem;
 }
 
 button,
@@ -555,7 +555,7 @@ tr.odd-gametype {
     gap: 1rem;
   }
 
-  h1 {
+  h1.main-title {
     margin-top: 3rem
   }
 }
