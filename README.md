@@ -10,12 +10,12 @@ Bismarck is a Finnish trick-taking card game for 3–4 players, played with a st
 
 ### Prerequisites
 
-- Node.js (v18+)
+- Node.js (v24+)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for Cloudflare Workers
 
 ### Architecture
 
-- **Backend**: Cloudflare Workers with Durable Objects (SQL storage)
+- **Backend**: Cloudflare Workers
 - **Storage**: Durable Objects for game state, KV namespace for login tokens
 - **Frontend**: Vite + React
 
@@ -37,7 +37,7 @@ wrangler login
 
 **Backend** (in `src/bismarck-server`):
 
-Environment variables are now managed using a `.dev.vars` file.
+Environment variables are managed using a `.dev.vars` file.
 
 1. Create a new `.dev.vars` file in `src/bismarck-server/`.
 
@@ -59,7 +59,7 @@ Environment variables are now managed using a `.dev.vars` file.
    - `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`: Email server configuration. Can be empty in developmet environment.
    - `CORS_ORIGIN`: Allowed CORS origins (e.g., `*` for all).
 
-3. The application will automatically load variables from `.dev.vars` when running locally.
+3. The application will automatically load variables when running locally.
 
 **Frontend** (in `src/bismarck-web`):
 
@@ -102,9 +102,9 @@ The web app will be available at `http://localhost:5173`
 ### Usage
 
 1. Browse to http://localhost:5173/create
-2. Fill the form with player names and emails
+2. Fill the form with unique player names and emails
 3. Fetch login codes from the Wrangler dev terminal output
-4. Each player can login with their code
+4. Each player can login with their code, these can be run on separate browser tabs
 
 ### Deployment
 
