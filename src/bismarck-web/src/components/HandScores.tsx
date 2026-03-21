@@ -45,8 +45,9 @@ export const HandScores = ({
         <h1>Jaon tulokset</h1>
         {handScores(scores.trickScores).map(
           (playerScore: PlayerScore, index: number) => (
-            <div key={index}>
-              {playerScore.player.name}: {playerScore.score}
+            <div key={index} className="hand-score-row">
+              <span className="player-name">{playerScore.player.name}</span>
+              <span className="player-score">{playerScore.score}</span>
             </div>
           )
         )}

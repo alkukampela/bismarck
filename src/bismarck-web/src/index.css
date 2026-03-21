@@ -232,7 +232,7 @@ legend {
 table.score-sheet {
   border-spacing: 0;
   border-collapse: collapse;
-  font-size: 1.20em;
+  font-size: 1.05em;
 }
 
 table.score-sheet td,
@@ -495,6 +495,10 @@ tr.odd-gametype {
   }
 }
 
+.final-player-positions {
+  margin-top: 0;
+}
+
 .final-player-positions > li {
   list-style: none;
   font-size: 1.2rem;
@@ -550,6 +554,20 @@ tr.odd-gametype {
   border-radius: 0.8rem;
 }
 
+.hand-score-row {
+  display: flex;
+  align-items: center;
+}
+
+.hand-score-row  > .player-name {
+  min-width: 8rem;
+  text-align: left;
+}
+
+.hand-score-row  > .player-score {
+  text-align: right;
+  min-width: 2.5rem;
+}
 
 @media (max-width: 768px) {
   .score-board {
