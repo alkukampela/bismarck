@@ -91,7 +91,7 @@ const api: Partial<ApiService> = {
 
 const gameContextValue: GameContextInterface = {
   gameId: 'fixture-game',
-  player: 'Player 1',
+  player: PLAYER_0.name,
   token: 'token',
 };
 

@@ -18,7 +18,7 @@ const api: Partial<ApiService> = {
       { player: PLAYER_2 },
     ],
     trickStatus: 'UNFINISHED',
-    trickNumber: 10,
+    trickNumber: 7,
     taker: PLAYER_0,
   }),
   fetchTableCards: async () => ({
@@ -27,7 +27,14 @@ const api: Partial<ApiService> = {
   }),
   fetchPlayersHand: async () => {
     return {
-      cards: [],
+      cards: [
+        { suit: '♥️', rank: '6' },
+
+        { suit: '♣️', rank: '5' },
+        { suit: '♣️', rank: 'K' },
+
+        { suit: '♠️', rank: '7' },
+      ],
       extraCards: 0,
     };
   },
@@ -91,7 +98,7 @@ const api: Partial<ApiService> = {
 
 const gameContextValue: GameContextInterface = {
   gameId: 'fixture-game',
-  player: 'Player 1',
+  player: PLAYER_0.name,
   token: 'token',
 };
 

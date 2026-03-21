@@ -142,6 +142,7 @@ legend {
 }
 
 .players-cards {
+  margin-top: -1rem;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -221,7 +222,7 @@ legend {
   flex-direction: row;
   display: flex;
   justify-content: space-evenly;
-  margin-right: 1rem;
+  margin-top: 1rem;
 }
 
 .taker {
