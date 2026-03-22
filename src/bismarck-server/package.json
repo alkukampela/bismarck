@@ -18,7 +18,7 @@
     "prettier": "^2.5.1",
     "ts-jest": "^29.4.6",
     "typescript": "^5.5.2",
-    "wrangler": "^4.73.0"
+    "wrangler": "^4.76.0"
   },
   "dependencies": {
     "@tsndr/cloudflare-worker-jwt": "^3.2.1",
