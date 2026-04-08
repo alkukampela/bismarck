@@ -368,6 +368,7 @@ tr.odd-gametype {
   align-items: flex-start;
   flex-wrap: wrap;
   padding-top: 3rem;
+  max-width: 23rem;
 }
 
 .login-id-field {
@@ -401,7 +402,7 @@ tr.odd-gametype {
   align-self: center;
   margin-top: 0.5rem;
   width: auto;
-  max-width: 12rem;
+  max-width: 9rem;
 }
 
 .tabbed-area {
